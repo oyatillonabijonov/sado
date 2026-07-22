@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { budgetOptions, contactSchema, serviceOptions } from "@/lib/contact";
+import Select from "@/components/Select";
+import { contactSchema, serviceOptions } from "@/lib/contact";
 
 type Status = "idle" | "sending" | "success" | "error";
 type Errors = Partial<Record<string, string>>;
@@ -58,7 +59,6 @@ export default function ContactForm() {
       {(
         [
           ["name", "Ismingiz", "text"],
-          ["email", "Email", "email"],
           ["phone", "Telefon", "tel"],
           ["company", "Kompaniya (ixtiyoriy)", "text"],
         ] as const
@@ -69,45 +69,18 @@ export default function ContactForm() {
         </div>
       ))}
       <div>
-        <select name="service" defaultValue="" className={field} aria-invalid={!!errors.service}>
-          <option value="" disabled>
-            Xizmat turi
-          </option>
-          {serviceOptions.map((s) => (
-            <option key={s} value={s} className="bg-pure-black">
-              {s}
-            </option>
-          ))}
-        </select>
+        <Select
+          name="service"
+          placeholder="Xizmat turi"
+          options={serviceOptions}
+          invalid={!!errors.service}
+        />
         {errors.service && <p className="mt-[8px] text-scarlet-signal">{errors.service}</p>}
       </div>
-      <div>
-        <select name="budget" defaultValue="" className={field} aria-invalid={!!errors.budget}>
-          <option value="" disabled>
-            Byudjet oralig'i
-          </option>
-          {budgetOptions.map((b) => (
-            <option key={b} value={b} className="bg-pure-black">
-              {b}
-            </option>
-          ))}
-        </select>
-        {errors.budget && <p className="mt-[8px] text-scarlet-signal">{errors.budget}</p>}
-      </div>
-      <div>
-        <textarea
-          name="message"
-          rows={4}
-          placeholder="Loyihangiz haqida qisqacha"
-          className={field}
-          aria-invalid={!!errors.message}
-        />
-        {errors.message && <p className="mt-[8px] text-scarlet-signal">{errors.message}</p>}
-      </div>
       <div className="pt-[16px]">
-        <button type="submit" disabled={status === "sending"} className="inline-flex cursor-pointer items-center gap-[8px] border border-graphite px-[16px] py-[8px] transition-colors hover:border-bone-white disabled:opacity-50">
+        <button type="submit" disabled={status === "sending"} className="btn-fill inline-flex cursor-pointer items-center gap-[8px] border border-graphite px-[16px] py-[8px] disabled:opacity-50">
           <span className="inline-block size-[6px] rounded-full bg-scarlet-signal" />
-          {status === "sending" ? "Yuborilmoqda…" : "Yuborish"}
+          <span>{status === "sending" ? "Yuborilmoqda…" : "Yuborish"}</span>
         </button>
         {status === "error" && (
           <p className="mt-[16px] text-scarlet-signal">

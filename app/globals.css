@@ -5,76 +5,65 @@
   --color-pure-black: #000000;
   --color-soft-black: #101010;
   --color-bone-white: #ffffff;
-  --color-fog-gray: #a0a0a0;
-  --color-graphite: #484848;
+  --color-fog-gray: #9a9a9a;
+  --color-graphite: #2c2c2c;
   --color-scarlet-signal: #e4002b;
-  --color-rose-brand-spectrum: #e85a5a;
-
-  /* Typography */
-  --font-nextbook: "NextBook", ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-circular-std: "Circular Std", ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   /* Typography — Scale */
-  --text-body-sm: 16px;
-  --leading-body-sm: 1.25;
-  --tracking-body-sm: -0.16px;
-  --text-subheading: 24px;
-  --leading-subheading: 1.13;
-  --tracking-subheading: -0.24px;
+  --text-body-sm: 15px;
+  --leading-body-sm: 1.55;
+  --tracking-body-sm: 0;
+  --text-subheading: 21px;
+  --leading-subheading: 1.3;
+  --tracking-subheading: -0.01em;
   --text-heading-sm: 32px;
-  --leading-heading-sm: 1;
-  --tracking-heading-sm: -0.64px;
-  --text-display: 80px;
-  --leading-display: 1;
-  --tracking-display: -1.6px;
-
-  /* Spacing */
-  --spacing-8: 8px;
-  --spacing-16: 16px;
-  --spacing-48: 48px;
-  --spacing-120: 120px;
-  --spacing-240: 240px;
+  --leading-heading-sm: 1.15;
+  --tracking-heading-sm: -0.02em;
 }
 
-:root {
-  --gradient-rose-brand-spectrum: linear-gradient(
-    90deg,
-    #f5a5a5 0%,
-    #e85a5a 25%,
-    #d42020 50%,
-    #7a0a0a 70%,
-    #2a0606 85%,
-    #000000 100%
-  );
-  --font-weight-light: 300;
-  --font-weight-regular: 400;
-  --section-gap: 120px;
-  --card-padding: 16px;
-  --element-gap: 16px;
-  --radius-tags: 0px;
-  --radius-cards: 0px;
-  --radius-images: 0px;
-  --radius-buttons: 0px;
-  --surface-canvas-black: #000000;
-  --surface-soft-black: #101010;
-  --surface-graphite-line: #484848;
-}
-
-/* NextBook is the studio face; falls back to system humanist sans. */
 html {
   background: var(--color-pure-black);
+  color-scheme: light dark;
+}
+
+/*
+ * Light mode — token nomlari tarixiy (dark-first), qiymatlari semantik:
+ * pure-black = fon, bone-white = asosiy matn, fog-gray = ikkinchi matn,
+ * graphite = chiziqlar, soft-black = ikkinchi fon.
+ * data-theme (header tugmasi) tizim sozlamasidan ustun turadi.
+ */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --color-pure-black: #f7f7f5;
+    --color-soft-black: #ececea;
+    --color-bone-white: #111111;
+    --color-fog-gray: #6f6f6f;
+    --color-graphite: #dcdcd8;
+    --logo-invert: 1;
+  }
+}
+:root[data-theme="light"] {
+  --color-pure-black: #f7f7f5;
+  --color-soft-black: #ececea;
+  --color-bone-white: #111111;
+  --color-fog-gray: #6f6f6f;
+  --color-graphite: #dcdcd8;
+  --logo-invert: 1;
+}
+
+/* Oq (monoxrom) logolar light rejimda qoraga ag'dariladi */
+img[src$="logo.svg"],
+.sado-marquee img {
+  filter: invert(var(--logo-invert, 0));
 }
 
 body {
   background: var(--color-pure-black);
   color: var(--color-bone-white);
-  font-family: var(--font-nextbook);
-  font-weight: var(--font-weight-regular);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   font-size: var(--text-body-sm);
   line-height: var(--leading-body-sm);
-  letter-spacing: var(--tracking-body-sm);
+  font-feature-settings: "ss01";
   -webkit-font-smoothing: antialiased;
 }
 
@@ -93,48 +82,167 @@ body {
   color: var(--color-bone-white);
 }
 
-/* Display heading — 80px whisper weight, clamps down on mobile */
+/* Display heading — hero and CTA only; sections use .heading */
 .display {
-  font-weight: var(--font-weight-light);
-  font-size: clamp(48px, 7vw, 80px);
-  line-height: 1;
-  letter-spacing: -0.02em;
+  font-weight: 500;
+  font-size: clamp(40px, 6.5vw, 84px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
   color: var(--color-bone-white);
+  text-wrap: balance;
 }
 
-/* Long-form MDX article column */
+/* Section heading — calmer step below display */
+.heading {
+  font-weight: 500;
+  font-size: clamp(26px, 3.2vw, 40px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-bone-white);
+  text-wrap: balance;
+}
+
+/* Long-form MDX article column — o'qish uchun */
 .prose-oker {
-  max-width: 640px;
-  color: var(--color-fog-gray);
+  color: color-mix(in srgb, var(--color-bone-white) 78%, var(--color-pure-black));
+  font-size: 17px;
+  line-height: 1.75;
+  letter-spacing: 0;
 }
 .prose-oker h2 {
   color: var(--color-bone-white);
-  font-size: var(--text-heading-sm);
-  line-height: var(--leading-heading-sm);
-  letter-spacing: var(--tracking-heading-sm);
-  font-weight: var(--font-weight-light);
-  margin: 48px 0 16px;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+  margin: 56px 0 20px;
 }
 .prose-oker h3 {
   color: var(--color-bone-white);
-  font-size: var(--text-subheading);
-  line-height: var(--leading-subheading);
-  letter-spacing: var(--tracking-subheading);
-  font-weight: var(--font-weight-regular);
-  margin: 48px 0 16px;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  margin: 40px 0 16px;
 }
 .prose-oker p {
-  margin: 0 0 16px;
+  margin: 0 0 24px;
 }
 .prose-oker a {
   color: var(--color-bone-white);
   border-bottom: 1px solid var(--color-graphite);
+  transition: border-color 0.2s ease;
+}
+.prose-oker a:hover {
+  border-color: var(--color-bone-white);
+}
+.prose-oker strong {
+  color: var(--color-bone-white);
+  font-weight: 500;
+}
+.prose-oker ul,
+.prose-oker ol {
+  margin: 0 0 24px;
+  padding-left: 22px;
+}
+.prose-oker ul {
+  list-style: disc;
+}
+.prose-oker ol {
+  list-style: decimal;
+}
+.prose-oker li {
+  margin-bottom: 8px;
+}
+.prose-oker li::marker {
+  color: var(--color-fog-gray);
 }
 .prose-oker blockquote {
-  border-left: 1px solid var(--color-graphite);
-  margin: 48px 0;
-  padding-left: 16px;
+  border-left: 2px solid var(--color-scarlet-signal);
+  margin: 40px 0;
+  padding-left: 24px;
   color: var(--color-bone-white);
+  font-size: 21px;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.prose-oker blockquote p {
+  margin: 0;
+}
+.prose-oker img {
+  width: 100%;
+  height: auto;
+  margin: 40px 0;
+}
+.prose-oker hr {
+  border: 0;
+  border-top: 1px solid var(--color-graphite);
+  margin: 56px 0;
+}
+.prose-oker code {
+  background: var(--color-soft-black);
+  padding: 2px 6px;
+  font-size: 15px;
+}
+
+/* Tugma hover: stroke'dan fill'ga — chapdan o'ngga to'lish */
+.btn-fill {
+  position: relative;
+  overflow: hidden;
+  color: var(--color-bone-white);
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+.btn-fill::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-bone-white);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.btn-fill > * {
+  position: relative;
+}
+.btn-fill:hover,
+.btn-fill:focus-visible {
+  color: var(--color-pure-black);
+  border-color: var(--color-bone-white);
+}
+.btn-fill:hover::before,
+.btn-fill:focus-visible::before {
+  transform: scaleX(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn-fill::before {
+    transition: none;
+  }
+}
+
+/* Hero case loop — 5 frames, 0.5s each, CSS-only */
+.hero-frame {
+  opacity: 0;
+  animation: hero-loop 2.5s infinite;
+}
+@keyframes hero-loop {
+  0%,
+  19.99% {
+    opacity: 1;
+  }
+  20%,
+  100% {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-frame {
+    animation: none;
+  }
+  .hero-frame:first-child {
+    opacity: 1;
+  }
 }
 
 /* Clients marquee */

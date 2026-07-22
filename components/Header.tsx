@@ -5,6 +5,39 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { site } from "@/data/site";
 
+function ThemeToggle() {
+  const [theme, setTheme] = useState<"light" | "dark" | null>(null);
+  useEffect(() => {
+    const t = document.documentElement.dataset.theme;
+    setTheme(
+      t === "light" || t === "dark"
+        ? t
+        : window.matchMedia("(prefers-color-scheme: light)").matches
+          ? "light"
+          : "dark",
+    );
+  }, []);
+  function toggle() {
+    const next = theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.theme = next;
+    } catch {}
+    setTheme(next);
+  }
+  return (
+    <button
+      onClick={toggle}
+      aria-label="Yorug'/qorong'i rejimni almashtirish"
+      className="cursor-pointer p-[8px] text-fog-gray transition-colors hover:text-bone-white"
+    >
+      <span suppressHydrationWarning aria-hidden>
+        {theme === "light" ? "☾" : "☀"}
+      </span>
+    </button>
+  );
+}
+
 function Clock() {
   const [now, setNow] = useState<string>("");
   useEffect(() => {
@@ -33,23 +66,29 @@ export default function Header() {
         <span className="hidden text-fog-gray md:block">
           <Clock />
         </span>
-        <nav className="hidden items-center gap-[16px] md:flex">
-          {site.nav.map((item) => (
-            <Link key={item.href} href={item.href} className="text-bone-white hover:text-fog-gray">
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        {/* 2x2 grid glyph — mobile menu trigger */}
-        <button
-          aria-label="Menyu"
-          onClick={() => setOpen((v) => !v)}
-          className="grid grid-cols-2 gap-[3px] p-[8px] md:hidden"
-        >
-          {[0, 1, 2, 3].map((i) => (
-            <span key={i} className="size-[5px] bg-bone-white" />
-          ))}
-        </button>
+        <div className="hidden items-center gap-[16px] md:flex">
+          <nav className="flex items-center gap-[16px]">
+            {site.nav.map((item) => (
+              <Link key={item.href} href={item.href} className="text-bone-white hover:text-fog-gray">
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <ThemeToggle />
+        </div>
+        <div className="flex items-center md:hidden">
+          <ThemeToggle />
+          {/* 2x2 grid glyph — mobile menu trigger */}
+          <button
+            aria-label="Menyu"
+            onClick={() => setOpen((v) => !v)}
+            className="grid grid-cols-2 gap-[3px] p-[8px]"
+          >
+            {[0, 1, 2, 3].map((i) => (
+              <span key={i} className="size-[5px] bg-bone-white" />
+            ))}
+          </button>
+        </div>
       </div>
       {open && (
         <nav className="flex flex-col gap-[24px] border-t border-graphite bg-pure-black px-[16px] py-[48px] md:hidden">
@@ -58,7 +97,7 @@ export default function Header() {
               key={item.href}
               href={item.href}
               onClick={() => setOpen(false)}
-              className="text-heading-sm font-light text-bone-white"
+              className="text-heading-sm font-medium text-bone-white"
             >
               {item.label}
             </Link>

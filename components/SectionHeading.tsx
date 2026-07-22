@@ -1,4 +1,4 @@
-/** 80px whisper-weight section heading with the 120px rhythm below it. */
+/** Section opener: hairline rule, small gray kicker, calm heading. */
 export default function SectionHeading({
   children,
   kicker,
@@ -7,11 +7,9 @@ export default function SectionHeading({
   kicker?: string;
 }) {
   return (
-    <div className="mb-[120px]">
-      {kicker && (
-        <p className="mb-[16px] text-fog-gray text-body-sm">{kicker}</p>
-      )}
-      <h2 className="display">{children}</h2>
+    <div className="mb-[64px] border-t border-graphite pt-[20px]">
+      {kicker && <p className="mb-[40px] text-fog-gray">{kicker}</p>}
+      <h2 className="heading">{children}</h2>
     </div>
   );
 }

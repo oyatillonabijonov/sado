@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
+import { Inter_Tight } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { site } from "@/data/site";
 import "./globals.css";
+
+const interTight = Inter_Tight({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -24,8 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="uz">
+    <html lang="uz" className={interTight.variable} suppressHydrationWarning>
       <body>
+        {/* FOUC oldini olish: saqlangan rejimni birinchi bo'yashdan oldin qo'llaymiz */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.theme;if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`,
+          }}
+        />
         <Header />
         <main className="pt-[48px]">{children}</main>
         <Footer />

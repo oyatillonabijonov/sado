@@ -11,14 +11,14 @@ export default function RedDotLink({
   as?: "link" | "button";
 }) {
   const box =
-    "inline-flex items-center gap-[8px] border border-graphite px-[16px] py-[8px] transition-colors hover:border-bone-white";
+    "btn-fill inline-flex items-center gap-[8px] border border-graphite px-[16px] py-[8px]";
   const inner = (
     <>
       <span
         aria-hidden
         className="inline-block size-[6px] rounded-full bg-scarlet-signal"
       />
-      <span className="text-bone-white">{children}</span>
+      <span>{children}</span>
     </>
   );
   if (as === "button" || !href) {

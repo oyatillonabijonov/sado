@@ -3,6 +3,8 @@ export interface Testimonial {
   name: string;
   role: string;
   company: string;
+  /** YouTube video ID — 9:16 formatdagi video otziv */
+  youtubeId: string;
 }
 
 export const testimonials: Testimonial[] = [
@@ -12,6 +14,7 @@ export const testimonials: Testimonial[] = [
     name: "Dilshod Ergashev",
     role: "Bosh direktor",
     company: "Orzu Bank",
+    youtubeId: "PVT3d8LvocI", // vaqtinchalik — haqiqiy otziv bilan almashtiring
   },
   {
     quote:
@@ -19,6 +22,7 @@ export const testimonials: Testimonial[] = [
     name: "Kamola Saidova",
     role: "Marketing rahbari",
     company: "Sahro",
+    youtubeId: "PVT3d8LvocI", // vaqtinchalik — haqiqiy otziv bilan almashtiring
   },
   {
     quote:
@@ -26,6 +30,7 @@ export const testimonials: Testimonial[] = [
     name: "Bekzod Nurmatov",
     role: "Mahsulot menejeri",
     company: "Yo'l Logistics",
+    youtubeId: "PVT3d8LvocI", // vaqtinchalik — haqiqiy otziv bilan almashtiring
   },
 ];
 

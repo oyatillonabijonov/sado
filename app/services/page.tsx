@@ -21,7 +21,7 @@ export default function ServicesPage() {
             className="grid gap-[48px] border-t border-graphite py-[120px] lg:grid-cols-[1fr_1fr_1fr] scroll-mt-[48px]"
           >
             <div>
-              <h2 className="text-heading-sm font-light text-bone-white">
+              <h2 className="text-heading-sm font-medium text-bone-white">
                 {s.title}
               </h2>
               <p className="mt-[16px] max-w-[420px] text-fog-gray">

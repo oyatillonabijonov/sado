@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1600" viewBox="0 0 1200 1600">
+<rect width="1200" height="1600" fill="#101010"></rect>
+<rect x="1" y="1" width="1198" height="1598" fill="none" stroke="#484848" stroke-width="2"></rect>
+<line x1="0" y1="0" x2="1200" y2="1600" stroke="#484848" stroke-width="1"></line>
+<line x1="1200" y1="0" x2="0" y2="1600" stroke="#484848" stroke-width="1"></line>
+<text x="600" y="800" fill="#a0a0a0" font-family="system-ui,sans-serif" font-size="40" text-anchor="middle" dominant-baseline="middle">Jamoa foto 1</text>
+</svg>

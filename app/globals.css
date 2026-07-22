@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-pure-black: #000000;
+  --color-soft-black: #101010;
+  --color-bone-white: #ffffff;
+  --color-fog-gray: #a0a0a0;
+  --color-graphite: #484848;
+  --color-scarlet-signal: #e4002b;
+  --color-rose-brand-spectrum: #e85a5a;
+
+  /* Typography */
+  --font-nextbook: "NextBook", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-circular-std: "Circular Std", ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Typography — Scale */
+  --text-body-sm: 16px;
+  --leading-body-sm: 1.25;
+  --tracking-body-sm: -0.16px;
+  --text-subheading: 24px;
+  --leading-subheading: 1.13;
+  --tracking-subheading: -0.24px;
+  --text-heading-sm: 32px;
+  --leading-heading-sm: 1;
+  --tracking-heading-sm: -0.64px;
+  --text-display: 80px;
+  --leading-display: 1;
+  --tracking-display: -1.6px;
+
+  /* Spacing */
+  --spacing-8: 8px;
+  --spacing-16: 16px;
+  --spacing-48: 48px;
+  --spacing-120: 120px;
+  --spacing-240: 240px;
+}
+
+:root {
+  --gradient-rose-brand-spectrum: linear-gradient(
+    90deg,
+    #f5a5a5 0%,
+    #e85a5a 25%,
+    #d42020 50%,
+    #7a0a0a 70%,
+    #2a0606 85%,
+    #000000 100%
+  );
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --section-gap: 120px;
+  --card-padding: 16px;
+  --element-gap: 16px;
+  --radius-tags: 0px;
+  --radius-cards: 0px;
+  --radius-images: 0px;
+  --radius-buttons: 0px;
+  --surface-canvas-black: #000000;
+  --surface-soft-black: #101010;
+  --surface-graphite-line: #484848;
+}
+
+/* NextBook is the studio face; falls back to system humanist sans. */
+html {
+  background: var(--color-pure-black);
+}
+
+body {
+  background: var(--color-pure-black);
+  color: var(--color-bone-white);
+  font-family: var(--font-nextbook);
+  font-weight: var(--font-weight-regular);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-body-sm);
+  letter-spacing: var(--tracking-body-sm);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-bone-white);
+  text-decoration: none;
+}
+a:hover {
+  color: var(--color-fog-gray);
+}
+
+::selection {
+  background: var(--color-scarlet-signal);
+  color: var(--color-bone-white);
+}
+
+/* Display heading — 80px whisper weight, clamps down on mobile */
+.display {
+  font-weight: var(--font-weight-light);
+  font-size: clamp(48px, 7vw, 80px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--color-bone-white);
+}
+
+/* Long-form MDX article column */
+.prose-oker {
+  max-width: 640px;
+  color: var(--color-fog-gray);
+}
+.prose-oker h2 {
+  color: var(--color-bone-white);
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm);
+  letter-spacing: var(--tracking-heading-sm);
+  font-weight: var(--font-weight-light);
+  margin: 48px 0 16px;
+}
+.prose-oker h3 {
+  color: var(--color-bone-white);
+  font-size: var(--text-subheading);
+  line-height: var(--leading-subheading);
+  letter-spacing: var(--tracking-subheading);
+  font-weight: var(--font-weight-regular);
+  margin: 48px 0 16px;
+}
+.prose-oker p {
+  margin: 0 0 16px;
+}
+.prose-oker a {
+  color: var(--color-bone-white);
+  border-bottom: 1px solid var(--color-graphite);
+}
+.prose-oker blockquote {
+  border-left: 1px solid var(--color-graphite);
+  margin: 48px 0;
+  padding-left: 16px;
+  color: var(--color-bone-white);
+}
+
+/* Clients marquee */
+@keyframes sado-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.sado-marquee {
+  animation: sado-marquee 28s linear infinite;
+}
+.sado-marquee-mask {
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent,
+    #000 8%,
+    #000 92%,
+    transparent
+  );
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .sado-marquee {
+    animation: none;
+  }
+}

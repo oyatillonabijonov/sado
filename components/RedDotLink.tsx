@@ -1,0 +1,36 @@
+import Link from "next/link";
+
+/** Red dot + white text — the system's only button. */
+export default function RedDotLink({
+  href,
+  children,
+  as = "link",
+}: {
+  href?: string;
+  children: React.ReactNode;
+  as?: "link" | "button";
+}) {
+  const box =
+    "inline-flex items-center gap-[8px] border border-graphite px-[16px] py-[8px] transition-colors hover:border-bone-white";
+  const inner = (
+    <>
+      <span
+        aria-hidden
+        className="inline-block size-[6px] rounded-full bg-scarlet-signal"
+      />
+      <span className="text-bone-white">{children}</span>
+    </>
+  );
+  if (as === "button" || !href) {
+    return (
+      <button type="submit" className={`cursor-pointer ${box}`}>
+        {inner}
+      </button>
+    );
+  }
+  return (
+    <Link href={href} className={box}>
+      {inner}
+    </Link>
+  );
+}

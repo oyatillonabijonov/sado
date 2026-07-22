@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import RedDotLink from "@/components/RedDotLink";
 import { adjacentProjects, getProject, projects } from "@/data/projects";
 
 export function generateStaticParams() {
@@ -32,7 +31,7 @@ export default async function ProjectPage({
   const { slug } = await params;
   const project = getProject(slug);
   if (!project) notFound();
-  const { prev, next } = adjacentProjects(slug);
+  const { next } = adjacentProjects(slug);
 
   return (
     <article className="px-[16px] pt-[120px]">
@@ -104,36 +103,50 @@ export default async function ProjectPage({
               i === 0 ? "md:col-span-2 md:aspect-[16/9]" : ""
             }`}
           >
-            <Image
-              src={src}
-              alt={`${project.title} — galereya ${i + 1}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
-            />
+            {src.endsWith(".mp4") ? (
+              <video
+                src={src}
+                muted
+                loop
+                autoPlay
+                playsInline
+                className="absolute inset-0 size-full object-cover"
+              />
+            ) : (
+              <Image
+                src={src}
+                alt={`${project.title} — galereya ${i + 1}`}
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
+            )}
           </div>
         ))}
       </div>
 
-      {/* Prev / Next */}
-      <nav className="mt-[240px] flex items-center justify-between border-t border-graphite pt-[48px]">
-        <Link href={`/portfolio/${prev.slug}`} className="group">
-          <p className="text-fog-gray">Oldingi loyiha</p>
-          <p className="text-subheading text-bone-white group-hover:text-fog-gray">
-            {prev.client}
+      {/* Keyingi loyiha — to'liq cover, hover'da nom chiqadi */}
+      <Link
+        href={`/portfolio/${next.slug}`}
+        className="group relative mt-[120px] block aspect-[16/9] w-full overflow-hidden bg-soft-black"
+      >
+        <Image
+          src={next.cover}
+          alt={next.title}
+          fill
+          sizes="100vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+        />
+        {/* ponytail: media overlay — rasm ustida har doim qorayadi, temadan mustaqil */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-[12px] bg-black/0 transition-colors duration-300 group-hover:bg-black/55">
+          <p className="uppercase tracking-wide text-white/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            Keyingi loyiha
           </p>
-        </Link>
-        <Link href={`/portfolio/${next.slug}`} className="group text-right">
-          <p className="text-fog-gray">Keyingi loyiha</p>
-          <p className="text-subheading text-bone-white group-hover:text-fog-gray">
+          <p className="display text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             {next.client}
           </p>
-        </Link>
-      </nav>
-
-      <div className="mt-[120px]">
-        <RedDotLink href="/contact">Shunga o'xshash loyiha kerakmi?</RedDotLink>
-      </div>
+        </div>
+      </Link>
     </article>
   );
 }

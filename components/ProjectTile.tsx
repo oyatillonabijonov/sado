@@ -2,17 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Project } from "@/data/projects";
 
-const aspects = {
-  square: "aspect-square",
-  portrait: "aspect-[3/4]",
-  landscape: "aspect-[4/3]",
-} as const;
-
-/** Edge-to-edge photograph tile — the image IS the card. */
+/** Edge-to-edge photograph tile — the image IS the card. Uniform 4:3 across the grid. */
 export default function ProjectTile({ project }: { project: Project }) {
   return (
     <Link href={`/portfolio/${project.slug}`} className="group block">
-      <div className={`relative w-full overflow-hidden bg-soft-black ${aspects[project.aspect]}`}>
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-soft-black">
         <Image
           src={project.cover}
           alt={project.title}

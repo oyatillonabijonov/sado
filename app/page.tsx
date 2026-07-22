@@ -58,7 +58,7 @@ export default function HomePage() {
 
       {/* Featured portfolio */}
       <section className="pt-[80px]">
-        <SectionHeading kicker="Tanlangan ishlar">
+        <SectionHeading>
           So'nggi loyihalar.
         </SectionHeading>
         <div className="grid gap-x-[16px] gap-y-[64px] md:grid-cols-2">

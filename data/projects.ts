@@ -8,8 +8,6 @@ export interface Project {
   category: ProjectCategory;
   services: string[];
   cover: string; // public/ path
-  /** Tile aspect in the grid: "square" | "portrait" | "landscape" */
-  aspect: "square" | "portrait" | "landscape";
   featured?: boolean;
   brief: string;
   solution: string;
@@ -23,6 +21,47 @@ export interface Project {
  */
 export const projects: Project[] = [
   {
+    slug: "allsolar",
+    title: "AllSolar — quyosh energiyasi brendi",
+    client: "AllSolar",
+    year: "2024",
+    category: "Branding",
+    services: ["Brend strategiyasi", "Logotip", "Vizual identifikatsiya"],
+    cover: "/images/projects/allsolar-1.jpg",
+    featured: true,
+    brief:
+      "AllSolar — O'zbekistonda quyosh energiyasi yechimlarini taqdim etuvchi kompaniya. Bozorga zamonaviy, ishonchli va texnologik brend obrazi bilan chiqish kerak edi.",
+    solution:
+      "Quyosh panelini eslatuvchi belgi va yashil-ko'k gradient asosida yaxlit vizual tizim qurdik: logotip, biznes aksessuarlari, ish kiyimi va bosma materiallar. General Sans shrifti tizimga toza, texnologik ohang berdi.",
+    gallery: [
+      "/images/projects/allsolar-2.jpg",
+      "/images/projects/allsolar-3.jpg",
+      "/images/projects/allsolar-4.jpg",
+      "/images/projects/allsolar-5.jpg",
+      "/images/projects/allsolar-6.jpg",
+    ],
+  },
+  {
+    slug: "honut",
+    title: "HONUT — asal va yong'oq brendi",
+    client: "HONUT",
+    year: "2025",
+    category: "Branding",
+    services: ["Brend strategiyasi", "Logotip", "Qadoqlash dizayni"],
+    cover: "/images/projects/honut-1.jpg",
+    featured: true,
+    brief:
+      "HONUT (Honey & Nuts) — asal ichidagi yong'oq mahsulotlari uchun premium brend. Tabiiylik va sifatni ta'kidlaydigan, sovg'abop qadoqlash tizimi kerak edi.",
+    solution:
+      "Ari belgisi asosidagi minimal oltin logotip va qora-oltin qadoqlash tizimini ishlab chiqdik: banka etiketkalari, sovg'a sumkalari va \"Fuel by Nature\" shiori. Har bir mahsulot turi yagona tizim ichida ajralib turadi.",
+    gallery: [
+      "/images/projects/honut-2.jpg",
+      "/images/projects/honut-3.jpg",
+      "/images/projects/honut-1.mp4",
+      "/images/projects/honut-2.mp4",
+    ],
+  },
+  {
     slug: "orzu-bank",
     title: "Orzu Bank — raqamli brend",
     client: "Orzu Bank",
@@ -30,7 +69,6 @@ export const projects: Project[] = [
     category: "Branding",
     services: ["Brend strategiyasi", "Vizual identifikatsiya", "Dizayn tizimi"],
     cover: "/images/projects/orzu-cover.svg",
-    aspect: "landscape",
     featured: true,
     brief:
       "Orzu Bank yosh auditoriyaga mo'ljallangan raqamli bank sifatida bozorga chiqmoqchi edi — ammo mavjud vizual til an'anaviy bank obrazidan farq qilmasdi. Placeholder matn: muammo tavsifi shu yerda.",
@@ -55,7 +93,6 @@ export const projects: Project[] = [
     category: "Branding",
     services: ["Logotip", "Menyu dizayni", "Interyer grafikasi"],
     cover: "/images/projects/tandir-cover.svg",
-    aspect: "square",
     featured: true,
     brief:
       "Placeholder matn: milliy oshxona tarmog'i uchun zamonaviy, lekin ildizlarga sodiq identifikatsiya kerak edi.",
@@ -75,7 +112,6 @@ export const projects: Project[] = [
     category: "UI/UX",
     services: ["UX tadqiqot", "Interfeys dizayni", "Prototiplash"],
     cover: "/images/projects/yol-cover.svg",
-    aspect: "portrait",
     featured: true,
     brief:
       "Placeholder matn: haydovchilar va dispetcherlar uchun murakkab jarayonlarni soddalashtirish talab qilingan.",
@@ -95,7 +131,6 @@ export const projects: Project[] = [
     category: "Web",
     services: ["Art-direksiya", "Veb-dizayn", "Frontend"],
     cover: "/images/projects/sahro-cover.svg",
-    aspect: "landscape",
     featured: true,
     brief:
       "Placeholder matn: yangi kolleksiya uchun editorial uslubdagi onlayn vitrina kerak edi.",
@@ -111,7 +146,6 @@ export const projects: Project[] = [
     category: "Print",
     services: ["Editorial dizayn", "Tipografika", "Bosma nazorati"],
     cover: "/images/projects/nashr-cover.svg",
-    aspect: "portrait",
     brief:
       "Placeholder matn: har chorakda chiqadigan madaniyat jurnali uchun yangi maket tizimi.",
     solution:
@@ -126,7 +160,6 @@ export const projects: Project[] = [
     category: "Web",
     services: ["Veb-dizayn", "Kontent strategiyasi"],
     cover: "/images/projects/quyosh-cover.svg",
-    aspect: "square",
     brief:
       "Placeholder matn: qayta tiklanadigan energiya kompaniyasi uchun ishonch uyg'otuvchi sayt.",
     solution:

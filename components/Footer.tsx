@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { site } from "@/data/site";
 
 function Newsletter() {
@@ -18,51 +18,102 @@ function Newsletter() {
         e.preventDefault();
         setStatus("done");
       }}
-      className="flex items-center border border-graphite bg-soft-black px-[16px] py-[8px]"
+      className="flex items-center gap-[16px] border-b border-graphite focus-within:border-bone-white"
     >
       <input
         type="email"
         required
         placeholder="Email manzilingiz"
-        className="w-full bg-transparent py-[8px] text-bone-white placeholder:text-fog-gray focus:outline-none"
+        className="w-full bg-transparent py-[16px] text-bone-white placeholder:text-fog-gray focus:outline-none"
       />
       <button
         type="submit"
-        className="flex shrink-0 items-center gap-[8px] text-bone-white hover:text-fog-gray"
+        aria-label="Obuna bo'lish"
+        className="shrink-0 cursor-pointer text-fog-gray transition-colors hover:text-bone-white"
       >
-        Obuna bo'lish
         <span aria-hidden>→</span>
       </button>
     </form>
   );
 }
 
+/** Toshkent vaqti — meta qatordagi mayda agentlik detali. */
+function LocalTime() {
+  const [time, setTime] = useState("");
+  useEffect(() => {
+    const fmt = () =>
+      setTime(
+        new Intl.DateTimeFormat("uz-UZ", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "Asia/Tashkent",
+        }).format(new Date()),
+      );
+    fmt();
+    const t = setInterval(fmt, 30_000);
+    return () => clearInterval(t);
+  }, []);
+  return <span suppressHydrationWarning>Toshkent {time}</span>;
+}
+
 export default function Footer() {
   return (
     <footer className="mt-[240px] border-t border-graphite px-[16px] py-[48px]">
-      <div className="grid gap-[48px] md:grid-cols-3">
-        <nav className="flex flex-col gap-[8px]">
-          <p className="text-fog-gray">Menyu</p>
+      <div className="grid gap-[48px] sm:grid-cols-2 lg:grid-cols-4">
+        <nav className="flex flex-col items-start gap-[12px]">
+          <p className="mb-[12px] text-fog-gray">Menyu</p>
           {site.nav.map((item) => (
-            <Link key={item.href} href={item.href} className="text-bone-white hover:text-fog-gray">
+            <Link
+              key={item.href}
+              href={item.href}
+              className="text-bone-white transition-colors hover:text-fog-gray"
+            >
               {item.label}
             </Link>
           ))}
         </nav>
-        <nav className="flex flex-col gap-[8px]">
-          <p className="text-fog-gray">Ijtimoiy tarmoqlar</p>
+        <nav className="flex flex-col items-start gap-[12px]">
+          <p className="mb-[12px] text-fog-gray">Ijtimoiy tarmoqlar</p>
           {site.socials.map((s) => (
-            <a key={s.label} href={s.href} target="_blank" rel="noreferrer" className="text-bone-white hover:text-fog-gray">
+            <a
+              key={s.label}
+              href={s.href}
+              target="_blank"
+              rel="noreferrer"
+              className="group text-bone-white transition-colors hover:text-fog-gray"
+            >
               {s.label}
+              <span
+                aria-hidden
+                className="ml-[8px] inline-block text-fog-gray transition-transform duration-200 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]"
+              >
+                ↗
+              </span>
             </a>
           ))}
         </nav>
-        <div className="flex flex-col gap-[8px]">
-          <p className="text-fog-gray">Newsletter</p>
-          <p className="text-bone-white">Yangi loyihalar va fikrlar haqida obuna bo'ling</p>
-          <div className="mt-[8px]">
-            <Newsletter />
-          </div>
+        <div className="flex flex-col gap-[12px]">
+          <p className="mb-[12px] text-fog-gray">Aloqa</p>
+          <a
+            href={`mailto:${site.email}`}
+            className="text-bone-white transition-colors hover:text-fog-gray"
+          >
+            {site.email}
+          </a>
+          <a
+            href={`tel:${site.phone.replace(/\s/g, "")}`}
+            className="text-bone-white transition-colors hover:text-fog-gray"
+          >
+            {site.phone}
+          </a>
+          <p className="text-fog-gray">{site.address}</p>
+        </div>
+        <div>
+          <p className="mb-[24px] text-fog-gray">Newsletter</p>
+          <p className="mb-[16px] text-bone-white">
+            Yangi loyihalar va fikrlar haqida obuna bo'ling
+          </p>
+          <Newsletter />
         </div>
       </div>
 
@@ -80,11 +131,12 @@ export default function Footer() {
         <p>
           © {new Date().getFullYear()} {site.name}. Barcha huquqlar himoyalangan.
         </p>
+        <LocalTime />
         <div className="flex gap-[16px]">
-          <a href="#" className="hover:text-bone-white">
+          <a href="#" className="transition-colors hover:text-bone-white">
             Cookie siyosati
           </a>
-          <a href="#" className="hover:text-bone-white">
+          <a href="#" className="transition-colors hover:text-bone-white">
             Maxfiylik siyosati
           </a>
         </div>

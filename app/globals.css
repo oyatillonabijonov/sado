@@ -221,6 +221,55 @@ body {
   }
 }
 
+/* Nav link 3D flip on hover — two stacked faces, CSS-only (no framer-motion).
+   perspective on the inner (not the clip box) flattens the 3D to 2D there, so
+   overflow:hidden on .nav-flip clips the resting back face without any ghost. */
+.nav-flip {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+.nav-flip__inner {
+  display: block;
+  position: relative;
+  perspective: 600px;
+}
+.nav-flip__face {
+  display: block;
+  transition:
+    transform 0.45s cubic-bezier(0.3, 0.7, 0.2, 1),
+    opacity 0.45s ease;
+  backface-visibility: hidden;
+}
+.nav-flip__face--front {
+  transform-origin: center bottom;
+}
+.nav-flip__face--back {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: rotateX(-90deg);
+  transform-origin: center top;
+}
+.nav-flip:hover .nav-flip__face--front,
+.nav-flip:focus-visible .nav-flip__face--front {
+  transform: rotateX(90deg);
+  opacity: 0;
+}
+.nav-flip:hover .nav-flip__face--back,
+.nav-flip:focus-visible .nav-flip__face--back {
+  transform: rotateX(0deg);
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nav-flip__face {
+    transition: none;
+  }
+  .nav-flip__face--back {
+    display: none;
+  }
+}
+
 /* Hero case loop — 5 frames, 0.5s each, CSS-only */
 .hero-frame {
   opacity: 0;

@@ -24,7 +24,7 @@ export default function HomePage() {
   return (
     <div className="px-[16px]">
       {/* Hero */}
-      <section className="relative -mx-[16px] flex min-h-[80vh] flex-col justify-center overflow-hidden px-[16px] py-[120px]">
+      <section className="relative -mx-[16px] flex min-h-screen flex-col justify-center overflow-hidden px-[16px] py-[120px]">
         <video
           aria-hidden
           autoPlay
@@ -56,16 +56,55 @@ export default function HomePage() {
       {/* Clients */}
       <ClientsMarquee />
 
-      {/* Services preview */}
+      {/* Services */}
       <section className="pt-[240px]">
-        <SectionHeading kicker="Xizmatlar">Nima qilamiz</SectionHeading>
-        <div className="grid gap-x-[16px] gap-y-[120px] md:grid-cols-2 lg:grid-cols-3">
-          {services.map((s) => (
-            <Link key={s.slug} href={`/services#${s.slug}`} className="group block">
-              <p className="text-subheading text-bone-white">{s.title}</p>
-              <p className="mt-[16px] text-fog-gray">{s.description}</p>
-              <p className="mt-[16px] text-fog-gray group-hover:text-bone-white">
-                Batafsil
+        <div className="grid gap-[16px] lg:grid-cols-4">
+          {/* Intro */}
+          <div className="flex flex-col justify-between lg:row-span-2">
+            <div>
+              <p className="text-body-sm text-fog-gray">{"{ Xizmatlar }"}</p>
+              <h2 className="mt-[16px] text-heading-sm font-light text-bone-white">
+                Yordam kerakmi?
+              </h2>
+              <p className="mt-[16px] max-w-[280px] text-fog-gray">
+                Nima kerakligiga amin emasmisiz? Suhbatdan boshlaymiz —
+                qolganini birga aniqlaymiz.
+              </p>
+            </div>
+            <Link
+              href="/contact"
+              className="mt-[48px] inline-flex items-center gap-[8px] text-bone-white underline decoration-graphite underline-offset-[6px] transition-colors hover:decoration-bone-white"
+            >
+              Loyihani muhokama qilish
+              <span aria-hidden>→</span>
+            </Link>
+          </div>
+
+          {/* Cards */}
+          {services.map((s, i) => (
+            <Link
+              key={s.slug}
+              href={`/services#${s.slug}`}
+              className="group flex min-h-[360px] flex-col justify-between bg-[#efefec] p-[24px] text-[#111111] transition-colors hover:bg-bone-white"
+            >
+              <p className="text-subheading">
+                {s.title}
+                <sup className="ml-[6px] text-body-sm text-graphite">
+                  {String(i + 1).padStart(2, "0")}
+                </sup>
+              </p>
+              <svg
+                aria-hidden
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.25"
+                className="mx-auto size-[36px]"
+              >
+                <path d="M12 2.5l2.9 6.1 6.6.6-5 4.4 1.5 6.4L12 17.9 6 20.5l1.5-6.4-5-4.4 6.6-.6z" />
+              </svg>
+              <p className="text-graphite">
+                {s.description.replace(/^Placeholder matn:\s*/, "")}
               </p>
             </Link>
           ))}

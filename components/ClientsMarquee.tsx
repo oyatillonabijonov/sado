@@ -6,9 +6,11 @@ export default function ClientsMarquee() {
   return (
     <section
       aria-label="Biz bilan ishlagan mijozlar"
-      className="border-t border-graphite py-[48px]"
+      className="py-[48px]"
     >
-      <p className="mb-[32px] text-fog-gray">Biz bilan ishlagan mijozlar</p>
+      <p className="mb-[32px] text-body-sm text-fog-gray">
+        Biz bilan ishlagan mijozlar
+      </p>
       <div className="sado-marquee-mask overflow-hidden">
         <div className="sado-marquee flex w-max items-center gap-[56px]">
           {row.map((c, i) => (

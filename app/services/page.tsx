@@ -18,7 +18,7 @@ export default function ServicesPage() {
           <section
             key={s.slug}
             id={s.slug}
-            className="grid gap-[48px] border-t border-graphite py-[120px] lg:grid-cols-[1fr_1fr_1fr] scroll-mt-[48px]"
+            className="grid gap-[48px] border-t border-graphite py-[120px] lg:grid-cols-[1fr_1fr_1fr] scroll-mt-[72px]"
           >
             <div>
               <h2 className="text-heading-sm font-medium text-bone-white">

@@ -122,7 +122,7 @@ function LanguageSwitcher() {
         aria-expanded={open}
         aria-label="Til tanlash"
         onClick={() => setOpen((v) => !v)}
-        className="flex cursor-pointer items-center gap-[8px] text-fog-gray transition-colors hover:text-bone-white"
+        className="flex cursor-pointer items-center gap-[8px] text-[17px] text-fog-gray transition-colors hover:text-bone-white"
       >
         <span suppressHydrationWarning>{current.label}</span>
         <span aria-hidden className={`transition-transform ${open ? "rotate-180" : ""}`}>
@@ -132,7 +132,7 @@ function LanguageSwitcher() {
       {open && (
         <ul
           role="listbox"
-          className="absolute left-0 top-full z-20 mt-[8px] min-w-[140px] border border-graphite bg-pure-black"
+          className="absolute left-0 top-full z-20 mt-[8px] min-w-[140px] overflow-hidden rounded-[10px] border border-graphite bg-pure-black"
         >
           {LANGS.map((l) => (
             <li key={l.code}>
@@ -159,17 +159,17 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-pure-black">
-      <div className="flex h-[48px] items-center justify-between px-[16px]">
+      <div className="flex h-[72px] items-center justify-between px-[16px]">
         <Link href="/" onClick={() => setOpen(false)}>
-          <Image src="/images/logo.svg" alt={site.name} width={354} height={135} className="h-[24px] w-auto" priority />
+          <Image src="/images/logo.svg" alt={site.name} width={354} height={135} className="h-[38px] w-auto" priority />
         </Link>
         <div className="hidden md:block">
           <LanguageSwitcher />
         </div>
-        <div className="hidden items-center gap-[16px] md:flex">
-          <nav className="flex items-center gap-[16px]">
+        <div className="hidden items-center gap-[24px] md:flex">
+          <nav className="flex items-center gap-[24px]">
             {site.nav.map((item) => (
-              <Link key={item.href} href={item.href} className="nav-flip text-bone-white">
+              <Link key={item.href} href={item.href} className="nav-flip text-[17px] text-bone-white">
                 <span className="nav-flip__inner">
                   <span className="nav-flip__face nav-flip__face--front">{item.label}</span>
                   <span aria-hidden className="nav-flip__face nav-flip__face--back">

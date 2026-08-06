@@ -53,7 +53,7 @@ export default async function ProjectPage({
       </div>
 
       {/* Cover */}
-      <div className="relative mt-[120px] aspect-[16/9] w-full bg-soft-black">
+      <div className="relative mt-[120px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black">
         <Image
           src={project.cover}
           alt={project.title}
@@ -99,7 +99,7 @@ export default async function ProjectPage({
         {project.gallery.map((src, i) => (
           <div
             key={src}
-            className={`relative aspect-[4/3] w-full bg-soft-black ${
+            className={`relative aspect-[4/3] w-full overflow-hidden rounded-[10px] bg-soft-black ${
               i === 0 ? "md:col-span-2 md:aspect-[16/9]" : ""
             }`}
           >
@@ -128,7 +128,7 @@ export default async function ProjectPage({
       {/* Keyingi loyiha — to'liq cover, hover'da nom chiqadi */}
       <Link
         href={`/portfolio/${next.slug}`}
-        className="group relative mt-[120px] block aspect-[16/9] w-full overflow-hidden bg-soft-black"
+        className="group relative mt-[120px] block aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black"
       >
         <Image
           src={next.cover}

@@ -5,7 +5,7 @@ import type { PostMeta } from "@/lib/blog";
 export default function BlogCard({ post }: { post: PostMeta }) {
   return (
     <Link href={`/blog/${post.slug}`} className="group block">
-      <div className="relative aspect-[4/3] w-full bg-soft-black">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[10px] bg-soft-black">
         <Image
           src={post.cover}
           alt={post.title}

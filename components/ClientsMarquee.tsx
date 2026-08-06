@@ -9,14 +9,14 @@ export default function ClientsMarquee() {
         <p className="text-fog-gray">Bizga 50+ kompaniyalar ishonch bildirgan</p>
       </div>
       <div className="sado-marquee-mask mt-[48px] overflow-hidden">
-        <div className="sado-marquee flex w-max items-center gap-[64px]">
+        <div className="sado-marquee flex w-max items-center gap-[96px]">
           {row.map((c, i) => (
             <img
               key={i}
               aria-hidden={i >= clients.length}
               src={c.logo}
               alt={c.name}
-              className="block h-[28px] w-auto shrink-0 opacity-50 transition-opacity hover:opacity-100"
+              className="block h-[56px] w-auto shrink-0 opacity-90 transition-opacity hover:opacity-100"
             />
           ))}
         </div>

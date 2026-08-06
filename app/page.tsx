@@ -24,7 +24,7 @@ export default function HomePage() {
   return (
     <div className="px-[16px]">
       {/* Hero */}
-      <section className="relative -mx-[16px] flex min-h-[calc(100svh-48px)] flex-col justify-end overflow-hidden px-[16px] pb-[48px]">
+      <section className="relative -mx-[16px] flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden px-[16px] pb-[48px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           {["/sd1.png", "/sd2.png", "/sd3.png", "/sd4.png", "/sd5.webp"].map(
             (src, i) => (
@@ -79,7 +79,7 @@ export default function HomePage() {
         <div className="grid gap-x-[16px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t) => (
             <figure key={t.name}>
-              <div className="aspect-[9/16] w-full overflow-hidden bg-soft-black">
+              <div className="aspect-[9/16] w-full overflow-hidden rounded-[10px] bg-soft-black">
                 <iframe
                   src={`https://www.youtube.com/embed/${t.youtubeId}`}
                   title={`${t.name} — video fikr`}

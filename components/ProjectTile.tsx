@@ -6,7 +6,7 @@ import type { Project } from "@/data/projects";
 export default function ProjectTile({ project }: { project: Project }) {
   return (
     <Link href={`/portfolio/${project.slug}`} className="group block">
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-soft-black">
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[10px] bg-soft-black">
         <Image
           src={project.cover}
           alt={project.title}

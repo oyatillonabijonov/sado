@@ -1,3 +1,8 @@
+/**
+ * ponytail: bu massiv endi SAYTGA emas, faqat `scripts/seed.ts` ga xizmat qiladi —
+ * kontent Payload'da (`collections/Projects.ts`), sayt uni `lib/content.ts` orqali o'qiydi.
+ * Bu yerni tahrirlash saytni o'zgartirmaydi; /panel/loyihalar dan foydalaning.
+ */
 export type ProjectCategory = "Branding" | "Web" | "UI/UX" | "Print";
 
 export interface Project {
@@ -175,14 +180,4 @@ export const projectCategories: ProjectCategory[] = [
   "Print",
 ];
 
-export function getProject(slug: string) {
-  return projects.find((p) => p.slug === slug);
-}
 
-export function adjacentProjects(slug: string) {
-  const i = projects.findIndex((p) => p.slug === slug);
-  return {
-    prev: i > 0 ? projects[i - 1] : projects[projects.length - 1],
-    next: i < projects.length - 1 ? projects[i + 1] : projects[0],
-  };
-}

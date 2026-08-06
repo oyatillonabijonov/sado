@@ -1,3 +1,8 @@
+/**
+ * ponytail: bu massiv endi SAYTGA emas, faqat `scripts/seed.ts` ga xizmat qiladi —
+ * kontent Payload'da (`collections/Services.ts`), sayt uni `lib/content.ts` orqali o'qiydi.
+ * Bu yerni tahrirlash saytni o'zgartirmaydi; /panel/xizmatlar dan foydalaning.
+ */
 export interface Service {
   slug: string;
   title: string;

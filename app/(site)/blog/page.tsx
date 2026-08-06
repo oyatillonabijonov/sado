@@ -8,9 +8,8 @@ export const metadata: Metadata = {
   description: "Dizayn, brending va raqamli mahsulotlar haqida fikrlarimiz.",
 };
 
-export default function BlogPage() {
-  const posts = getAllPosts();
-  const categories = getBlogCategories();
+export default async function BlogPage() {
+  const [posts, categories] = await Promise.all([getAllPosts(), getBlogCategories()]);
   return (
     <div className="px-[16px] pt-[120px]">
       <SectionHeading kicker="Fikrlar">Blog</SectionHeading>

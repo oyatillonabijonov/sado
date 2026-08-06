@@ -6,7 +6,7 @@ import BlogCard from "@/components/BlogCard";
 import RedDotLink from "@/components/RedDotLink";
 import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
-import { projects } from "@/data/projects";
+import { getProjects } from "@/lib/content";
 import { testimonials } from "@/data/testimonials";
 import { site } from "@/data/site";
 import { getAllPosts } from "@/lib/blog";
@@ -17,9 +17,10 @@ export const metadata: Metadata = {
     "Brend strategiyasi, veb-dizayn va raqamli tajribalar. Placeholder tavsif.",
 };
 
-export default function HomePage() {
-  const featured = projects.filter((p) => p.featured).slice(0, 4);
-  const posts = getAllPosts().slice(0, 3);
+export default async function HomePage() {
+  const [allProjects, allPosts] = await Promise.all([getProjects(), getAllPosts()]);
+  const featured = allProjects.filter((p) => p.featured).slice(0, 4);
+  const posts = allPosts.slice(0, 3);
 
   return (
     <div className="px-[16px]">

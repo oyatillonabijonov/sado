@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { projects } from "@/data/projects";
+import { getProjects } from "@/lib/content";
 import { getAllPosts } from "@/lib/blog";
 import { site } from "@/data/site";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = ["", "/portfolio", "/services", "/about", "/blog", "/contact"].map(
     (p) => ({
       url: `${site.url}${p}`,
@@ -12,13 +12,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: p === "" ? 1 : 0.7,
     })
   );
-  const projectPages = projects.map((p) => ({
+  const projectPages = (await getProjects()).map((p) => ({
     url: `${site.url}/portfolio/${p.slug}`,
     lastModified: new Date(),
     changeFrequency: "yearly" as const,
     priority: 0.6,
   }));
-  const blogPages = getAllPosts().map((p) => ({
+  const blogPages = (await getAllPosts()).map((p) => ({
     url: `${site.url}/blog/${p.slug}`,
     lastModified: new Date(p.date),
     changeFrequency: "yearly" as const,

@@ -1,6 +1,15 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import { getPayload } from "payload";
+import config from "@payload-config";
+import { toText } from "@/panel/lexical";
+
+/**
+ * Blog — MDX fayllari o'rniga Payload.
+ *
+ * Maqola matni Payload'da Lexical formatida yotadi; `toText` uni markdown'ga
+ * qaytaradi va sahifa uni avvalgidek `MDXRemote` ga beradi. Panel tomonida
+ * `BlockEditor` o'sha markdown bilan ishlaydi — `panel/lexical.test.ts` shu
+ * ikki tomonlama o'girmani qo'riqlaydi.
+ */
 
 export interface PostMeta {
   slug: string;
@@ -13,61 +22,57 @@ export interface PostMeta {
   readingTime: string;
 }
 
-const BLOG_DIR = path.join(process.cwd(), "content/blog");
-
 function readingTimeOf(text: string) {
   const words = text.trim().split(/\s+/).length;
   return `${Math.max(1, Math.round(words / 180))} daqiqa o'qish`;
 }
 
-export function getAllPosts(): PostMeta[] {
-  return fs
-    .readdirSync(BLOG_DIR)
-    .filter((f) => f.endsWith(".mdx"))
-    .map((file) => {
-      const slug = file.replace(/\.mdx$/, "");
-      const raw = fs.readFileSync(path.join(BLOG_DIR, file), "utf8");
-      const { data, content } = matter(raw);
-      return {
-        slug,
-        title: data.title as string,
-        description: data.description as string,
-        date: data.date as string,
-        category: data.category as string,
-        cover: data.cover as string,
-        author: data.author as string,
-        readingTime: readingTimeOf(content),
-      };
-    })
-    .sort((a, b) => (a.date < b.date ? 1 : -1));
-}
+const url = (value: unknown): string =>
+  value && typeof value === "object" && "url" in value ? String((value as { url: string }).url) : "";
 
-export function getPost(slug: string) {
-  const file = path.join(BLOG_DIR, `${slug}.mdx`);
-  if (!fs.existsSync(file)) return null;
-  const raw = fs.readFileSync(file, "utf8");
-  const { data, content } = matter(raw);
+function toMeta(doc: Record<string, unknown>): PostMeta {
   return {
-    meta: {
-      slug,
-      title: data.title as string,
-      description: data.description as string,
-      date: data.date as string,
-      category: data.category as string,
-      cover: data.cover as string,
-      author: data.author as string,
-      readingTime: readingTimeOf(content),
-    } as PostMeta,
-    content,
+    slug: String(doc.slug ?? ""),
+    title: String(doc.title ?? ""),
+    description: String(doc.description ?? ""),
+    date: String(doc.date ?? "").slice(0, 10),
+    category: String(doc.category ?? ""),
+    cover: url(doc.cover),
+    author: String(doc.author ?? ""),
+    readingTime: readingTimeOf(toText(doc.body).text),
   };
 }
 
-export function getBlogCategories(): string[] {
-  return Array.from(new Set(getAllPosts().map((p) => p.category)));
+export async function getAllPosts(): Promise<PostMeta[]> {
+  const payload = await getPayload({ config });
+  const { docs } = await payload.find({
+    collection: "posts",
+    depth: 1,
+    limit: 200,
+    sort: "-date",
+  });
+  return (docs as unknown as Record<string, unknown>[]).map(toMeta);
 }
 
-export function getRelatedPosts(slug: string, category: string, n = 2) {
-  const all = getAllPosts().filter((p) => p.slug !== slug);
+export async function getPost(slug: string) {
+  const payload = await getPayload({ config });
+  const { docs } = await payload.find({
+    collection: "posts",
+    depth: 1,
+    limit: 1,
+    where: { slug: { equals: slug } },
+  });
+  const doc = docs[0] as unknown as Record<string, unknown> | undefined;
+  if (!doc) return null;
+  return { meta: toMeta(doc), content: toText(doc.body).text };
+}
+
+export async function getBlogCategories(): Promise<string[]> {
+  return Array.from(new Set((await getAllPosts()).map((p) => p.category)));
+}
+
+export async function getRelatedPosts(slug: string, category: string, n = 2) {
+  const all = (await getAllPosts()).filter((p) => p.slug !== slug);
   const same = all.filter((p) => p.category === category);
   return [...same, ...all.filter((p) => p.category !== category)].slice(0, n);
 }

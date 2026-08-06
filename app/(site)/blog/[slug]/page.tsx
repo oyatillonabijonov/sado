@@ -6,8 +6,8 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import BlogCard from "@/components/BlogCard";
 import { getAllPosts, getPost, getRelatedPosts } from "@/lib/blog";
 
-export function generateStaticParams() {
-  return getAllPosts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  return (await getAllPosts()).map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -16,7 +16,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) return {};
   return {
     title: post.meta.title,
@@ -31,9 +31,9 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getPost(slug);
+  const post = await getPost(slug);
   if (!post) notFound();
-  const related = getRelatedPosts(slug, post.meta.category);
+  const related = await getRelatedPosts(slug, post.meta.category);
 
   return (
     <article className="px-[16px] pt-[120px]">

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import RedDotLink from "@/components/RedDotLink";
 import SectionHeading from "@/components/SectionHeading";
-import { services } from "@/data/services";
+import { getServices } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Xizmatlar",
@@ -9,7 +9,8 @@ export const metadata: Metadata = {
     "Brend strategiyasi, brend dizayn, veb-dizayn, UI/UX, motion va print — SADO xizmatlari.",
 };
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const services = await getServices();
   return (
     <div className="px-[16px] pt-[120px]">
       <SectionHeading kicker="Xizmatlar">Nima qilamiz</SectionHeading>

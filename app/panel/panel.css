@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+/**
+ * The panel's design tokens, and the only stylesheet it needs.
+ *
+ * It is separate from the host site's CSS on purpose: the panel should not
+ * inherit whatever the site is doing, and the site should not break when the
+ * panel's greys change. Every Tailwind utility the panel uses — `text-body`,
+ * `border-mist`, `rounded-card`, `ease-fluid` — is defined here and nowhere
+ * else, so the panel drops into a project whose design system is unrelated.
+ *
+ * To rebrand: change the six colours. Nothing else needs touching, and
+ * deliberately so — the type scale and the two radii are what make the panel
+ * feel like one tool rather than a pile of screens.
+ */
+@theme {
+  --color-white: #ffffff;
+  --color-obsidian: #000000; /* text, hairlines, button borders, the nav rail */
+  --color-pebble: #999999; /* secondary body text */
+  --color-driftwood: #a1a1a1; /* captions, meta, placeholders */
+  --color-mist: #d9d9d9; /* hairlines, resting borders, disabled */
+  /* Accent, and it has exactly one job: the count of things waiting for a
+     reply. Used anywhere else it becomes decoration and stops meaning
+     "look here". */
+  --color-ember: #fa5c40;
+
+  --font-sans: var(--font-dm-sans), var(--font-onest), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* Nothing is set below 16px. A CMS is read all day by people who are not
+     looking at it from 40cm with fresh eyes. */
+  --text-heading-lg: 48px;
+  --text-heading-lg--line-height: 1.05;
+  --text-heading-lg--letter-spacing: -2.4px;
+
+  --text-heading: 34px;
+  --text-heading--line-height: 1.2;
+  --text-heading--letter-spacing: -1.02px;
+
+  --text-heading-sm: 24px;
+  --text-heading-sm--line-height: 1.2;
+  --text-heading-sm--letter-spacing: -0.72px;
+
+  --text-body-lg: 20px;
+  --text-body-lg--line-height: 1.4;
+  --text-body-lg--letter-spacing: -0.6px;
+
+  --text-body: 16px;
+  --text-body--line-height: 1.5;
+  --text-body--letter-spacing: -0.48px;
+
+  /* Same size as body, looser leading — the difference is rhythm, not scale. */
+  --text-body-sm: 16px;
+  --text-body-sm--line-height: 1.45;
+  --text-body-sm--letter-spacing: -0.48px;
+
+  --text-caption: 16px;
+  --text-caption--line-height: 1.2;
+  --text-caption--letter-spacing: -0.48px;
+
+  --text-code: 14px;
+  --text-code--line-height: 1.7;
+  --text-code--letter-spacing: normal;
+
+  --radius-card: 20px;
+  --radius-pill: 100px;
+
+  /* One curve on everything. Nothing uses ease-in or a symmetric ease — both
+     read as machinery starting up. */
+  --ease-fluid: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --spacing: 4px;
+}

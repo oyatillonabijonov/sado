@@ -117,17 +117,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="my-[120px] flex justify-center">
-        <Image
-          src="/images/logo.svg"
-          alt={site.name}
-          width={354}
-          height={135}
-          className="h-auto w-full max-w-[560px]"
-        />
-      </div>
-
-      <div className="flex flex-col gap-[16px] border-t border-graphite pt-[16px] text-fog-gray md:flex-row md:items-center md:justify-between">
+      <div className="mt-[120px] flex flex-col gap-[16px] border-t border-graphite pt-[16px] text-fog-gray md:flex-row md:items-center md:justify-between">
         <p>
           © {new Date().getFullYear()} {site.name}. Barcha huquqlar himoyalangan.
         </p>
@@ -141,6 +131,15 @@ export default function Footer() {
           </a>
         </div>
       </div>
+
+      {/* Katta wordmark — footer tagida to'liq kenglikda, chetlarga tegib turadi */}
+      <Image
+        src="/images/logo.svg"
+        alt={site.name}
+        width={354}
+        height={135}
+        className="-mx-[16px] -mb-[48px] mt-[64px] block h-auto w-[calc(100%+32px)] max-w-none"
+      />
     </footer>
   );
 }

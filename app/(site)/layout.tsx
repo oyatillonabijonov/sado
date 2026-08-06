@@ -39,7 +39,7 @@ export default function RootLayout({
           }}
         />
         <Header />
-        <main className="pt-[48px]">{children}</main>
+        <main className="pt-[72px]">{children}</main>
         <Footer />
       </body>
     </html>

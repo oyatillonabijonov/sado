@@ -60,7 +60,7 @@ export default function AboutPage() {
         <div className="grid gap-[16px] sm:grid-cols-2 lg:grid-cols-3">
           {team.map((m) => (
             <div key={m.name}>
-              <div className="relative aspect-[3/4] w-full bg-soft-black">
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-[10px] bg-soft-black">
                 <Image
                   src={m.photo}
                   alt={m.name}

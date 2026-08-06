@@ -189,6 +189,7 @@ body {
 .btn-fill {
   position: relative;
   overflow: hidden;
+  border-radius: 999px;
   color: var(--color-bone-white);
   transition:
     color 0.3s ease,

@@ -58,7 +58,7 @@ export default function Select({
       {open && (
         <ul
           role="listbox"
-          className="absolute inset-x-0 top-full z-20 max-h-[320px] overflow-y-auto border border-graphite bg-pure-black"
+          className="absolute inset-x-0 top-full z-20 max-h-[320px] overflow-y-auto rounded-[10px] border border-graphite bg-pure-black"
         >
           {options.map((o) => (
             <li key={o}>

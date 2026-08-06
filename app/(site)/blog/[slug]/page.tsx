@@ -62,7 +62,7 @@ export default async function BlogPostPage({
         ))}
       </div>
 
-      <div className="relative mt-[64px] aspect-[21/9] w-full bg-soft-black">
+      <div className="relative mt-[64px] aspect-[21/9] w-full overflow-hidden rounded-[10px] bg-soft-black">
         <Image
           src={post.meta.cover}
           alt={post.meta.title}

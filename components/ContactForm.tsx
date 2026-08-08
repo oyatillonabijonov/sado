@@ -7,8 +7,14 @@ import { contactSchema, serviceOptions } from "@/lib/contact";
 type Status = "idle" | "sending" | "success" | "error";
 type Errors = Partial<Record<string, string>>;
 
+/* Har bir maydon o'z ramkasiga olindi: pastki chiziqli variant kulrang kartada
+   yo'qolib ketardi va forma "tekis" ko'rinardi. */
 const field =
-  "w-full border-0 border-b border-graphite bg-transparent py-[16px] text-bone-white placeholder:text-fog-gray focus:border-bone-white focus:outline-none";
+  "w-full rounded-[10px] border border-graphite bg-pure-black px-[16px] py-[16px] text-bone-white transition-colors placeholder:text-fog-gray hover:border-fog-gray focus:border-bone-white focus:outline-none";
+
+/* Formani sahifadan ajratib turadigan to'rtburchak. Ikkala joyda ham (bosh sahifa
+   CTA va /contact) bir xil bo'lishi uchun sahifada emas, shu yerda. */
+const card = "rounded-[10px] bg-soft-black p-[24px] sm:p-[40px]";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -45,7 +51,7 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="border-t border-graphite pt-[48px]">
+      <div className={card}>
         <p className="text-subheading text-bone-white">Xabaringiz yuborildi.</p>
         <p className="mt-[16px] text-fog-gray">
           Bir ish kuni ichida siz bilan bog'lanamiz.
@@ -55,7 +61,7 @@ export default function ContactForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-[32px]">
+    <form onSubmit={onSubmit} noValidate className={`${card} flex flex-col gap-[16px]`}>
       {(
         [
           ["name", "Ismingiz", "text"],
@@ -63,22 +69,38 @@ export default function ContactForm() {
           ["company", "Kompaniya (ixtiyoriy)", "text"],
         ] as const
       ).map(([name, label, type]) => (
-        <div key={name}>
-          <input name={name} type={type} placeholder={label} className={field} aria-invalid={!!errors[name]} />
-          {errors[name] && <p className="mt-[8px] text-scarlet-signal">{errors[name]}</p>}
+        <div key={name} className="flex flex-col gap-[8px]">
+          {/* Ko'rinadigan yorliq: placeholder yozuv kirgach yo'qoladi va maydon
+              nima uchun ekani bilinmay qoladi. */}
+          <label htmlFor={`contact-${name}`} className="text-fog-gray">
+            {label}
+          </label>
+          <input
+            id={`contact-${name}`}
+            name={name}
+            type={type}
+            className={field}
+            aria-invalid={!!errors[name]}
+          />
+          {errors[name] && <p className="text-scarlet-signal">{errors[name]}</p>}
         </div>
       ))}
-      <div>
+      <div className="flex flex-col gap-[8px]">
+        <span className="text-fog-gray">Xizmat turi</span>
         <Select
           name="service"
-          placeholder="Xizmat turi"
+          placeholder="Tanlang"
           options={serviceOptions}
           invalid={!!errors.service}
         />
-        {errors.service && <p className="mt-[8px] text-scarlet-signal">{errors.service}</p>}
+        {errors.service && <p className="text-scarlet-signal">{errors.service}</p>}
       </div>
       <div className="pt-[16px]">
-        <button type="submit" disabled={status === "sending"} className="btn-fill inline-flex cursor-pointer items-center gap-[8px] border border-graphite px-[16px] py-[8px] disabled:opacity-50">
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className="btn-fill inline-flex w-full cursor-pointer items-center justify-center gap-[8px] rounded-[10px] border border-graphite px-[16px] py-[16px] text-subheading disabled:opacity-50 sm:w-auto sm:px-[32px]"
+        >
           <span className="inline-block size-[6px] rounded-full bg-scarlet-signal" />
           <span>{status === "sending" ? "Yuborilmoqda…" : "Yuborish"}</span>
         </button>

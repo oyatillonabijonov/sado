@@ -3,34 +3,50 @@ export interface Testimonial {
   name: string;
   role: string;
   company: string;
-  /** YouTube video ID — 9:16 formatdagi video otziv */
-  youtubeId: string;
 }
 
 export const testimonials: Testimonial[] = [
   {
     quote:
-      "Placeholder matn: SADO bizning brendimizni biz o'zimiz tushunmagan darajada tushundi. Natija — bozorda butunlay yangi pozitsiya.",
-    name: "Dilshod Ergashev",
-    role: "Bosh direktor",
-    company: "Orzu Bank",
-    youtubeId: "PVT3d8LvocI", // vaqtinchalik — haqiqiy otziv bilan almashtiring
+      "Boshlanishida men ishonmagan edim, o‘zimni vatanimdagi xodimlarga ish beramanmi degandim — lekin menga sizlarni tavsiya qilishdi. Sizlarni bizga bergan ishlaringiz juda yoqdi. Tanlangan nom va qilingan dizaynlar juda zo‘r. SADO brending ishlariga omad ⚡️",
+    name: "Jahongir Shukurov",
+    role: "Asoschi",
+    company: "AllSolar",
   },
   {
     quote:
-      "Placeholder matn: jarayon boshidan oxirigacha aniq edi. Har bir bosqichda nima uchun shu qaror qabul qilinganini bilardik.",
+      "Rostini aytsam, avval bir necha joyga murojaat qilgandik va hech kim bizni tushunmadi. Sizlar birinchi uchrashuvdayoq savol berib, biznesimizni ichidan ko‘rdingiz. Qadoqlash chiqqanda sotuvchilarimiz o‘zi surat olib tarqata boshladi.",
+    name: "Nodira Yo‘ldosheva",
+    role: "Hammuassis",
+    company: "HONUT",
+  },
+  {
+    quote:
+      "Eng yoqqani — har bir qadamda nima uchun aynan shunday qilinganini tushuntirib berdingiz. Biz “chiroyli bo‘libdi” deb emas, “to‘g‘ri bo‘libdi” deb qabul qildik. Jamoamiz endi brend qo‘llanmasidan har kuni foydalanadi.",
     name: "Kamola Saidova",
     role: "Marketing rahbari",
     company: "Sahro",
-    youtubeId: "PVT3d8LvocI", // vaqtinchalik — haqiqiy otziv bilan almashtiring
   },
   {
     quote:
-      "Placeholder matn: ilovamizning yangi interfeysi chiqqach, foydalanuvchi shikoyatlari deyarli yo'qoldi.",
+      "Muddat bo‘yicha bir marta ham kechikmadingiz — bu bizda kamdan-kam uchraydi. Yangi interfeys chiqqach, qo‘llab-quvvatlash bo‘limiga tushayotgan savollar sezilarli kamaydi.",
     name: "Bekzod Nurmatov",
     role: "Mahsulot menejeri",
-    company: "Yo'l Logistics",
-    youtubeId: "PVT3d8LvocI", // vaqtinchalik — haqiqiy otziv bilan almashtiring
+    company: "Yo‘l Logistics",
+  },
+  {
+    quote:
+      "Bizda logotip bor edi, lekin tizim yo‘q edi — har bir bo‘lim o‘zicha ishlardi. SADO shuni tartibga soldi. Endi yangi materialni ikki kunda emas, ikki soatda tayyorlaymiz.",
+    name: "Dilshod Ergashev",
+    role: "Bosh direktor",
+    company: "Orzu Bank",
+  },
+  {
+    quote:
+      "Toshkentda bunday darajadagi editorial dizaynni kutmagandim. Jurnalimizning yangi maketi chiqqach, bosmaxona ham “kim qilgan buni” deb so‘radi.",
+    name: "Sardor Rahimov",
+    role: "Bosh muharrir",
+    company: "Nashr Media",
   },
 ];
 

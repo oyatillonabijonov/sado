@@ -72,32 +72,49 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials — 9:16 video otzivlar */}
+      {/* Mijozlar fikri — yozma otzivlar */}
       <section className="pt-[160px]">
         <SectionHeading kicker="Mijozlar fikri">
           Bizga ishonganlar.
         </SectionHeading>
-        <div className="grid gap-x-[16px] gap-y-[48px] sm:grid-cols-2 lg:grid-cols-3">
-          {testimonials.map((t) => (
-            <figure key={t.name}>
-              <div className="aspect-[9/16] w-full overflow-hidden rounded-[10px] bg-soft-black">
-                <iframe
-                  src={`https://www.youtube.com/embed/${t.youtubeId}`}
-                  title={`${t.name} — video fikr`}
-                  className="h-full w-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  loading="lazy"
-                />
-              </div>
-              <figcaption className="pt-[16px]">
-                <p className="text-bone-white">{t.name}</p>
-                <p className="text-fog-gray">
-                  {t.role}, {t.company}
-                </p>
-              </figcaption>
-            </figure>
-          ))}
+        {/* Bitta qatorda, o'zi suriladi. Hover'da to'xtaydi — o'qiyotgan gapni
+            qochirmaslik uchun. Ro'yxat ikki marta chiziladi: animatsiya -50% da
+            boshiga qaytadi va uzilish ko'rinmaydi. */}
+        <div className="sado-marquee-mask -mx-[16px] overflow-hidden">
+          <ul className="sado-rail flex w-max gap-[16px] px-[16px]">
+            {[...testimonials, ...testimonials].map((t, i) => (
+              <li key={i} aria-hidden={i >= testimonials.length}>
+                <figure
+                  className={`flex h-full w-[360px] flex-col justify-between gap-[48px] rounded-[10px] p-[32px] sm:w-[480px] ${
+                    i % 3 === 1
+                      ? "bg-soft-black"
+                      : "border border-graphite"
+                  }`}
+                >
+                  <blockquote className="text-subheading text-bone-white">
+                    {t.quote}
+                  </blockquote>
+                  <figcaption className="flex items-center gap-[16px] border-t border-graphite pt-[16px]">
+                    {/* Foto o'rniga bosh harflar — soxta stok surat mijoz sifatida chiqmasin. */}
+                    <span
+                      aria-hidden
+                      className="flex size-[48px] shrink-0 items-center justify-center rounded-full border border-graphite text-subheading text-fog-gray"
+                    >
+                      {t.name.slice(0, 1)}
+                    </span>
+                    <span>
+                      <span className="block text-subheading font-medium text-bone-white">
+                        {t.name}
+                      </span>
+                      <span className="block text-fog-gray">
+                        {t.role}, {t.company}
+                      </span>
+                    </span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

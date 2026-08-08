@@ -31,13 +31,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="uz" className={interTight.variable} suppressHydrationWarning>
-      <body>
-        {/* FOUC oldini olish: saqlangan rejimni birinchi bo'yashdan oldin qo'llaymiz */}
+      {/* FOUC oldini olish: saqlangan rejimni birinchi bo'yashdan oldin qo'llaymiz.
+          <head> ichida — Next 16 da <body> dagi inline skript hydration'ni buzadi. */}
+      <head>
         <script
           dangerouslySetInnerHTML={{
             __html: `try{var t=localStorage.theme;if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`,
           }}
         />
+      </head>
+      <body>
         <Header />
         <main className="pt-[72px]">{children}</main>
         <Footer />

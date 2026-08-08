@@ -322,3 +322,19 @@ body {
     animation: none;
   }
 }
+
+/* Otzivlar qatori — logotiplar bilan bir xil mexanika, sekinroq va hover'da to'xtaydi.
+   ponytail: karusel kutubxonasi emas — bitta keyframe. Kontent ikki marta chiziladi,
+   shuning uchun -50% da qatorning boshiga qaytadi va uzilish ko'rinmaydi. */
+.sado-rail {
+  animation: sado-marquee 60s linear infinite;
+}
+.sado-rail:hover,
+.sado-rail:focus-within {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sado-rail {
+    animation: none;
+  }
+}

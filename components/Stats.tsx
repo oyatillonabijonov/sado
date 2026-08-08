@@ -52,15 +52,18 @@ export default function Stats() {
           Math.max(0, (progress - i * 0.08) / (1 - i * 0.08 || 1)),
         );
         return (
-          <div key={s.label} className="border-t border-graphite pt-[20px]">
-            <p className="text-fog-gray">{s.label}</p>
+          // Raqam birinchi, yorliq ostida. Ilgari teskari edi va ustunlar
+          // "yorliq — raqam — yorliq — raqam" bo'lib bir tekis o'qilardi;
+          // raqamlar tepaga chiqqanda ular qatorni boshqaradi.
+          <div key={s.label} className="border-t border-graphite pt-[24px]">
             <p
-              className="display mt-[32px] tabular-nums"
+              className="display tabular-nums"
               style={{ opacity: 0.25 + local * 0.75 }}
             >
               {Math.round(n * local)}
               {suffix}
             </p>
+            <p className="mt-[16px] text-fog-gray">{s.label}</p>
           </div>
         );
       })}

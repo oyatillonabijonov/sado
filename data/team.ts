@@ -16,15 +16,15 @@ export const team: TeamMember[] = [
 export const values = [
   {
     title: "Sukunatga ishonamiz",
-    text: "Placeholder matn: yaxshi dizayn baqirmaydi. Biz ortiqcha elementni olib tashlashdan qo'rqmaymiz.",
+    text: "Yaxshi dizayn baqirmaydi. Biz ortiqcha elementni olib tashlashdan qo'rqmaymiz.",
   },
   {
     title: "Ish o'zi gapiradi",
-    text: "Placeholder matn: taqdimotdan ko'ra natija muhim. Har bir loyiha o'lchanadigan maqsad bilan boshlanadi.",
+    text: "Taqdimotdan ko'ra natija muhim. Har bir loyiha o'lchanadigan maqsad bilan boshlanadi.",
   },
   {
     title: "Uzoq hamkorlik",
-    text: "Placeholder matn: mijozlarimizning aksariyati biz bilan yillar davomida ishlaydi.",
+    text: "Mijozlarimizning aksariyati biz bilan yillar davomida ishlaydi.",
   },
 ];
 

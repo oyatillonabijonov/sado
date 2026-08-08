@@ -18,12 +18,12 @@ export default function AboutPage() {
       {/* Story / mission */}
       <div className="grid gap-[48px] lg:grid-cols-2">
         <p className="max-w-[560px] text-subheading text-bone-white">
-          Placeholder matn: SADO 2018-yilda uch dizayner tomonidan tashkil
+          SADO 2018-yilda uch dizayner tomonidan tashkil
           etilgan. Bugun biz o'n bir kishilik jamoa bilan brend, veb va raqamli
           mahsulotlar ustida ishlaymiz.
         </p>
         <p className="max-w-[480px] text-fog-gray">
-          Placeholder matn: missiyamiz — O'zbekiston brendlarini jahon
+          Missiyamiz — O'zbekiston brendlarini jahon
           darajasidagi dizayn tili bilan gapirishga o'rgatish. Biz shovqin
           emas, aniqlik sotamiz.
         </p>
@@ -80,7 +80,7 @@ export default function AboutPage() {
       <section className="pt-[240px]">
         <SectionHeading kicker="Madaniyat">Qanday ishlaymiz</SectionHeading>
         <p className="max-w-[640px] text-fog-gray">
-          Placeholder matn: bizda ochiq muhokama, halol fikr va sokin ish
+          Bizda ochiq muhokama, halol fikr va sokin ish
           muhiti qadrlanadi. Har juma — ichki dizayn tanqidi kuni. Yiliga ikki
           marta jamoa bilan tog'larga chiqamiz.
         </p>

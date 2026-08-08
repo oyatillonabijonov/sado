@@ -14,13 +14,23 @@ import { getAllPosts } from "@/lib/blog";
 export const metadata: Metadata = {
   title: "SADO — Dizayn agentligi",
   description:
-    "Brend strategiyasi, veb-dizayn va raqamli tajribalar. Placeholder tavsif.",
+    "Toshkentdagi dizayn agentligi. Brend strategiyasi, vizual identifikatsiya, veb va UI/UX — 2018-yildan beri 120 dan ortiq loyiha.",
 };
 
 export default async function HomePage() {
   const [allProjects, allPosts] = await Promise.all([getProjects(), getAllPosts()]);
   const featured = allProjects.filter((p) => p.featured).slice(0, 4);
   const posts = allPosts.slice(0, 3);
+
+  // Bo'sh seksiyalar umuman chiqmaydi, shuning uchun raqamlar faqat
+  // ko'rinadiganlar bo'yicha hisoblanadi — aks holda "02, 04" bo'lib qoladi.
+  const visible = [
+    featured.length > 0 && "ishlar",
+    "ishonch",
+    posts.length > 0 && "blog",
+    "aloqa",
+  ].filter((v): v is string => Boolean(v));
+  const no = (key: string) => String(visible.indexOf(key) + 1).padStart(2, "0");
 
   return (
     <div className="px-[16px]">
@@ -34,7 +44,7 @@ export default async function HomePage() {
                 src={src}
                 alt=""
                 className="hero-frame absolute inset-0 h-full w-full object-cover"
-                style={{ animationDelay: `${i * 0.5}s` }}
+                style={{ animationDelay: `${i * 3}s` }}
               />
             ),
           )}
@@ -57,9 +67,17 @@ export default async function HomePage() {
       {/* Clients */}
       <ClientsMarquee />
 
-      {/* Featured portfolio */}
-      <section className="pt-[80px]">
-        <SectionHeading>
+      {/* Featured portfolio. Kontent bo'lmasa seksiya butunlay chiqmaydi:
+          "So'nggi loyihalar" sarlavhasi ostidagi bo'sh grid va'daning
+          bajarilmagani bo'lib ko'rinadi. */}
+      {featured.length > 0 && (
+      <section className="pt-[120px]">
+        <SectionHeading
+          index={no("ishlar")}
+          kicker="Ishlar"
+          lead="Har bir loyiha strategiyadan boshlanadi va yaxlit vizual tizim bilan tugaydi."
+          action={<RedDotLink href="/portfolio">Barcha ishlar</RedDotLink>}
+        >
           So'nggi loyihalar.
         </SectionHeading>
         <div className="grid gap-x-[16px] gap-y-[64px] md:grid-cols-2">
@@ -67,16 +85,22 @@ export default async function HomePage() {
             <ProjectTile key={p.slug} project={p} />
           ))}
         </div>
-        <div className="mt-[64px]">
-          <RedDotLink href="/portfolio">Barcha ishlar</RedDotLink>
-        </div>
       </section>
+      )}
 
-      {/* Mijozlar fikri — yozma otzivlar */}
-      <section className="pt-[160px]">
-        <SectionHeading kicker="Mijozlar fikri">
+      {/* Ishonch bandi — otzivlar va raqamlar bitta fonda.
+          Butun sahifa bitta tekis fon edi va seksiyalarni faqat 1px chiziq
+          ajratardi. To'liq kenglikdagi bu band sahifaga qatlam beradi va
+          "bizga ishonish mumkin" degan ikkita dalilni bir joyga yig'adi. */}
+      <section className="mt-[160px] -mx-[16px] bg-soft-black px-[16px] py-[120px]">
+        <SectionHeading
+          index={no("ishonch")}
+          kicker="Ishonch"
+          lead="Uch yildan beri birga ishlayotgan mijozlarimiz bor — quyidagilar ularning o'z so'zlari."
+        >
           Bizga ishonganlar.
         </SectionHeading>
+
         {/* Bitta qatorda, o'zi suriladi. Hover'da to'xtaydi — o'qiyotgan gapni
             qochirmaslik uchun. Ro'yxat ikki marta chiziladi: animatsiya -50% da
             boshiga qaytadi va uzilish ko'rinmaydi. */}
@@ -84,13 +108,7 @@ export default async function HomePage() {
           <ul className="sado-rail flex w-max gap-[16px] px-[16px]">
             {[...testimonials, ...testimonials].map((t, i) => (
               <li key={i} aria-hidden={i >= testimonials.length}>
-                <figure
-                  className={`flex h-full w-[360px] flex-col justify-between gap-[48px] rounded-[10px] p-[32px] sm:w-[480px] ${
-                    i % 3 === 1
-                      ? "bg-soft-black"
-                      : "border border-graphite"
-                  }`}
-                >
+                <figure className="flex h-full w-[360px] flex-col justify-between gap-[48px] rounded-[10px] bg-pure-black p-[32px] sm:w-[480px]">
                   <blockquote className="text-subheading text-bone-white">
                     {t.quote}
                   </blockquote>
@@ -116,30 +134,45 @@ export default async function HomePage() {
             ))}
           </ul>
         </div>
+
+        <div className="mt-[120px]">
+          <Stats />
+        </div>
       </section>
 
-      {/* Stats */}
+      {/* Blog preview — maqola bo'lmasa chiqmaydi. */}
+      {posts.length > 0 && (
       <section className="pt-[160px]">
-        <Stats />
-      </section>
-
-      {/* Blog preview */}
-      <section className="pt-[160px]">
-        <SectionHeading kicker="Blog">Fikrlar va kuzatuvlar.</SectionHeading>
+        <SectionHeading
+          index={no("blog")}
+          kicker="Blog"
+          action={<RedDotLink href="/blog">Barcha maqolalar</RedDotLink>}
+        >
+          Fikrlar va kuzatuvlar.
+        </SectionHeading>
         <div className="grid gap-x-[16px] gap-y-[48px] md:grid-cols-3">
           {posts.map((p) => (
             <BlogCard key={p.slug} post={p} />
           ))}
         </div>
       </section>
+      )}
 
       {/* CTA + aloqa formasi */}
       <section className="mt-[160px] border-t border-graphite pt-[120px] pb-[48px]">
         <div className="grid gap-[80px] lg:grid-cols-2">
-          <div>
+          <div className="lg:sticky lg:top-[120px] lg:self-start">
+            <p className="mb-[24px] flex items-baseline gap-[12px] text-fog-gray">
+              <span className="tabular-nums text-bone-white">{no("aloqa")}</span>
+              <span>Aloqa</span>
+            </p>
             <h2 className="display max-w-[560px]">
               Loyihangizni muhokama qilamizmi?
             </h2>
+            <p className="mt-[32px] max-w-[46ch] text-fog-gray">
+              Qisqacha yozib qoldiring — bir ish kuni ichida javob beramiz va
+              birinchi suhbatni belgilaymiz.
+            </p>
             <div className="mt-[48px] flex flex-col gap-[8px]">
               <a
                 href={`mailto:${site.email}`}

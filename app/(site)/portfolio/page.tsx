@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import EmptyState from "@/components/EmptyState";
 import PortfolioGrid from "@/components/PortfolioGrid";
 import SectionHeading from "@/components/SectionHeading";
 import { projectCategories } from "@/data/projects";
@@ -14,7 +15,15 @@ export default async function PortfolioPage() {
   return (
     <div className="px-[16px] pt-[120px]">
       <SectionHeading kicker="Ishlarimiz">Portfolio</SectionHeading>
-      <PortfolioGrid projects={projects} categories={projectCategories} />
+      {projects.length === 0 ? (
+        <EmptyState
+          title="Ishlar tez orada shu yerda bo'ladi."
+          hint="Birinchi loyihalarimizni joylayapmiz. Shu orada bevosita bog'lanishingiz mumkin."
+          action={{ href: "/contact", label: "Bog'lanish" }}
+        />
+      ) : (
+        <PortfolioGrid projects={projects} categories={projectCategories} />
+      )}
     </div>
   );
 }

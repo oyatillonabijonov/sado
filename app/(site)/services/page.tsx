@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import EmptyState from "@/components/EmptyState";
 import RedDotLink from "@/components/RedDotLink";
 import SectionHeading from "@/components/SectionHeading";
 import { getServices } from "@/lib/content";
@@ -14,6 +15,13 @@ export default async function ServicesPage() {
   return (
     <div className="px-[16px] pt-[120px]">
       <SectionHeading kicker="Xizmatlar">Nima qilamiz</SectionHeading>
+      {services.length === 0 && (
+        <EmptyState
+          title="Xizmatlar ro'yxati yangilanmoqda."
+          hint="Nima kerakligini yozib qoldiring — to'g'ridan-to'g'ri javob beramiz."
+          action={{ href: "/contact", label: "Bog'lanish" }}
+        />
+      )}
       <div className="flex flex-col">
         {services.map((s) => (
           <section

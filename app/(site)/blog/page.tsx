@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SectionHeading from "@/components/SectionHeading";
 import BlogFilterGrid from "@/components/BlogFilterGrid";
+import EmptyState from "@/components/EmptyState";
 import { getAllPosts, getBlogCategories } from "@/lib/blog";
 
 export const metadata: Metadata = {
@@ -13,7 +14,15 @@ export default async function BlogPage() {
   return (
     <div className="px-[16px] pt-[120px]">
       <SectionHeading kicker="Fikrlar">Blog</SectionHeading>
-      <BlogFilterGrid posts={posts} categories={categories} />
+      {posts.length === 0 ? (
+        <EmptyState
+          title="Birinchi maqola yozilmoqda."
+          hint="Dizayn va brending haqidagi kuzatuvlarimizni shu yerda chop etamiz."
+          action={{ href: "/contact", label: "Bog'lanish" }}
+        />
+      ) : (
+        <BlogFilterGrid posts={posts} categories={categories} />
+      )}
     </div>
   );
 }

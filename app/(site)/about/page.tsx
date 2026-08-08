@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="px-[16px] pt-[120px]">
+    <div className="shell pt-[120px]">
       <SectionHeading kicker="Agentlik">Biz haqimizda</SectionHeading>
 
       {/* Story / mission */}

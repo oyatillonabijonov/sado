@@ -33,9 +33,9 @@ export default async function HomePage() {
   const no = (key: string) => String(visible.indexOf(key) + 1).padStart(2, "0");
 
   return (
-    <div className="px-[16px]">
+    <div className="shell">
       {/* Hero */}
-      <section className="relative -mx-[16px] flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden px-[16px] pb-[48px]">
+      <section className="bleed shell relative flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden pb-[48px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           {["/sd1.png", "/sd2.png", "/sd3.png", "/sd4.png", "/sd5.webp"].map(
             (src, i) => (
@@ -92,7 +92,7 @@ export default async function HomePage() {
           Butun sahifa bitta tekis fon edi va seksiyalarni faqat 1px chiziq
           ajratardi. To'liq kenglikdagi bu band sahifaga qatlam beradi va
           "bizga ishonish mumkin" degan ikkita dalilni bir joyga yig'adi. */}
-      <section className="mt-[160px] -mx-[16px] bg-soft-black px-[16px] py-[120px]">
+      <section className="bleed shell mt-[160px] bg-soft-black py-[120px]">
         <SectionHeading
           index={no("ishonch")}
           kicker="Ishonch"
@@ -104,8 +104,8 @@ export default async function HomePage() {
         {/* Bitta qatorda, o'zi suriladi. Hover'da to'xtaydi — o'qiyotgan gapni
             qochirmaslik uchun. Ro'yxat ikki marta chiziladi: animatsiya -50% da
             boshiga qaytadi va uzilish ko'rinmaydi. */}
-        <div className="sado-marquee-mask -mx-[16px] overflow-hidden">
-          <ul className="sado-rail flex w-max gap-[16px] px-[16px]">
+        <div className="sado-marquee-mask bleed overflow-hidden">
+          <ul className="sado-rail shell flex w-max gap-[16px]">
             {[...testimonials, ...testimonials].map((t, i) => (
               <li key={i} aria-hidden={i >= testimonials.length}>
                 <figure className="flex h-full w-[360px] flex-col justify-between gap-[48px] rounded-[10px] bg-pure-black p-[32px] sm:w-[480px]">

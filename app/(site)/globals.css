@@ -30,6 +30,45 @@ html {
 }
 
 /*
+ * Sahifa gutteri.
+ *
+ * Ilgari hamma joyda qat'iy 16px edi — bu mobil o'lchov, va u desktopda ham
+ * o'zgarmay qolgani uchun kontent 1440px ekranda qirraga yopishib turardi.
+ * Endi bitta o'zgaruvchi: ekran kattalashgani sari chekka ham o'sadi.
+ *
+ * `.shell` — sahifa ichki bo'shlig'i, `.bleed` — undan chetga chiqish
+ * (to'liq kenglikdagi band, hero, marquee). Ikkalasi bitta qiymatdan
+ * oziqlanadi, shuning uchun ular hech qachon bir-biridan ajralib qolmaydi.
+ * DIQQAT: tugma/input ichidagi 16px bunga aloqador emas — ular komponent
+ * bo'shlig'i va o'z holicha qoladi.
+ */
+:root {
+  --gutter: 20px;
+}
+@media (min-width: 768px) {
+  :root {
+    --gutter: 40px;
+  }
+}
+@media (min-width: 1280px) {
+  :root {
+    --gutter: 64px;
+  }
+}
+@media (min-width: 1920px) {
+  :root {
+    --gutter: 96px;
+  }
+}
+
+.shell {
+  padding-inline: var(--gutter);
+}
+.bleed {
+  margin-inline: calc(var(--gutter) * -1);
+}
+
+/*
  * Light mode — token nomlari tarixiy (dark-first), qiymatlari semantik:
  * pure-black = fon, bone-white = asosiy matn, fog-gray = ikkinchi matn,
  * graphite = chiziqlar, soft-black = ikkinchi fon.

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[70vh] flex-col justify-center px-[16px]">
+    <div className="shell flex min-h-[70vh] flex-col justify-center">
       <h1 className="display">404</h1>
       <p className="mt-[48px] text-fog-gray">
         Bunday sahifa topilmadi.

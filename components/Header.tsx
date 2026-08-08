@@ -159,7 +159,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-pure-black">
-      <div className="flex h-[72px] items-center justify-between px-[16px]">
+      <div className="shell flex h-[72px] items-center justify-between">
         <Link href="/" onClick={() => setOpen(false)}>
           <Image src="/images/logo.svg" alt={site.name} width={354} height={135} className="h-[38px] w-auto" priority />
         </Link>
@@ -196,7 +196,7 @@ export default function Header() {
         </div>
       </div>
       {open && (
-        <nav className="flex flex-col gap-[24px] border-t border-graphite bg-pure-black px-[16px] py-[48px] md:hidden">
+        <nav className="shell flex flex-col gap-[24px] border-t border-graphite bg-pure-black py-[48px] md:hidden">
           {site.nav.map((item) => (
             <Link
               key={item.href}

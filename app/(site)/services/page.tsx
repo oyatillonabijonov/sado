@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function ServicesPage() {
   const services = await getServices();
   return (
-    <div className="px-[16px] pt-[120px]">
+    <div className="shell pt-[120px]">
       <SectionHeading kicker="Xizmatlar">Nima qilamiz</SectionHeading>
       {services.length === 0 && (
         <EmptyState

@@ -58,7 +58,7 @@ function LocalTime() {
 
 export default function Footer() {
   return (
-    <footer className="mt-[240px] border-t border-graphite px-[16px] py-[48px]">
+    <footer className="shell mt-[240px] border-t border-graphite py-[48px]">
       <div className="grid gap-[48px] sm:grid-cols-2 lg:grid-cols-4">
         <nav className="flex flex-col items-start gap-[12px]">
           <p className="mb-[12px] text-fog-gray">Menyu</p>
@@ -138,7 +138,7 @@ export default function Footer() {
         alt={site.name}
         width={354}
         height={135}
-        className="-mx-[16px] -mb-[48px] mt-[64px] block h-auto w-[calc(100%+32px)] max-w-none"
+        className="bleed -mb-[48px] mt-[64px] block h-auto w-[calc(100%+var(--gutter)*2)] max-w-none"
       />
     </footer>
   );

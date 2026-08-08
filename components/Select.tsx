@@ -43,7 +43,7 @@ export default function Select({
         aria-expanded={open}
         aria-invalid={invalid}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full cursor-pointer items-center justify-between rounded-[10px] border border-graphite bg-pure-black px-[16px] py-[16px] text-left transition-colors hover:border-fog-gray focus:border-bone-white focus:outline-none"
+        className="flex w-full cursor-pointer items-center justify-between rounded-[10px] bg-pure-black px-[16px] py-[16px] text-left outline-none ring-1 ring-transparent transition-shadow focus:ring-bone-white"
       >
         <span className={value ? "text-bone-white" : "text-fog-gray"}>
           {value || placeholder}

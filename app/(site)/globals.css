@@ -9,8 +9,11 @@
   --color-graphite: #2c2c2c;
   --color-scarlet-signal: #e4002b;
 
-  /* Typography — Scale */
-  --text-body-sm: 15px;
+  /* Typography — Scale.
+     Asosiy matn 15px edi: 1440px kanvasda bu texnik spetsifikatsiya o'lchami,
+     shuning uchun sahifadagi 100 dan ortiq element chizmadek o'qilardi.
+     17px — agentlik saytining o'qish o'lchami. */
+  --text-body-sm: 17px;
   --leading-body-sm: 1.55;
   --tracking-body-sm: 0;
   --text-subheading: 21px;

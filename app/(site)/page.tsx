@@ -112,11 +112,11 @@ export default async function HomePage() {
                   <blockquote className="text-subheading text-bone-white">
                     {t.quote}
                   </blockquote>
-                  <figcaption className="flex items-center gap-[16px] border-t border-graphite pt-[16px]">
+                  <figcaption className="flex items-center gap-[16px]">
                     {/* Foto o'rniga bosh harflar — soxta stok surat mijoz sifatida chiqmasin. */}
                     <span
                       aria-hidden
-                      className="flex size-[48px] shrink-0 items-center justify-center rounded-full border border-graphite text-subheading text-fog-gray"
+                      className="flex size-[48px] shrink-0 items-center justify-center rounded-full bg-soft-black text-subheading text-fog-gray"
                     >
                       {t.name.slice(0, 1)}
                     </span>

@@ -55,7 +55,7 @@ export default function Stats() {
           // Raqam birinchi, yorliq ostida. Ilgari teskari edi va ustunlar
           // "yorliq — raqam — yorliq — raqam" bo'lib bir tekis o'qilardi;
           // raqamlar tepaga chiqqanda ular qatorni boshqaradi.
-          <div key={s.label} className="border-t border-graphite pt-[24px]">
+          <div key={s.label}>
             <p
               className="display tabular-nums"
               style={{ opacity: 0.25 + local * 0.75 }}

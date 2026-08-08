@@ -10,7 +10,7 @@ type Errors = Partial<Record<string, string>>;
 /* Har bir maydon o'z ramkasiga olindi: pastki chiziqli variant kulrang kartada
    yo'qolib ketardi va forma "tekis" ko'rinardi. */
 const field =
-  "w-full rounded-[10px] border border-graphite bg-pure-black px-[16px] py-[16px] text-bone-white transition-colors placeholder:text-fog-gray hover:border-fog-gray focus:border-bone-white focus:outline-none";
+  "w-full rounded-[10px] bg-pure-black px-[16px] py-[16px] text-bone-white outline-none ring-1 ring-transparent transition-shadow placeholder:text-fog-gray focus:ring-bone-white";
 
 /* Formani sahifadan ajratib turadigan to'rtburchak. Ikkala joyda ham (bosh sahifa
    CTA va /contact) bir xil bo'lishi uchun sahifada emas, shu yerda. */

@@ -70,9 +70,11 @@ Avtosaqlash faqat **mavjud** yozuv uchun: yangi maqolada har bir tugmacha yangi 
 yaratib ketardi, shuning uchun birinchi "Saqlash" dan keyin yoqiladi.
 
 **Sozlamalar globali.** `globals/Settings.ts` — mijoz o'zgartiradigan sayt matni: bosh
-sahifaning birinchi ekrani, aloqa ma'lumotlari, ijtimoiy tarmoqlar, meta tavsif. Sayt uni
-`lib/getSettings()` orqali o'qiydi va har bir maydon uchun `data/site.ts` dagi qiymat
-zaxira. Sayt nomi, manzili va navigatsiya tuzilishi kodda qoladi — ular kontent emas.
+sahifaning birinchi ekrani (matn + `heroImages`), aloqa ma'lumotlari, ijtimoiy tarmoqlar,
+meta tavsif. Sayt uni `lib/getSettings()` orqali o'qiydi va har bir maydon uchun
+`data/site.ts` dagi qiymat zaxira (hero rasmlari uchun `public/sd1–sd5`). Sayt nomi, manzili
+va navigatsiya tuzilishi kodda qoladi — ular kontent emas. Hero'ni `HeroSlideshow` (client,
+JS crossfade) render qiladi — rasm soni paneldan kelgani uchun har qanday songa moslashadi.
 
 **Client komponentga `lib/settings.ts` dan qiymat import qilmang.** U Payload'ni tortadi,
 Payload esa sharp va nodemailer'ni — build `child_process` topilmadi deb yiqiladi. Tip va
@@ -84,6 +86,20 @@ sof yordamchilar `lib/site-format.ts` da (direktivasiz, Payload'ga tegmaydi).
 sozlanmagan bo'lsa xat server konsoliga yoziladi — oqim dev'da to'liq ishlaydi,
 productionda `.env` dagi to'rtta SMTP qiymati kerak. `nodemailer` `next.config.mjs` da
 `serverExternalPackages` ro'yxatida.
+
+**Deploy (Coolify, Docker).** `Dockerfile` — bun install → `next build` (SSG sxemani
+o'qish uchun `cp schema.sqlite db.sqlite`; SIGTRAP-on-exit `.next/BUILD_ID` bilan ajratiladi)
+→ `docker-entrypoint.sh`. Prodda Payload sxema push qilmaydi va uni konteynerda Next'dan
+tashqarida ishga tushirib bo'lmaydi (bun ostida payload CLI/tsx va lexical yiqiladi), shuning
+uchun **sxema `schema.sqlite`** — sxema-only, 0 qatorli SQLite repoda commit qilingan.
+`scripts/db-ensure.ts` (bun:sqlite, payload'siz) entrypoint'da: bo'sh volume'ga sxemani
+ko'chiradi; baza eskirgan (jadval yetishmayapti) va **0 foydalanuvchi** bo'lsa yangilaydi;
+kontent bor bo'lsa tegmaydi. **Kolleksiya/global o'zgarsa:** `bunx payload generate:types`
+(payload-types.ts, u ham commit qilinadi) + `schema.sqlite` ni qayta yarat
+(`NODE_ENV=development DATABASE_URI=file:./schema.sqlite bun scripts/db-init.ts`). Mavjud
+kontentli prod uchun ustun-o'zgarishlar qo'lda migratsiya talab qiladi (db-ensure faqat yangi
+jadvalni aniqlaydi). Baza `/app/data`, rasmlar `/app/media` — Coolify volume'lari. Repoga push
+= avtodeploy (GitHub App webhook).
 
 **Lokalizatsiya o'chirilgan.** Header'dagi til tanlagich hozircha faqat `<html lang>` ni
 almashtiradi. Yoqish = `payload.config.ts` ga `localization` bloki, maydonlarga `localized: true`,

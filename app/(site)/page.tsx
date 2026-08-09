@@ -22,16 +22,6 @@ export default async function HomePage() {
   const featured = allProjects.filter((p) => p.featured).slice(0, 4);
   const posts = allPosts.slice(0, 3);
 
-  // Bo'sh seksiyalar umuman chiqmaydi, shuning uchun raqamlar faqat
-  // ko'rinadiganlar bo'yicha hisoblanadi — aks holda "02, 04" bo'lib qoladi.
-  const visible = [
-    featured.length > 0 && "ishlar",
-    "ishonch",
-    posts.length > 0 && "blog",
-    "aloqa",
-  ].filter((v): v is string => Boolean(v));
-  const no = (key: string) => String(visible.indexOf(key) + 1).padStart(2, "0");
-
   return (
     <div>
       {/* Hero */}
@@ -73,7 +63,6 @@ export default async function HomePage() {
       {featured.length > 0 && (
       <section className="shell pt-[120px]">
         <SectionHeading
-          index={no("ishlar")}
           kicker="Ishlar"
           lead="Har bir loyiha strategiyadan boshlanadi va yaxlit vizual tizim bilan tugaydi."
           action={<RedDotLink href="/portfolio">Barcha ishlar</RedDotLink>}
@@ -95,7 +84,6 @@ export default async function HomePage() {
       <section className="mt-[160px] bg-soft-black py-[120px]">
         <div className="shell">
         <SectionHeading
-          index={no("ishonch")}
           kicker="Ishonch"
           lead="Uch yildan beri birga ishlayotgan mijozlarimiz bor — quyidagilar ularning o'z so'zlari."
         >
@@ -146,7 +134,6 @@ export default async function HomePage() {
       {posts.length > 0 && (
       <section className="shell pt-[160px]">
         <SectionHeading
-          index={no("blog")}
           kicker="Blog"
           action={<RedDotLink href="/blog">Barcha maqolalar</RedDotLink>}
         >
@@ -164,10 +151,7 @@ export default async function HomePage() {
       <section className="shell mt-[160px] border-t border-graphite pt-[120px] pb-[48px]">
         <div className="grid gap-[80px] lg:grid-cols-2">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
-            <p className="mb-[24px] flex items-baseline gap-[12px] text-fog-gray">
-              <span className="tabular-nums text-bone-white">{no("aloqa")}</span>
-              <span>Aloqa</span>
-            </p>
+            <p className="mb-[24px] text-fog-gray">Aloqa</p>
             <h2 className="display max-w-[560px]">
               Loyihangizni muhokama qilamizmi?
             </h2>

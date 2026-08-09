@@ -183,12 +183,20 @@ formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `sa
 **Seksiya naqshi.** Bosh sahifa seksiyalari izchil ritmda, hairline `border-t border-graphite` + kulrang kicker (`SectionHeading` komponenti buni inkassa qiladi).
 
 **Vertikal ritm — token orqali, `pt-[160px]` deb yozmang.** `globals.css` `@theme` da
-`--spacing-section-lg` / `-section` / `-section-sm` / `-block` / `-card`, ya'ni
-`pt-section`, `mt-block`, `p-card`. Ular 768px dan pastda kichrayadi (240→88, 160→72,
+`--spacing-section-lg` / `-section` / `-section-sm` / `-stack` / `-card`, ya'ni
+`pt-section`, `mt-stack`, `p-card`. Ular 768px dan pastda kichrayadi (240→88, 160→72,
 120→56, 64→40, 32→20). Ilgari har bir seksiya o'z qiymatini qo'lda olib yurardi va
 mobilda qisqarmasdi: 375px ekranda bosh sahifa 11 ekranga cho'zilardi. **Yangi mobil
 qiymat qo'shganda `md:` dan foydalaning, `lg:` dan emas** — desktop chegarasi 768px, va
 `lg:` bilan yozilgan tuzatish 768–1023px oralig'ida qo'llanmay qoladi.
+
+**Yangi `--spacing-*` tokeni qo'shsangiz nomini tekshiring.** Tailwind undan
+`p-<nom>`, `w-<nom>`, `inline-<nom>` va boshqa util'lar yasaydi — ya'ni token nomi
+util nomiga aylanadi. Bu token bir muddat `--spacing-block` deb atalgan edi va
+`.inline-block { inline-size: 64px }` chiqarib, Tailwind'ning `display: inline-block`
+util'i ustiga yozib qo'ygan: saytdagi har bir `inline-block` element 64px enga
+cho'zilgan, `RedDotLink` dagi 6px qizil nuqta uzun chiziqqa aylangan. `block`,
+`full`, `auto`, `none`, `px` kabi nomlarni ishlatmang.
 
 **Mobilda barmoq uchun 44px.** Matn havolasiga `.tap` klassi vertikal padding beradi
 (faqat <768px). Salbiy margin ataylab yo'q: u qo'shni havolalarning bosish maydonlarini

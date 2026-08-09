@@ -111,7 +111,7 @@ export default function ContactForm() {
           disabled={status === "sending"}
           className="btn-fill inline-flex w-full cursor-pointer items-center justify-center gap-[8px] rounded-[10px] border border-graphite px-[16px] py-[16px] text-subheading disabled:opacity-50 sm:w-auto sm:px-[32px]"
         >
-          <span className="inline-block size-[6px] rounded-full bg-scarlet-signal" />
+          <span className="block size-[6px] shrink-0 rounded-full bg-scarlet-signal" />
           <span>{status === "sending" ? "Yuborilmoqda…" : "Yuborish"}</span>
         </button>
         {status === "error" && (

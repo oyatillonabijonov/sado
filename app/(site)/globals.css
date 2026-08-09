@@ -24,7 +24,7 @@
   --tracking-heading-sm: -0.02em;
 
   /*
-   * Vertikal ritm — `pt-section`, `mt-block`, `p-card`.
+   * Vertikal ritm — `pt-section`, `mt-stack`, `p-card`.
    *
    * Ilgari har bir seksiya o'z qiymatini qo'lda olib yurardi (`pt-[160px]`,
    * `mt-[240px]`, `py-[120px]`) va ular mobilda qisqarmasdi: 375px ekranda
@@ -32,11 +32,21 @@
    * Endi uchta o'zgaruvchi, quyidagi media-blokda mobil qiymatga o'tadi —
    * Tailwind `padding-top: var(--spacing-section)` chiqargani uchun override
    * ish paytida qo'llanadi.
+   *
+   * DIQQAT: `--spacing-<nom>` Tailwind'da `p-<nom>`, `w-<nom>`, `inline-<nom>`
+   * va boshqa util'larni yaratadi, ya'ni **token nomi util nomiga aylanadi**.
+   * Bu token avval `--spacing-block` deb atalgan edi va u `.inline-block`
+   * degan ikkinchi qoida chiqarib, Tailwind'ning o'z `display: inline-block`
+   * util'i ustiga `inline-size: 64px` yozib qo'ygan: saytdagi har bir
+   * `inline-block` element 64px enga cho'zilgan, jumladan `RedDotLink` dagi
+   * 6px qizil nuqta uzun chiziqqa aylangan. Yangi token qo'shishdan oldin
+   * nomi mavjud util bilan to'qnashmasligini tekshiring (`block`, `full`,
+   * `auto`, `none`, `px` kabi nomlarni umuman ishlatmang).
    */
   --spacing-section-lg: 240px;
   --spacing-section: 160px;
   --spacing-section-sm: 120px;
-  --spacing-block: 64px;
+  --spacing-stack: 64px;
   --spacing-card: 32px;
 }
 
@@ -47,7 +57,7 @@
     --spacing-section-lg: 88px;
     --spacing-section: 72px;
     --spacing-section-sm: 56px;
-    --spacing-block: 40px;
+    --spacing-stack: 40px;
     --spacing-card: 20px;
   }
 }

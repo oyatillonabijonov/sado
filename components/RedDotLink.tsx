@@ -16,7 +16,7 @@ export default function RedDotLink({
     <>
       <span
         aria-hidden
-        className="inline-block size-[6px] rounded-full bg-scarlet-signal"
+        className="block size-[6px] shrink-0 rounded-full bg-scarlet-signal"
       />
       <span>{children}</span>
     </>

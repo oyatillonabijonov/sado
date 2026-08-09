@@ -74,7 +74,7 @@ export default async function HomePage() {
         >
           So'nggi loyihalar.
         </SectionHeading>
-        <Stagger className="grid gap-x-[16px] gap-y-block md:grid-cols-2">
+        <Stagger className="grid gap-x-[16px] gap-y-stack md:grid-cols-2">
           {featured.map((p) => (
             <StaggerItem key={p.slug}>
               <ProjectTile project={p} />

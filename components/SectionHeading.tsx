@@ -17,7 +17,7 @@ export default function SectionHeading({
   lead?: string;
 }) {
   return (
-    <div className="mb-block border-t border-graphite pt-[20px]">
+    <div className="mb-stack border-t border-graphite pt-[20px]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-[24px] gap-y-[16px]">
         {/* Kicker bo'lmasa ham bo'sh element qoladi: justify-between bitta
             bolada action'ni chapga tortib ketardi. */}

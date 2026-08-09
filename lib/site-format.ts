@@ -12,6 +12,8 @@ export type SiteSettings = {
   heroKicker: string;
   heroHeading: string;
   heroImages: string[];
+  /** Telefon uchun tik kadrlar. Bo'sh bo'lsa `heroImages` ishlatiladi. */
+  heroImagesMobile: string[];
   email: string;
   phone: string;
   address: string;

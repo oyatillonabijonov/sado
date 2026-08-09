@@ -36,7 +36,10 @@ export default async function HomePage() {
       <section className="relative flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden pb-[48px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           {/* Rasmlar paneldan (Sozlamalar → hero). Bo'sh bo'lsa standartlar. */}
-          <HeroSlideshow images={settings.heroImages} />
+          <HeroSlideshow
+            images={settings.heroImages}
+            imagesMobile={settings.heroImagesMobile}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-pure-black via-pure-black/40 to-pure-black/10" />
         </div>
         <div className="shell relative z-10">

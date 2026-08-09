@@ -1,26 +1,47 @@
 "use client";
 
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "motion/react";
 
 /**
+ * `object-cover` rasmni oynani to'ldirguncha kattalashtiradi, ya'ni kerakli
+ * kenglik oynanikidan katta bo'ladi. `100vw` desa brauzer aynan oyna
+ * kengligidagi variantni yuklaydi va u cho'zilib bulanadi — o'lchangan: 375px
+ * variant 894px ga cho'zilardi. 115vw hero nisbatlari uchun shu farqni yopadi.
+ */
+const SIZES = "115vw";
+
+/**
  * Hero orqa fon — rasmlar 3 soniyada almashib crossfade bo'ladi.
  *
- * Ilgari 5 ta rasm CSS loop bilan qat'iy 5 kadrga sozlangan edi. Endi rasmlar
- * paneldan keladi va soni oldindan ma'lum emas, shuning uchun JS: har qanday
- * songa moslashadi. SSR'da birinchi rasm ko'rinadi (opacity 1), JS'siz ham
- * bo'sh chiqmaydi. `prefers-reduced-motion`da almashinuv yo'q — birinchi rasm
- * qotib turadi.
+ * Rasm soni paneldan keladi, shuning uchun JS: qat'iy N-kadrli CSS loop
+ * yaramaydi. SSR'da birinchi rasm ko'rinadi (opacity 1), JS'siz ham bo'sh
+ * chiqmaydi. `prefers-reduced-motion`da almashinuv yo'q.
  *
- * Ikki narsa LCP uchun muhim va ularni buzmang:
- * 1. `next/image` — manba PNG'lar 1.5–2 MB, optimizatsiyasiz uzatilsa mobil
- *    ulanishda LCP o'nlab soniyaga chiqadi (o'lchangan: 42 s).
- * 2. Faqat birinchi kadr darrov yuklanadi. Qolganlari o'sha kadr ekranga
- *    chiqqach mount bo'ladi — aks holda beshtasi bandwidth talashib, LCP
- *    rasmning o'zini kutdirib qo'yadi.
+ * **Telefon uchun alohida kadr.** Telefon ekrani ~1:2, hero rasmlari 16:9 —
+ * `object-cover` bilan kadrning atigi ~28% ko'rinardi va kompozitsiya
+ * yo'qolardi. Balandlikni kamaytirish buni hal qilmadi (42% gacha ko'tarildi,
+ * evaziga hero to'liq ekran bo'lmay qoldi), shuning uchun tik kadr: mijoz
+ * paneldan yuklaydi, `<picture>` uni 768px dan tor ekranda ko'rsatadi.
+ *
+ * `<picture>` + `getImageProps`, ikkita `<Image>` emas: `display:none` bilan
+ * yashirilgan rasmni ham brauzer yuklaydi, ya'ni telefon ikkala kadrni ham
+ * tortardi. `<source media>` bilan faqat bittasi ketadi.
+ *
+ * Yana ikki qoida buzilmasin:
+ * 1. Faqat **birinchi kadr** darrov yuklanadi, qolganlari u chizilgach mount
+ *    bo'ladi — beshtasi barobar yuklanganda LCP rasm bandwidth talashardi.
+ * 2. Manba fayllar WebP: `next/image` baribir siqadi, lekin og'ir manba
+ *    Docker image'ni va har bir sovuq optimizatsiyani qimmatlashtiradi.
  */
-export default function HeroSlideshow({ images }: { images: string[] }) {
+export default function HeroSlideshow({
+  images,
+  imagesMobile,
+}: {
+  images: string[];
+  imagesMobile: string[];
+}) {
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
   const [rest, setRest] = useState(false);
@@ -34,20 +55,43 @@ export default function HeroSlideshow({ images }: { images: string[] }) {
 
   return (
     <>
-      {shown.map((src, i) => (
-        <Image
-          key={`${src}-${i}`}
-          src={src}
-          alt=""
-          aria-hidden
-          fill
-          sizes="100vw"
-          priority={i === 0}
-          onLoad={i === 0 ? () => setRest(!reduce) : undefined}
-          className="object-cover transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{ opacity: i === active ? 1 : 0 }}
-        />
-      ))}
+      {shown.map((src, i) => {
+        const { props: desktop } = getImageProps({
+          src,
+          alt: "",
+          fill: true,
+          sizes: SIZES,
+          priority: i === 0,
+        });
+
+        /* Tik kadrlar tartibi desktop bilan bir xil deb olinadi. Mijoz
+           to'rttadan uchtasini yuklasa qolgani desktop kadrida qoladi —
+           yarim to'ldirilgan holat ham buzilmasin. */
+        const mobileSrc = imagesMobile[i];
+        const mobile = mobileSrc
+          ? getImageProps({ src: mobileSrc, alt: "", fill: true, sizes: SIZES, priority: i === 0 })
+          : null;
+
+        return (
+          <picture key={`${src}-${i}`}>
+            {mobile && (
+              <source
+                media="(max-width: 767px)"
+                srcSet={mobile.props.srcSet}
+                sizes={mobile.props.sizes}
+              />
+            )}
+            {/* eslint-disable-next-line jsx-a11y/alt-text */}
+            <img
+              {...desktop}
+              aria-hidden
+              onLoad={i === 0 ? () => setRest(!reduce) : undefined}
+              className="object-cover transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+              style={{ ...desktop.style, opacity: i === active ? 1 : 0 }}
+            />
+          </picture>
+        );
+      })}
     </>
   );
 }

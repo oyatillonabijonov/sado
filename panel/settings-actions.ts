@@ -18,11 +18,15 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
     .filter((s) => s.label && s.href);
 
   // Hero rasmlari — ImageStack `heroImages.0`, `heroImages.1`, … beradi.
-  const heroImages = [...fd.keys()]
-    .filter((k) => k.startsWith("heroImages."))
-    .sort((a, b) => Number(a.split(".")[1]) - Number(b.split(".")[1]))
-    .map((k) => Number(str(fd, k)))
-    .filter((n) => Number.isFinite(n) && n > 0);
+  const stack = (prefix: string) =>
+    [...fd.keys()]
+      .filter((k) => k.startsWith(`${prefix}.`))
+      .sort((a, b) => Number(a.split(".")[1]) - Number(b.split(".")[1]))
+      .map((k) => Number(str(fd, k)))
+      .filter((n) => Number.isFinite(n) && n > 0);
+
+  const heroImages = stack("heroImages");
+  const heroImagesMobile = stack("heroImagesMobile");
 
   try {
     const payload = await payloadClient();
@@ -31,6 +35,7 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
       data: {
         hero: { kicker: str(fd, "heroKicker"), heading: str(fd, "heroHeading") },
         heroImages,
+        heroImagesMobile,
         contact: { email: str(fd, "email"), phone: str(fd, "phone"), address: str(fd, "address") },
         socials,
         description: str(fd, "description"),

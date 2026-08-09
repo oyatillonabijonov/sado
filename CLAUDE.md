@@ -84,6 +84,16 @@ o'lchangan regressiya — hero 6.8 MB PNG'da, `<img>` bilan turganda mobil LCP 4
 Manba fayllar ham WebP: `next/image` baribir siqadi, lekin og'ir manba Docker image'ni
 va har bir sovuq optimizatsiyani qimmatlashtiradi.
 
+**Hero'da telefon uchun alohida kadr.** Telefon ekrani ~1:2, hero rasmlari 16:9 —
+`object-cover` bilan kadrning ~28% i ko'rinardi. Sozlamalardagi `heroImagesMobile`
+(tik kadrlar, tavsiya 9:16) `<picture>` + `<source media="(max-width: 767px)">` orqali
+768px dan tor ekranda chiqadi; bo'sh bo'lsa desktop kadriga qaytadi. Ikkita `<Image>`
+va `hidden`/`block` **emas**: yashirilgan rasmni ham brauzer yuklaydi, ya'ni telefon
+ikkala kadrni ham tortardi. Shu sabab `getImageProps` — u `srcSet` beradi va uni
+`<source>` ga qo'yish mumkin. `sizes` esa `115vw`, `100vw` emas: `object-cover` rasmni
+oynadan kattaroq qilib cho'zadi va `100vw` da mobilda 375px variant 894px ga cho'zilib
+bulanardi.
+
 **Client komponentga `lib/settings.ts` dan qiymat import qilmang.** U Payload'ni tortadi,
 Payload esa sharp va nodemailer'ni — build `child_process` topilmadi deb yiqiladi. Tip va
 sof yordamchilar `lib/site-format.ts` da (direktivasiz, Payload'ga tegmaydi).

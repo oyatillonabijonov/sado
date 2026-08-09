@@ -7,6 +7,7 @@ export type SettingsFormData = {
   heroKicker: string;
   heroHeading: string;
   heroImages: number[];
+  heroImagesMobile: number[];
   email: string;
   phone: string;
   address: string;
@@ -27,6 +28,7 @@ export async function loadSettings(): Promise<SettingsFormData> {
     heroKicker: String(hero.kicker ?? ""),
     heroHeading: String(hero.heading ?? ""),
     heroImages: relIds(doc.heroImages),
+    heroImagesMobile: relIds(doc.heroImagesMobile),
     email: String(contact.email ?? ""),
     phone: String(contact.phone ?? ""),
     address: String(contact.address ?? ""),

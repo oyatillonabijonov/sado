@@ -40,6 +40,13 @@ export function SettingsForm({ data, media }: { data: SettingsFormData; media: M
           options={media}
           defaultValue={data.heroImages}
         />
+        <ImageStack
+          label="Telefon uchun rasmlar"
+          hint="Tik (vertikal) kadrlar — telefonda shular chiqadi. Tartibi yuqoridagi bilan bir xil bo'lsin: birinchisi birinchisining o'rnini oladi. Bo'sh qoldirilsa yuqoridagi rasmlar ishlatiladi, lekin telefon ekrani tor bo'lgani uchun ularning chetlari qirqiladi."
+          name="heroImagesMobile"
+          options={media}
+          defaultValue={data.heroImagesMobile}
+        />
       </Card>
 
       <Card title="Aloqa" hint="Bu ma'lumotlar futerda va aloqa bo'limida chiqadi.">

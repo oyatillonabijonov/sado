@@ -43,6 +43,17 @@ export const Settings: GlobalConfig = {
       },
     },
     {
+      name: "heroImagesMobile",
+      type: "upload",
+      relationTo: "media",
+      hasMany: true,
+      label: "Bosh sahifa — telefon uchun rasmlar",
+      admin: {
+        description:
+          "Tik (vertikal) kadrlar — telefonda shular chiqadi. Bo'sh qoldirilsa yuqoridagi rasmlar ishlatiladi, lekin telefon ekrani tor bo'lgani uchun ularning chetlari qirqiladi. Tartibi yuqoridagi bilan bir xil bo'lsin.",
+      },
+    },
+    {
       type: "group",
       name: "contact",
       label: "Aloqa",

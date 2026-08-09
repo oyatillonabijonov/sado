@@ -24,6 +24,9 @@ const FALLBACK: SiteSettings = {
   heroKicker: `${site.tagline} — Toshkent, ${site.founded}-yildan`,
   heroHeading: "Brendlarning vizual ko'rinishini\nshakllantiramiz.",
   heroImages: DEFAULT_HERO_IMAGES,
+  // Standart to'plamda tik kadr yo'q — bo'sh, ya'ni sayt desktop rasmlariga
+  // qaytadi. Mijoz paneldan yuklaguncha telefonda hozirgidek qirqiladi.
+  heroImagesMobile: [],
   email: site.email,
   phone: site.phone,
   address: site.address,
@@ -51,17 +54,21 @@ export async function getSettings(): Promise<SiteSettings> {
         .filter((s) => s.label && s.href)
     : [];
 
-  // heroImages — upload hasMany: depth bilan populatsiya qilingan media obyektlari.
-  const heroImages = Array.isArray(doc.heroImages)
-    ? (doc.heroImages as unknown[])
-        .map((m) => (m && typeof m === "object" && "url" in m ? String((m as { url: string }).url) : ""))
-        .filter(Boolean)
-    : [];
+  // Ikkalasi ham upload hasMany: depth bilan populatsiya qilingan media obyektlari.
+  const urls = (value: unknown) =>
+    Array.isArray(value)
+      ? (value as unknown[])
+          .map((m) => (m && typeof m === "object" && "url" in m ? String((m as { url: string }).url) : ""))
+          .filter(Boolean)
+      : [];
+
+  const heroImages = urls(doc.heroImages);
 
   return {
     heroKicker: text(hero.kicker, FALLBACK.heroKicker),
     heroHeading: text(hero.heading, FALLBACK.heroHeading),
     heroImages: heroImages.length ? heroImages : FALLBACK.heroImages,
+    heroImagesMobile: urls(doc.heroImagesMobile),
     email: text(contact.email, FALLBACK.email),
     phone: text(contact.phone, FALLBACK.phone),
     address: text(contact.address, FALLBACK.address),

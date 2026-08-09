@@ -39,9 +39,12 @@ export async function saveProject(
       label: str(fd, `results.${i}.label`),
       value: str(fd, `results.${i}.value`),
     })).filter((r) => r.label && r.value),
-    gallery: Array.from({ length: SLOTS.gallery }, (_, i) => rel(fd, `gallery.${i}`)).filter(
-      (v): v is number => v !== null,
-    ),
+    // Galereya endi qat'iy slot emas — nechta rasm bo'lsa shuncha kalit keladi.
+    gallery: [...fd.keys()]
+      .filter((k) => k.startsWith("gallery."))
+      .sort((a, b) => Number(a.split(".")[1]) - Number(b.split(".")[1]))
+      .map((k) => rel(fd, k))
+      .filter((v): v is number => v !== null),
     order: Number(str(fd, "order") || 0),
   };
 

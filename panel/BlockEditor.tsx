@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { uploadImage } from '@/panel/ImageDrop';
 import type { Block } from '@/panel/lexical';
-import type { MediaOption } from '@/panel/MediaPicker';
+import type { MediaOption } from '@/panel/media';
 
 /**
  * Writing, the way a post is written: a stack of blocks you add to as you go.
@@ -70,6 +71,7 @@ export function BlockEditor({
                 value={block.text}
                 placeholder={i === 0 ? placeholder : 'Davomi…'}
                 onChange={(text) => update(i, { kind: 'text', text })}
+                onImage={(id) => insert(i + 1, { kind: 'image', media: id })}
               />
             ) : (
               <ImageBlock
@@ -112,12 +114,30 @@ function TextBlock({
   value,
   placeholder,
   onChange,
+  onImage,
 }: {
   value: string;
   placeholder: string;
   onChange: (value: string) => void;
+  /** Matnga rasm qo'yilsa — shu blokdan keyin yangi rasm bloki. */
+  onImage: (id: number) => void;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const [dropping, setDropping] = useState(false);
+
+  // Yozayotganda rasmni shu yerning o'ziga tashlash yoki Cmd+V bilan qo'yish —
+  // "Rasmlar" ekraniga borib kelish shart emas.
+  const take = async (files: FileList | null) => {
+    const image = [...(files ?? [])].find((f) => f.type.startsWith('image/'));
+    if (!image) return false;
+    setDropping(true);
+    try {
+      onImage((await uploadImage(image)).id);
+    } finally {
+      setDropping(false);
+    }
+    return true;
+  };
 
   useEffect(() => {
     const el = ref.current;
@@ -133,11 +153,26 @@ function TextBlock({
       value={value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
+      onPaste={(e) => {
+        if (e.clipboardData.files.length) {
+          e.preventDefault();
+          void take(e.clipboardData.files);
+        }
+      }}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={(e) => {
+        if (e.dataTransfer.files.length) {
+          e.preventDefault();
+          void take(e.dataTransfer.files);
+        }
+      }}
       rows={2}
       // Borderless on purpose: a page of boxed fields reads as a form, and this
       // is meant to read as a page being written. The mist line only appears
       // when the block is being worked on.
-      className="w-full resize-none rounded-card border border-transparent bg-transparent px-4 py-3 text-body-lg leading-relaxed outline-none transition-colors placeholder:text-driftwood hover:border-mist focus:border-mist"
+      className={`w-full resize-none rounded-card border bg-transparent px-4 py-3 text-body-lg leading-relaxed outline-none transition-colors placeholder:text-driftwood hover:border-mist focus:border-mist ${
+        dropping ? 'border-obsidian' : 'border-transparent'
+      }`}
     />
   );
 }
@@ -151,34 +186,123 @@ function ImageBlock({
   media: MediaOption[];
   onChange: (id: number | null) => void;
 }) {
-  const selected = media.find((m) => m.id === value);
+  const known = media.find((m) => m.id === value) ?? null;
+  const [shown, setShown] = useState<MediaOption | null>(known);
+  const [busy, setBusy] = useState(false);
+  const [over, setOver] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [choosing, setChoosing] = useState(false);
+  const input = useRef<HTMLInputElement>(null);
+
+  const take = async (files: FileList | null) => {
+    const image = [...(files ?? [])].find((f) => f.type.startsWith('image/'));
+    if (!image) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const up = await uploadImage(image);
+      setShown(up);
+      onChange(up.id);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (shown) {
+    return (
+      <figure className="flex flex-col gap-2 rounded-card border border-mist p-4">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={shown.url} alt="" className="w-full rounded-card" />
+        <figcaption className="text-body-sm text-driftwood">
+          Sayt ostiga shu matnni yozadi: “{shown.label}”
+        </figcaption>
+        <button
+          type="button"
+          onClick={() => {
+            setShown(null);
+            onChange(null);
+          }}
+          className="self-start text-body-sm text-pebble underline underline-offset-4 hover:text-obsidian"
+        >
+          Boshqasini qo‘yish
+        </button>
+      </figure>
+    );
+  }
 
   return (
-    <div className="flex flex-col gap-3 rounded-card border border-mist p-4">
-      {selected ? (
-        <figure className="flex flex-col gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={selected.url} alt={selected.label} className="w-full rounded-card" />
-          <figcaption className="text-body-sm text-driftwood">
-            Sayt ostiga shu matnni yozadi: “{selected.label}”
-          </figcaption>
-        </figure>
-      ) : (
-        <p className="text-body-sm text-driftwood">Rasm tanlanmagan.</p>
+    <div
+      onDragOver={(e) => {
+        e.preventDefault();
+        setOver(true);
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setOver(false);
+        void take(e.dataTransfer.files);
+      }}
+      onPaste={(e) => {
+        if (e.clipboardData.files.length) {
+          e.preventDefault();
+          void take(e.clipboardData.files);
+        }
+      }}
+      className={`flex flex-col items-center gap-2 rounded-card border border-dashed p-6 text-center transition-colors ${
+        over ? 'border-obsidian bg-mist/20' : 'border-mist'
+      }`}
+    >
+      <input
+        ref={input}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          void take(e.target.files);
+          e.target.value = '';
+        }}
+      />
+      <button
+        type="button"
+        onClick={() => input.current?.click()}
+        className="text-body underline underline-offset-4 hover:text-pebble"
+      >
+        {busy ? 'Yuklanyapti…' : 'Rasm tanlash'}
+      </button>
+      <p className="text-body-sm text-driftwood">Sudrab tashlang yoki Cmd+V</p>
+
+      {media.length > 0 && (
+        <button
+          type="button"
+          onClick={() => setChoosing((v) => !v)}
+          className="text-body-sm text-pebble underline underline-offset-4 hover:text-obsidian"
+        >
+          {choosing ? 'Yopish' : 'Yoki yuklanganlardan tanlash'}
+        </button>
+      )}
+      {choosing && (
+        <div className="grid max-h-48 w-full grid-cols-5 gap-2 overflow-y-auto pt-2">
+          {media.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              title={m.label}
+              onClick={() => {
+                setShown(m);
+                onChange(m.id);
+              }}
+              className="overflow-hidden rounded-card border border-mist hover:border-obsidian"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.url} alt="" className="aspect-square w-full object-cover" />
+            </button>
+          ))}
+        </div>
       )}
 
-      <select
-        value={value ?? ''}
-        onChange={(e) => onChange(e.target.value ? Number(e.target.value) : null)}
-        className="min-h-12 w-full appearance-none rounded-pill border border-mist bg-white px-5 text-body outline-none transition-colors hover:border-pebble focus:border-obsidian"
-      >
-        <option value="">Rasm tanlang</option>
-        {media.map((m) => (
-          <option key={m.id} value={m.id}>
-            {m.label}
-          </option>
-        ))}
-      </select>
+      {error && <p className="text-body-sm text-ember">{error}</p>}
     </div>
   );
 }

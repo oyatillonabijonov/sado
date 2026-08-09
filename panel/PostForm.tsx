@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 import { BlockEditor } from "@/panel/BlockEditor";
 import type { FormState } from "@/panel/form-state";
-import { MediaPicker, type MediaOption } from "@/panel/MediaPicker";
+import { ImageDrop } from "@/panel/ImageDrop";
+import type { MediaOption } from "@/panel/media";
 import type { PostFormData } from "@/panel/posts-data";
 import { savePost } from "@/panel/posts-actions";
 import { BigField, Card, Collapse, Field, Grid, SaveBar } from "@/panel/ui";
@@ -33,7 +34,7 @@ export function PostForm({ data, media }: { data: PostFormData; media: MediaOpti
         </Grid>
         <Grid>
           <Field label="Sana" name="date" type="date" defaultValue={data.date} required />
-          <MediaPicker label="Muqova rasmi" name="cover" options={media} defaultValue={data.cover} required />
+          <ImageDrop label="Muqova rasmi" name="cover" options={media} defaultValue={data.cover} required />
         </Grid>
         <Field label="Sahifa manzili" name="slug" defaultValue={data.slug} placeholder="qorongi-interfeyslar" />
       </Collapse>

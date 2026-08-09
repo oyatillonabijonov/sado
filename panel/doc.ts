@@ -2,7 +2,7 @@ import 'server-only';
 import type { CollectionSlug } from 'payload';
 import { payloadClient } from '@/panel/auth';
 import { toText } from '@/panel/lexical';
-import type { MediaOption } from '@/panel/MediaPicker';
+import type { MediaOption } from '@/panel/media';
 
 /**
  * The four readers every screen's loader needs.

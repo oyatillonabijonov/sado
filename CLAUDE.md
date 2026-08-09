@@ -46,8 +46,15 @@ ekranlar. Kolleksiya qo'shish = 4 ta fayl (`<x>-data.ts`, `<x>-actions.ts`, `<X>
 `app/panel/(app)/<nom>/`) + `Nav.tsx` da bitta qator. Har bir server action `requireUser()` bilan
 boshlanadi — action o'z HTTP kirish nuqtasi, layout'ning qorovuli uni qamramaydi.
 
-Rasmlar `/panel/rasmlar` da yuklanadi, kontent formalarida faqat tanlanadi (`MediaPicker`).
-Fayllar `media/` da, `/api/media/file/<nom>` orqali uzatiladi (`app/(payload)/api/[...slug]`).
+Rasmlar **forma ichida** yuklanadi: `panel/ImageDrop.tsx` (`ImageDrop` — bitta rasm,
+`ImageStack` — galereya) va `BlockEditor` fayllarni `POST /api/panel/upload` ga `fetch`
+bilan yuboradi. Forma yuborilmaydi, sahifa qayta yuklanmaydi, yozilgan matn yo'qolmaydi —
+shuning uchun bu server action emas, route handler. Sudrab tashlash, Cmd+V va tanlash
+uchtasi ham ishlaydi; `/panel/rasmlar` esa umumiy kutubxona sifatida qoladi.
+
+Alt matni yuklashda so'ralmaydi (oqimni to'xtatadi) — fayl nomidan qo'yiladi va rasm
+ostida tahrirlanadi (`PATCH /api/panel/upload`). Fayllar `media/` da,
+`/api/media/file/<nom>` orqali uzatiladi (`app/(payload)/api/[...slug]`).
 
 **Lokalizatsiya o'chirilgan.** Header'dagi til tanlagich hozircha faqat `<html lang>` ni
 almashtiradi. Yoqish = `payload.config.ts` ga `localization` bloki, maydonlarga `localized: true`,

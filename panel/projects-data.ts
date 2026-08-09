@@ -16,12 +16,9 @@ export type ProjectFormData = {
   brief: string;
   solution: string;
   results: { label: string; value: string }[];
-  gallery: (number | null)[];
+  gallery: number[];
   order: number;
 };
-
-const padGallery = (ids: number[]) =>
-  Array.from({ length: SLOTS.gallery }, (_, i) => ids[i] ?? null);
 
 const padResults = (rows: { label: string; value: string }[]) =>
   Array.from({ length: SLOTS.metrics }, (_, i) => rows[i] ?? { label: "", value: "" });
@@ -40,7 +37,7 @@ export async function emptyProject(): Promise<ProjectFormData> {
     brief: "",
     solution: "",
     results: padResults([]),
-    gallery: padGallery([]),
+    gallery: [],
     order: await nextOrder("projects"),
   };
 }
@@ -69,7 +66,7 @@ export async function loadProject(id: number): Promise<ProjectFormData | null> {
     brief: String(doc.brief ?? ""),
     solution: String(doc.solution ?? ""),
     results: padResults(results),
-    gallery: padGallery(relIds(doc.gallery)),
+    gallery: relIds(doc.gallery),
     order: Number(doc.order ?? 0),
   };
 }

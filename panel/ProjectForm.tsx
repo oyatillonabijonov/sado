@@ -2,7 +2,8 @@
 
 import { useActionState } from "react";
 import type { FormState } from "@/panel/form-state";
-import { MediaPicker, type MediaOption } from "@/panel/MediaPicker";
+import { ImageDrop, ImageStack } from "@/panel/ImageDrop";
+import type { MediaOption } from "@/panel/media";
 import type { ProjectFormData } from "@/panel/projects-data";
 import { saveProject } from "@/panel/projects-actions";
 import { SLOTS } from "@/panel/slots";
@@ -23,7 +24,7 @@ export function ProjectForm({ data, media }: { data: ProjectFormData; media: Med
         </Grid>
         <Grid>
           <Choice label="Turi" name="category" options={CATEGORIES} defaultValue={data.category} />
-          <MediaPicker label="Asosiy rasm" name="cover" options={media} defaultValue={data.cover} required />
+          <ImageDrop label="Asosiy rasm" name="cover" options={media} defaultValue={data.cover} required />
         </Grid>
         <Area
           label="Nima qilingan"
@@ -45,18 +46,14 @@ export function ProjectForm({ data, media }: { data: ProjectFormData; media: Med
         <Area label="Yechim" name="solution" defaultValue={data.solution} rows={6} required />
       </Card>
 
-      <Card title="Rasmlar" hint="Loyiha sahifasidagi galereya. Bo'sh slotlar tashlanadi.">
-        <Grid>
-          {data.gallery.map((id, i) => (
-            <MediaPicker
-              key={i}
-              label={`${i + 1}-rasm`}
-              name={`gallery.${i}`}
-              options={media}
-              defaultValue={id}
-            />
-          ))}
-        </Grid>
+      <Card title="Rasmlar">
+        <ImageStack
+          label="Loyiha galereyasi"
+          hint="Bir nechta faylni birdan tashlashingiz mumkin. Tartibni strelkalar bilan o'zgartiring — saytda shu tartibda chiqadi."
+          name="gallery"
+          options={media}
+          defaultValue={data.gallery}
+        />
       </Card>
 
       <Collapse title="Natijalar" hint="Raqamlar — ixtiyoriy. To'ldirilmagani chiqmaydi.">

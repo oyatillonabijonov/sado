@@ -44,6 +44,11 @@ if (!existsSync(LIVE)) {
   const missing = [...schema].filter((t) => !live.has(t));
 
   if (missing.length) {
+    // Bazaga tegishdan oldin nusxa. Jadval qo'shish qatorlarni o'chirmaydi,
+    // lekin bu mijozning yagona kontenti — yozuv o'rtasida uzilish ham
+    // qaytarib bo'ladigan bo'lib qolsin.
+    copyFileSync(LIVE, `${LIVE}.bak`);
+
     const src = new Database(SCHEMA, { readonly: true });
     const target = new Database(LIVE);
     for (const table of missing) {
@@ -52,11 +57,22 @@ if (!existsSync(LIVE)) {
       const rows = src
         .query("select sql from sqlite_master where tbl_name = ? and sql is not null order by type desc")
         .all(table) as { sql: string }[];
-      for (const row of rows) target.run(row.sql);
+      for (const row of rows) {
+        // Har bir CREATE alohida: bittasi yiqilsa (masalan indeks nomi
+        // SQLite'da global va band bo'lsa) qolganlari baribir qo'shiladi.
+        // Yiqilib chiqib ketmaydi — entrypoint'da `set -e` bor va bu skript
+        // xato bersa konteyner umuman ko'tarilmasdi, ya'ni bitta indeks
+        // butun saytni o'chirardi.
+        try {
+          target.run(row.sql);
+        } catch (err) {
+          console.warn(`[db-ensure] Bajarilmadi: ${row.sql}\n  ${String(err)}`);
+        }
+      }
     }
     target.close();
     src.close();
-    console.log(`[db-ensure] Yangi jadval(lar) qo'shildi: ${missing.join(", ")}`);
+    console.log(`[db-ensure] Yangi jadval(lar) qo'shildi: ${missing.join(", ")} (zaxira: ${LIVE}.bak)`);
   }
 }
 

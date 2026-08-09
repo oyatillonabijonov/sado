@@ -1,5 +1,5 @@
 import { Database } from "bun:sqlite";
-import { copyFileSync, mkdtempSync } from "node:fs";
+import { copyFileSync, existsSync, mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { expect, test } from "bun:test";
@@ -36,4 +36,6 @@ test("yangi jadvalni qo'shadi, mavjud ma'lumotga tegmaydi", async () => {
 
   expect(tables).toHaveLength(1);
   expect(kept?.x).toBe(42);
+  // Tegishdan oldingi holat qaytariladigan bo'lib qolsin.
+  expect(existsSync(`${live}.bak`)).toBe(true);
 });

@@ -67,14 +67,15 @@ function ThemeToggle() {
 }
 
 const LANGS = [
-  { code: "uz", label: "O'zbekcha" },
-  { code: "ru", label: "Русский" },
-  { code: "en", label: "English" },
+  { code: "uz", label: "O'zbekcha", short: "UZ" },
+  { code: "ru", label: "Русский", short: "RU" },
+  { code: "en", label: "English", short: "EN" },
 ] as const;
 type Lang = (typeof LANGS)[number]["code"];
 
-// ponytail: UI-only switcher — persists choice + sets <html lang>. Content
-// translation not wired yet; add i18n (next-intl) when the site leaves placeholder stage.
+// ponytail: UI-only switcher — tanlovni saqlaydi va <html lang> ni qo'yadi.
+// Kontent tarjimasi hali ulanmagan; sayt placeholder bosqichidan chiqqanda
+// i18n (next-intl) qo'shiladi.
 function LanguageSwitcher() {
   const [lang, setLang] = useState<Lang | null>(null);
   const [open, setOpen] = useState(false);
@@ -116,36 +117,55 @@ function LanguageSwitcher() {
 
   return (
     <div ref={ref} className="relative">
+      {/* Qisqa kod: "O'zbekcha ↓" header'da uch so'zlik navigatsiya elementiga
+          o'xshab qolardi. To'liq nomi aria-label va ro'yxat ichida qoladi. */}
       <button
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label="Til tanlash"
+        aria-label={`Sayt tili: ${current.label}`}
         onClick={() => setOpen((v) => !v)}
-        className="flex cursor-pointer items-center gap-[8px] text-[17px] text-fog-gray transition-colors hover:text-bone-white"
+        className={`flex cursor-pointer items-center gap-[6px] px-[8px] py-[6px] text-[15px] tracking-[0.04em] transition-colors hover:text-bone-white ${
+          open ? "text-bone-white" : "text-fog-gray"
+        }`}
       >
-        <span suppressHydrationWarning>{current.label}</span>
-        <span aria-hidden className={`transition-transform ${open ? "rotate-180" : ""}`}>
-          ↓
-        </span>
+        <span suppressHydrationWarning>{current.short}</span>
+        {/* Glif emas, SVG: "▾" shriftda mayda nuqtaga o'xshab chiqadi va
+            o'lchami platformaga qarab o'zgaradi. */}
+        <svg
+          aria-hidden
+          viewBox="0 0 12 12"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className={`block size-[10px] transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        >
+          <path d="M2.5 4.5 6 8l3.5-3.5" />
+        </svg>
       </button>
       {open && (
         <ul
           role="listbox"
-          className="absolute left-0 top-full z-20 mt-[8px] min-w-[140px] overflow-hidden rounded-[10px] border border-graphite bg-pure-black"
+          className="absolute left-0 top-full z-20 mt-[8px] min-w-[132px] overflow-hidden rounded-[10px] bg-soft-black py-[4px]"
         >
           {LANGS.map((l) => (
             <li key={l.code}>
               <button
                 type="button"
                 role="option"
+                lang={l.code}
                 aria-selected={l.code === lang}
                 onClick={() => choose(l.code)}
-                className={`w-full cursor-pointer px-[16px] py-[12px] text-left transition-colors hover:bg-soft-black hover:text-bone-white ${
+                className={`flex w-full cursor-pointer items-baseline gap-[10px] px-[16px] py-[10px] text-left transition-colors hover:text-bone-white ${
                   l.code === lang ? "text-bone-white" : "text-fog-gray"
                 }`}
               >
-                {l.label}
+                <span className="w-[24px] shrink-0 text-[15px] tracking-[0.04em]">
+                  {l.short}
+                </span>
+                <span className="text-[15px]">{l.label}</span>
               </button>
             </li>
           ))}

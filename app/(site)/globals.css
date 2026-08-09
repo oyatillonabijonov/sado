@@ -44,6 +44,9 @@ html {
  */
 :root {
   --gutter: 20px;
+  /* O'qish maydonining shifti. Gutter bundan tashqarida, shuning uchun
+     2560px monitorda ham qator uzunligi o'qiladigan holda qoladi. */
+  --content: 1440px;
 }
 @media (min-width: 768px) {
   :root {
@@ -62,6 +65,9 @@ html {
 }
 
 .shell {
+  width: 100%;
+  max-width: calc(var(--content) + var(--gutter) * 2);
+  margin-inline: auto;
   padding-inline: var(--gutter);
 }
 .bleed {

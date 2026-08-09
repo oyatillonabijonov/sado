@@ -5,8 +5,10 @@ export default function ClientsMarquee() {
   const row = [...clients, ...clients];
   return (
     <section aria-label="Mijozlar" className="pt-[80px]">
-      <div className="border-t border-graphite pt-[20px]">
-        <p className="text-fog-gray">Bizga 50+ kompaniyalar ishonch bildirgan</p>
+      <div className="shell">
+        <div className="border-t border-graphite pt-[20px]">
+          <p className="text-fog-gray">Bizga 50+ kompaniyalar ishonch bildirgan</p>
+        </div>
       </div>
       <div className="sado-marquee-mask mt-[48px] overflow-hidden">
         <div className="sado-marquee flex w-max items-center gap-[96px]">

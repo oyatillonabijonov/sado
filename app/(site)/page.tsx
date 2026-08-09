@@ -33,9 +33,9 @@ export default async function HomePage() {
   const no = (key: string) => String(visible.indexOf(key) + 1).padStart(2, "0");
 
   return (
-    <div className="shell">
+    <div>
       {/* Hero */}
-      <section className="bleed shell relative flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden pb-[48px]">
+      <section className="relative flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden pb-[48px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           {["/sd1.png", "/sd2.png", "/sd3.png", "/sd4.png", "/sd5.webp"].map(
             (src, i) => (
@@ -50,7 +50,7 @@ export default async function HomePage() {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-pure-black via-pure-black/40 to-pure-black/10" />
         </div>
-        <div className="relative z-10">
+        <div className="shell relative z-10">
           <p className="mb-[24px] text-fog-gray">
             {site.tagline} — Toshkent, {site.founded}-yildan
           </p>
@@ -71,7 +71,7 @@ export default async function HomePage() {
           "So'nggi loyihalar" sarlavhasi ostidagi bo'sh grid va'daning
           bajarilmagani bo'lib ko'rinadi. */}
       {featured.length > 0 && (
-      <section className="pt-[120px]">
+      <section className="shell pt-[120px]">
         <SectionHeading
           index={no("ishlar")}
           kicker="Ishlar"
@@ -92,7 +92,8 @@ export default async function HomePage() {
           Butun sahifa bitta tekis fon edi va seksiyalarni faqat 1px chiziq
           ajratardi. To'liq kenglikdagi bu band sahifaga qatlam beradi va
           "bizga ishonish mumkin" degan ikkita dalilni bir joyga yig'adi. */}
-      <section className="bleed shell mt-[160px] bg-soft-black py-[120px]">
+      <section className="mt-[160px] bg-soft-black py-[120px]">
+        <div className="shell">
         <SectionHeading
           index={no("ishonch")}
           kicker="Ishonch"
@@ -138,11 +139,12 @@ export default async function HomePage() {
         <div className="mt-[120px]">
           <Stats />
         </div>
+        </div>
       </section>
 
       {/* Blog preview — maqola bo'lmasa chiqmaydi. */}
       {posts.length > 0 && (
-      <section className="pt-[160px]">
+      <section className="shell pt-[160px]">
         <SectionHeading
           index={no("blog")}
           kicker="Blog"
@@ -159,7 +161,7 @@ export default async function HomePage() {
       )}
 
       {/* CTA + aloqa formasi */}
-      <section className="mt-[160px] border-t border-graphite pt-[120px] pb-[48px]">
+      <section className="shell mt-[160px] border-t border-graphite pt-[120px] pb-[48px]">
         <div className="grid gap-[80px] lg:grid-cols-2">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
             <p className="mb-[24px] flex items-baseline gap-[12px] text-fog-gray">

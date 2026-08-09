@@ -43,7 +43,10 @@ export default function Stats() {
   }, []);
 
   return (
-    <div ref={ref} className="grid gap-[16px] sm:grid-cols-2 lg:grid-cols-4">
+    /* Mobilda 2×2. Bitta ustunda to'rtta 40px raqam ustma-ust turardi va
+       "bir qarashda dalil" degan butun maqsad yo'qolardi — o'qish uchun
+       skroll kerak bo'lardi. */
+    <div ref={ref} className="grid grid-cols-2 gap-[16px] lg:grid-cols-4">
       {stats.map((s, i) => {
         const { n, suffix } = parseValue(s.value);
         // har bir ustun ozgina kechikib chiqadi
@@ -55,7 +58,16 @@ export default function Stats() {
           // Raqam birinchi, yorliq ostida. Ilgari teskari edi va ustunlar
           // "yorliq — raqam — yorliq — raqam" bo'lib bir tekis o'qilardi;
           // raqamlar tepaga chiqqanda ular qatorni boshqaradi.
-          <div key={s.label}>
+          //
+          // Karta: raqamlar ilgari fonda yalang'och turardi va otzivlar bilan
+          // bitta bandda bo'lsa-da, boshqa tilda gapirardi. `bg-pure-black` —
+          // aynan otziv kartasining foni, ya'ni ikkalasi bir xil qatlamda.
+          // Kontent tepaga tekislanadi: `justify-between` bilan qisqa yorliq
+          // kartaning tagiga tushib, raqam bilan orasida bo'sh joy qolardi.
+          <div
+            key={s.label}
+            className="flex flex-col gap-[8px] rounded-[10px] bg-pure-black p-card"
+          >
             <p
               className="display tabular-nums"
               style={{ opacity: 0.25 + local * 0.75 }}
@@ -63,7 +75,7 @@ export default function Stats() {
               {Math.round(n * local)}
               {suffix}
             </p>
-            <p className="mt-[16px] text-fog-gray">{s.label}</p>
+            <p className="text-fog-gray">{s.label}</p>
           </div>
         );
       })}

@@ -4,14 +4,17 @@ import { clients } from "@/data/testimonials";
 export default function ClientsMarquee() {
   const row = [...clients, ...clients];
   return (
-    <section aria-label="Mijozlar" className="pt-[80px]">
+    <section aria-label="Mijozlar" className="pt-[48px] md:pt-[80px]">
       <div className="shell">
         <div className="border-t border-graphite pt-[20px]">
           <p className="text-fog-gray">Bizga 50+ kompaniyalar ishonch bildirgan</p>
         </div>
       </div>
-      <div className="sado-marquee-mask mt-[48px] overflow-hidden">
-        <div className="sado-marquee flex w-max items-center gap-[96px]">
+      {/* 96px oraliq 1440px lentada nafas, 375px da esa bir vaqtning o'zida
+          atigi bitta logo ko'rinishini anglatadi — "50+ kompaniya" da'vosi
+          ekranda tasdiqlanmay qolardi. */}
+      <div className="sado-marquee-mask mt-[24px] overflow-hidden md:mt-[48px]">
+        <div className="sado-marquee flex w-max items-center gap-[48px] md:gap-[96px]">
           {row.map((c, i) => (
             /* ponytail: `next/image` emas — logolar o'ndan ortiq turli
                nisbatda va u har biriga width/height talab qiladi. Manba
@@ -25,7 +28,7 @@ export default function ClientsMarquee() {
               alt={c.name}
               loading="lazy"
               decoding="async"
-              className="block h-[56px] w-auto shrink-0 opacity-90 transition-opacity hover:opacity-100"
+              className="block h-[40px] w-auto shrink-0 opacity-90 transition-opacity hover:opacity-100 md:h-[56px]"
             />
           ))}
         </div>

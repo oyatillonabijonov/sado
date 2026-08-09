@@ -28,7 +28,7 @@ export default async function AboutPage() {
       {/* Hikoya va raqamlar bitta blokda. Ilgari ular orasida 240px bo'sh joy
           bor edi va raqamlar oddiy matn o'lchamida turardi — bosh sahifada
           o'sha raqamlar 84px, bu yerda 17px bo'lishi izchil emas. */}
-      <div className="grid gap-[48px] lg:grid-cols-2">
+      <div className="grid gap-[24px] lg:grid-cols-2 md:gap-[48px]">
         <p className="text-subheading text-bone-white">
           SADO 2018-yilda uch dizayner tomonidan tashkil etilgan. Bugun biz o'n
           bir kishilik jamoa bilan brend, veb va raqamli mahsulotlar ustida
@@ -40,25 +40,27 @@ export default async function AboutPage() {
         </p>
       </div>
 
-      <Reveal className="mt-[80px] rounded-[10px] bg-soft-black p-[32px] lg:p-[48px]">
+      {/* Raqamlar endi o'zi karta — panelning 32/48px paddingi ustiga qo'shilib
+          ikki qavat ramka berardi. Panel yupqa zamin bo'lib qoladi. */}
+      <Reveal className="mt-[40px] rounded-[10px] bg-soft-black p-[16px] md:mt-[80px] md:p-[24px]">
         <Stats />
       </Reveal>
 
       {/* Qadriyatlar va madaniyat — ilgari ikkita alohida seksiya edi, ikkalasi
           ham "biz qanday ishlaymiz" haqida. Bittasi uchta yalang'och xatboshi,
           ikkinchisi bitta xatboshi uchun butun seksiya sarlavhasi bilan. */}
-      <section className="pt-[160px]">
+      <section className="pt-section">
         <SectionHeading kicker="Qadriyatlar">Qanday ishlaymiz</SectionHeading>
         <Stagger className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-4">
           {values.map((v) => (
             <StaggerItem key={v.title} className="h-full">
-            <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-[32px]">
+            <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-card">
               <p className="text-subheading text-bone-white">{v.title}</p>
               <p className="text-fog-gray">{v.text}</p>
             </div>
             </StaggerItem>
           ))}
-          <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-[32px]">
+          <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-card">
             <p className="text-subheading text-bone-white">Ish muhiti</p>
             <p className="text-fog-gray">
               Ochiq muhokama va halol fikr. Har juma — ichki dizayn tanqidi kuni.
@@ -69,9 +71,11 @@ export default async function AboutPage() {
       </section>
 
       {/* Jamoa — bu yerda zamin allaqachon bor: suratning o'zi. */}
-      <section className="pt-[160px]">
+      <section className="pt-section">
         <SectionHeading kicker="Jamoa">Kim ishlaydi</SectionHeading>
-        <Stagger className="grid gap-[16px] sm:grid-cols-2 lg:grid-cols-3">
+        {/* Mobilda 2 ustun: 3:4 portret bitta ustunda 500px baland bo'lib,
+            o'n bir kishilik jamoa sahifani cho'zib yuborardi. */}
+        <Stagger className="grid grid-cols-2 gap-[16px] lg:grid-cols-3">
           {team.map((m) => (
             <StaggerItem key={m.name}>
               <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-[10px] bg-soft-black">
@@ -80,7 +84,7 @@ export default async function AboutPage() {
                     src={m.photo}
                     alt={m.name}
                     fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
+                    sizes="(max-width: 1024px) 50vw, 33vw"
                     className="object-cover"
                   />
                 ) : (
@@ -114,32 +118,38 @@ export default async function AboutPage() {
           boshqa sahifalardagi havolalar shu yerga tushishi uchun. */}
       <section
         id="aloqa"
-        className="mt-[160px] scroll-mt-[88px] border-t border-graphite pt-[120px] pb-[48px]"
+        className="mt-section scroll-mt-[88px] border-t border-graphite pt-section-sm pb-[48px]"
       >
-        <div className="grid gap-[80px] lg:grid-cols-2">
+        <div className="grid gap-[32px] lg:grid-cols-2 md:gap-[80px]">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
             <p className="mb-[24px] text-fog-gray">Aloqa</p>
             <h2 className="display max-w-[560px]">Jamoamiz bilan ishlang.</h2>
             <p className="mt-[32px] max-w-[46ch] text-fog-gray">
               Vazifangizni qisqacha yozing — bir ish kuni ichida javob beramiz.
             </p>
-            <div className="mt-[48px] flex flex-col gap-[8px]">
-              <a href={`mailto:${settings.email}`} className="text-fog-gray hover:text-bone-white">
+            <div className="mt-[32px] flex flex-col md:mt-[48px] md:gap-[8px]">
+              <a
+                href={`mailto:${settings.email}`}
+                className="tap self-start text-fog-gray hover:text-bone-white"
+              >
                 {settings.email}
               </a>
-              <a href={telHref(settings.phone)} className="text-fog-gray hover:text-bone-white">
+              <a
+                href={telHref(settings.phone)}
+                className="tap self-start text-fog-gray hover:text-bone-white"
+              >
                 {settings.phone}
               </a>
-              <p className="text-fog-gray">{settings.address}</p>
+              <p className="mt-[8px] text-fog-gray md:mt-0">{settings.address}</p>
             </div>
-            <div className="mt-[32px] flex flex-wrap gap-x-[24px] gap-y-[8px]">
+            <div className="mt-[16px] flex flex-wrap gap-x-[24px] md:mt-[32px] md:gap-y-[8px]">
               {settings.socials.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-fog-gray hover:text-bone-white"
+                  className="tap text-fog-gray hover:text-bone-white"
                 >
                   {s.label} ↗
                 </a>

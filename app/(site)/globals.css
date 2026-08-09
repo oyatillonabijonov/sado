@@ -22,6 +22,34 @@
   --text-heading-sm: 32px;
   --leading-heading-sm: 1.15;
   --tracking-heading-sm: -0.02em;
+
+  /*
+   * Vertikal ritm — `pt-section`, `mt-block`, `p-card`.
+   *
+   * Ilgari har bir seksiya o'z qiymatini qo'lda olib yurardi (`pt-[160px]`,
+   * `mt-[240px]`, `py-[120px]`) va ular mobilda qisqarmasdi: 375px ekranda
+   * 160px bo'sh joy ekranning beshdan biri, sahifa esa 11 ekranga cho'zilardi.
+   * Endi uchta o'zgaruvchi, quyidagi media-blokda mobil qiymatga o'tadi —
+   * Tailwind `padding-top: var(--spacing-section)` chiqargani uchun override
+   * ish paytida qo'llanadi.
+   */
+  --spacing-section-lg: 240px;
+  --spacing-section: 160px;
+  --spacing-section-sm: 120px;
+  --spacing-block: 64px;
+  --spacing-card: 32px;
+}
+
+/* Mobil ritm. `@theme` dagi qiymatlar bugungi desktopdan bir piksel ham
+   farq qilmaydi — o'zgarish faqat shu yerda, 768px dan pastda. */
+@media (max-width: 767px) {
+  :root {
+    --spacing-section-lg: 88px;
+    --spacing-section: 72px;
+    --spacing-section-sm: 56px;
+    --spacing-block: 40px;
+    --spacing-card: 20px;
+  }
 }
 
 html {
@@ -237,6 +265,26 @@ body {
   padding: 2px 6px;
   font-size: 15px;
 }
+/* Uzun matnning nafas oralig'i 1440px ustun uchun o'lchangan. 375px da o'sha
+   56px sarlavhalar orasini uzib qo'yadi: bo'lim boshi va matni bir ekranga
+   sig'may qoladi. */
+@media (max-width: 767px) {
+  .prose-oker h2 {
+    font-size: 24px;
+    margin: 40px 0 16px;
+  }
+  .prose-oker h3 {
+    margin: 32px 0 12px;
+  }
+  .prose-oker blockquote {
+    margin: 32px 0;
+    font-size: 19px;
+  }
+  .prose-oker img,
+  .prose-oker hr {
+    margin: 32px 0;
+  }
+}
 
 /* Tugma hover: stroke'dan fill'ga — chapdan o'ngga to'lish */
 .btn-fill {
@@ -353,18 +401,58 @@ body {
   }
 }
 
-/* Otzivlar qatori — logotiplar bilan bir xil mexanika, sekinroq va hover'da to'xtaydi.
-   ponytail: karusel kutubxonasi emas — bitta keyframe. Kontent ikki marta chiziladi,
-   shuning uchun -50% da qatorning boshiga qaytadi va uzilish ko'rinmaydi. */
-.sado-rail {
-  animation: sado-marquee 60s linear infinite;
-}
-.sado-rail:hover,
-.sado-rail:focus-within {
-  animation-play-state: paused;
+/*
+ * Otzivlar qatori — logotiplar bilan bir xil mexanika, sekinroq va hover'da
+ * to'xtaydi. ponytail: karusel kutubxonasi emas — bitta keyframe. Kontent ikki
+ * marta chiziladi, shuning uchun -50% da qatorning boshiga qaytadi.
+ *
+ * FAQAT desktopda. Telefonda `hover` yo'q, ya'ni suzib ketayotgan otzivni
+ * to'xtatib o'qib bo'lmasdi — matn ko'zdan qochib ketardi. Mobilda o'rniga
+ * qo'lda suriladigan snap-rail (markup'dagi `overflow-x-auto snap-x`) turadi,
+ * u bu yerda hech narsa talab qilmaydi: animatsiya yo'q = oddiy flex qator.
+ */
+@media (min-width: 768px) {
+  .sado-rail {
+    animation: sado-marquee 60s linear infinite;
+  }
+  .sado-rail:hover,
+  .sado-rail:focus-within {
+    animation-play-state: paused;
+  }
+  /* Mask ham desktopga tegishli: qo'lda suriladigan rail'da yeyilgan chetlar
+     "rasm yuklanmadi" bo'lib ko'rinadi, surish ishorasi esa keyingi kartaning
+     ko'rinib turgan cheti — mask uni aynan o'sha yerda o'chiradi. */
+  .sado-rail-mask {
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .sado-rail {
     animation: none;
   }
+}
+
+/*
+ * Matn havolasining bosish maydoni.
+ *
+ * 17px qator ≈26px baland — sichqoncha uchun yetarli, barmoq uchun emas
+ * (o'lchandi: footer va aloqa havolalarining hammasi 26px edi, minimum 44).
+ * Vertikal padding uni 44 ga yetkazadi. Salbiy margin ataylab yo'q: u qo'shni
+ * havolalarning bosish maydonlarini ustma-ust tushirib, xato bosishga olib
+ * kelardi — o'rniga konteynerdagi `gap` kichraytiriladi.
+ */
+@media (max-width: 767px) {
+  .tap {
+    padding-block: 9px;
+  }
+}
+
+/* Surish rail'lari (otzivlar, filtr chip'lari) — polosa dizaynni buzadi va
+   telefonda baribir ko'rinmaydi. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

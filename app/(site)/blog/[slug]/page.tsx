@@ -39,14 +39,16 @@ export default async function BlogPostPage({
     <article className="shell pt-[48px]">
       {/* Sarlavha — saytning chapga tekislangan tizimida */}
       <header className="border-t border-graphite pt-[20px]">
-        <Link href="/blog" className="text-fog-gray hover:text-bone-white">
+        {/* `w-max`: `tap` padding'i bilan inline-block shrink-to-fit kengligi
+            "← Blog" ni ikki qatorga bo'lib tashlardi. */}
+        <Link href="/blog" className="tap inline-block w-max text-fog-gray hover:text-bone-white">
           ← Blog
         </Link>
-        <h1 className="display mt-[48px] max-w-[1000px]">{post.meta.title}</h1>
+        <h1 className="display mt-[24px] max-w-[1000px] md:mt-[48px]">{post.meta.title}</h1>
       </header>
 
       {/* Meta — spec-sheet qatori */}
-      <div className="mt-[64px] grid gap-[16px] border-t border-graphite pt-[16px] sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-[40px] grid grid-cols-2 gap-[16px] border-t border-graphite pt-[16px] md:mt-[64px] lg:grid-cols-4">
         {(
           [
             ["Kategoriya", post.meta.category],
@@ -62,7 +64,9 @@ export default async function BlogPostPage({
         ))}
       </div>
 
-      <div className="relative mt-[64px] aspect-[21/9] w-full overflow-hidden rounded-[10px] bg-soft-black">
+      {/* 21:9 mobilda 375×160 tasmaga aylanadi — muqovadan hech narsa
+          o'qilmaydi. Xizmatlar sahifasidagi bilan bir xil yechim. */}
+      <div className="relative mt-[40px] aspect-[4/3] w-full overflow-hidden rounded-[10px] bg-soft-black md:mt-[64px] md:aspect-[21/9]">
         <Image
           src={post.meta.cover}
           alt={post.meta.title}
@@ -74,7 +78,7 @@ export default async function BlogPostPage({
       </div>
 
       {/* Matn — chap rail'da yopishqoq meta, o'ngda o'qish ustuni */}
-      <div className="mt-[120px] grid gap-[48px] lg:grid-cols-[240px_minmax(0,720px)]">
+      <div className="mt-section-sm grid gap-[48px] lg:grid-cols-[240px_minmax(0,720px)]">
         <aside className="hidden lg:block">
           <p className="sticky top-[96px] text-fog-gray">
             {post.meta.category}
@@ -86,7 +90,7 @@ export default async function BlogPostPage({
       </div>
 
       {related.length > 0 && (
-        <section className="mt-[160px] border-t border-graphite pt-[20px]">
+        <section className="mt-section border-t border-graphite pt-[20px]">
           <p className="mb-[48px] text-fog-gray">Aloqador maqolalar</p>
           <div className="grid gap-x-[16px] gap-y-[48px] md:grid-cols-2 lg:grid-cols-3">
             {related.map((p) => (

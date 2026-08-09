@@ -60,7 +60,7 @@ export default async function ServicesPage() {
             <StaggerItem key={s.slug}>
             <section
               id={s.slug}
-              className="flex h-full scroll-mt-[88px] flex-col gap-[24px] rounded-[10px] bg-soft-black p-[32px]"
+              className="flex h-full scroll-mt-[88px] flex-col gap-[24px] rounded-[10px] bg-soft-black p-card"
             >
               <div>
                 <h2 className="text-heading-sm font-medium text-bone-white">
@@ -93,8 +93,8 @@ export default async function ServicesPage() {
 
       {/* Bitta CTA. Ilgari har bir xizmatda "Shu xizmat kerak" tugmasi turardi —
           oltita takror, va tugma xizmat nomidan og'irroq ko'rinardi. */}
-      <section className="mt-[160px] border-t border-graphite pt-[120px] pb-[48px]">
-        <div className="grid gap-[80px] lg:grid-cols-2">
+      <section className="mt-section border-t border-graphite pt-section-sm pb-[48px]">
+        <div className="grid gap-[32px] lg:grid-cols-2 md:gap-[80px]">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
             <p className="mb-[24px] text-fog-gray">Aloqa</p>
             <h2 className="display max-w-[560px]">Qaysi biri kerakligini bilmaysizmi?</h2>

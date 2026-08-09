@@ -38,7 +38,10 @@ export default async function ProjectPage({
       <h1 className="display max-w-[900px]">{project.title}</h1>
 
       {/* Meta row */}
-      <div className="mt-[120px] grid gap-[48px] sm:grid-cols-2 lg:grid-cols-4">
+      {/* Spec-sheet: mobilda 2 ustun. Bittada to'rt yorliq 48px oraliq bilan
+          butun ekranni egallardi, holbuki bu qatorning vazifasi — bir ko'z
+          yugurtirishda "kim, qachon, nima" ga javob berish. */}
+      <div className="mt-section-sm grid grid-cols-2 gap-x-[16px] gap-y-[24px] sm:gap-[48px] lg:grid-cols-4">
         {[
           ["Mijoz", project.client],
           ["Yil", project.year],
@@ -53,7 +56,7 @@ export default async function ProjectPage({
       </div>
 
       {/* Cover */}
-      <div className="relative mt-[120px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black">
+      <div className="relative mt-section-sm aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black">
         <Image
           src={project.cover}
           alt={project.title}
@@ -65,7 +68,7 @@ export default async function ProjectPage({
       </div>
 
       {/* Brief / Solution */}
-      <div className="mt-[120px] grid gap-[48px] lg:grid-cols-2">
+      <div className="mt-section-sm grid gap-[32px] lg:grid-cols-2 md:gap-[48px]">
         <div>
           <p className="text-fog-gray">Muammo</p>
           <p className="mt-[16px] max-w-[560px] text-subheading text-bone-white">
@@ -82,8 +85,8 @@ export default async function ProjectPage({
 
       {/* Results */}
       {project.results && (
-        <div className="mt-[120px] border-t border-graphite pt-[48px]">
-          <div className="grid gap-[48px] sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-section-sm border-t border-graphite pt-[48px]">
+          <div className="grid grid-cols-2 gap-x-[16px] gap-y-[32px] sm:gap-[48px] lg:grid-cols-3">
             {project.results.map((r) => (
               <div key={r.label}>
                 <p className="text-fog-gray">{r.label}</p>
@@ -95,7 +98,7 @@ export default async function ProjectPage({
       )}
 
       {/* Gallery */}
-      <div className="mt-[120px] grid gap-[16px] md:grid-cols-2">
+      <div className="mt-section-sm grid gap-[16px] md:grid-cols-2">
         {project.gallery.map((src, i) => (
           <div
             key={src}
@@ -128,7 +131,7 @@ export default async function ProjectPage({
       {/* Keyingi loyiha — to'liq cover, hover'da nom chiqadi */}
       <Link
         href={`/portfolio/${next.slug}`}
-        className="group relative mt-[120px] block aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black"
+        className="group relative mt-section-sm block aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black"
       >
         <Image
           src={next.cover}

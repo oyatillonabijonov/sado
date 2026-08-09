@@ -20,8 +20,12 @@ export default function PortfolioGrid({
       {/* Chip'lar: ilgari filtr oddiy matn qatori edi va bosilishi mumkinligi
           ko'rinmasdi — faol variantni faqat kichik qizil nuqta ajratardi.
           Zamin bilan ular boshqariladigan element ekani o'qiladi. */}
+      {/* Mobilda o'ralmaydi, suriladi: beshta chip 375px da uch qatorga
+          tushib, to'rgacha yetguncha ekranning uchdan biri ketardi. Chetdan
+          chetgacha (`-mx` + `px` = gutter) — qirqilgan chip surish mumkinligini
+          o'zi aytadi. Desktopda avvalgidek o'raladi. */}
       <div
-        className="mb-[48px] flex flex-wrap gap-[8px]"
+        className="no-scrollbar mb-[48px] flex gap-[8px] max-md:-mx-[var(--gutter)] max-md:overflow-x-auto max-md:px-[var(--gutter)] md:flex-wrap"
         role="tablist"
         aria-label="Kategoriya filtri"
       >
@@ -31,7 +35,7 @@ export default function PortfolioGrid({
             role="tab"
             aria-selected={active === c}
             onClick={() => setActive(c)}
-            className={`cursor-pointer rounded-full px-[20px] py-[10px] transition-colors ${
+            className={`shrink-0 cursor-pointer rounded-full px-[20px] py-[10px] transition-colors ${
               active === c
                 ? "bg-bone-white text-pure-black"
                 : "bg-soft-black text-fog-gray hover:text-bone-white"

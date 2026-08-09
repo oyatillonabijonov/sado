@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/data/site";
+import { telHref, type SiteSettings } from "@/lib/site-format";
 
 function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
@@ -31,7 +32,9 @@ function ThemeToggle() {
     <button
       onClick={toggle}
       aria-label="Yorug'/qorong'i rejimni almashtirish"
-      className="cursor-pointer p-[8px] text-fog-gray transition-colors hover:text-bone-white"
+      /* Mobilda 44×44: 18px glif + 8px padding 34px berardi va barmoq uchun
+         kichik edi. Desktopda o'lcham o'zgarmaydi. */
+      className="flex size-[44px] cursor-pointer items-center justify-center text-fog-gray transition-colors hover:text-bone-white md:size-auto md:p-[8px]"
     >
       <span aria-hidden className="relative block size-[18px]">
         <svg
@@ -148,7 +151,10 @@ function LanguageSwitcher() {
       {open && (
         <ul
           role="listbox"
-          className="absolute left-0 top-full z-20 mt-[8px] min-w-[132px] overflow-hidden rounded-[10px] bg-soft-black py-[4px]"
+          /* Mobil menyuda tanlagich ekranning pastida turadi — pastga
+             ochilgan ro'yxat oynadan chiqib ketardi, shuning uchun u yerda
+             tepaga ochiladi. */
+          className="absolute left-0 bottom-full z-20 mb-[8px] min-w-[132px] overflow-hidden rounded-[10px] bg-soft-black py-[4px] md:bottom-auto md:top-full md:mb-0 md:mt-[8px]"
         >
           {LANGS.map((l) => (
             <li key={l.code}>
@@ -158,7 +164,7 @@ function LanguageSwitcher() {
                 lang={l.code}
                 aria-selected={l.code === lang}
                 onClick={() => choose(l.code)}
-                className={`flex w-full cursor-pointer items-baseline gap-[10px] px-[16px] py-[10px] text-left transition-colors hover:text-bone-white ${
+                className={`flex w-full cursor-pointer items-baseline gap-[10px] px-[16px] py-[12px] text-left transition-colors hover:text-bone-white md:py-[10px] ${
                   l.code === lang ? "text-bone-white" : "text-fog-gray"
                 }`}
               >
@@ -175,12 +181,24 @@ function LanguageSwitcher() {
   );
 }
 
-export default function Header() {
+export default function Header({ settings }: { settings: SiteSettings }) {
   const [open, setOpen] = useState(false);
+
+  /* Menyu ochilganda ortidagi sahifa surilib ketardi: barmoq overlay ustida
+     yursa ham skroll body'ga o'tib, yopilgach odam boshqa joyda qolardi. */
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-pure-black">
       <div className="shell flex h-[72px] items-center justify-between">
-        <Link href="/" onClick={() => setOpen(false)}>
+        <Link href="/" onClick={() => setOpen(false)} className="flex h-[44px] items-center">
           <Image src="/images/logo.svg" alt={site.name} width={354} height={135} className="h-[38px] w-auto" priority />
         </Link>
         <div className="hidden md:block">
@@ -201,33 +219,86 @@ export default function Header() {
           </nav>
           <ThemeToggle />
         </div>
-        <div className="flex items-center md:hidden">
+        {/* -mr: 44px maydon logotip qatorini o'ngga surib yubormasin — glif
+            o'z joyida qoladi, bosish maydoni esa chetga chiqadi. */}
+        <div className="-mr-[10px] flex items-center md:hidden">
           <ThemeToggle />
-          {/* 2x2 grid glyph — mobile menu trigger */}
           <button
-            aria-label="Menyu"
+            aria-label={open ? "Menyuni yopish" : "Menyu"}
+            aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="grid grid-cols-2 gap-[3px] p-[8px]"
+            className="flex size-[44px] cursor-pointer items-center justify-center text-bone-white"
           >
-            {[0, 1, 2, 3].map((i) => (
-              <span key={i} className="size-[5px] bg-bone-white" />
-            ))}
+            {/* Ochiq menyuda o'sha 2×2 glif qolsa, yopish yo'li ko'rinmasdi. */}
+            {open ? (
+              <svg
+                aria-hidden
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                className="size-[20px]"
+              >
+                <path d="M5 5l14 14M19 5L5 19" />
+              </svg>
+            ) : (
+              <span aria-hidden className="grid grid-cols-2 gap-[3px]">
+                {[0, 1, 2, 3].map((i) => (
+                  <span key={i} className="size-[5px] bg-bone-white" />
+                ))}
+              </span>
+            )}
           </button>
         </div>
       </div>
+
+      {/*
+       * To'liq ekranli menyu. Ilgari bu header ostidan tushadigan to'rt qatorli
+       * ro'yxat edi: ortidagi sahifa ko'rinib turardi, tegib ketilsa suriladi,
+       * va til tanlagich ham, aloqa ham u yerda yo'q edi — telefondagi odam
+       * uchun yagona navigatsiya nuqtasi shu bo'lsa-da.
+       */}
       {open && (
-        <nav className="shell flex flex-col gap-[24px] border-t border-graphite bg-pure-black py-[48px] md:hidden">
-          {site.nav.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className="text-heading-sm font-medium text-bone-white"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
+        <div className="fixed inset-x-0 top-[72px] bottom-0 flex flex-col overflow-y-auto overscroll-contain border-t border-graphite bg-pure-black md:hidden">
+          <nav className="shell flex flex-col pt-[24px]">
+            {site.nav.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="py-[14px] text-heading-sm font-medium text-bone-white"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Aloqa pastda: menyu ochgan odamning ikkinchi niyati — yozish. */}
+          <div className="shell mt-auto flex flex-col gap-[16px] border-t border-graphite py-[24px]">
+            <div className="-ml-[8px]">
+              {/* ponytail: desktopdagisidan alohida nusxa. Ikkalasi ham
+                  localStorage'dan o'qiydi, lekin bir vaqtda faqat bittasi
+                  ko'rinadi — holatni bo'lishish uchun context qo'shish shu
+                  bitta ko'rinmas qirra uchun ortiqcha. */}
+              <LanguageSwitcher />
+            </div>
+            <div className="flex flex-col">
+              <a
+                href={`mailto:${settings.email}`}
+                className="tap text-bone-white transition-colors hover:text-fog-gray"
+              >
+                {settings.email}
+              </a>
+              <a
+                href={telHref(settings.phone)}
+                className="tap text-bone-white transition-colors hover:text-fog-gray"
+              >
+                {settings.phone}
+              </a>
+            </div>
+          </div>
+        </div>
       )}
     </header>
   );

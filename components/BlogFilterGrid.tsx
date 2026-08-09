@@ -17,12 +17,15 @@ export default function BlogFilterGrid({
     active === "Barchasi" ? posts : posts.filter((p) => p.category === active);
   return (
     <div>
-      <div className="mb-[48px] flex flex-wrap gap-[16px]">
+      {/* Portfolio filtri bilan bir xil mexanika: mobilda o'ralmaydi, chetdan
+          chetgacha suriladi. `tap` esa 26px balandlikdagi matn havolasini
+          barmoq uchun 44px ga yetkazadi. Ko'rinish desktopda o'zgarmaydi. */}
+      <div className="no-scrollbar mb-[48px] flex gap-[16px] max-md:-mx-[var(--gutter)] max-md:overflow-x-auto max-md:px-[var(--gutter)] md:flex-wrap">
         {["Barchasi", ...categories].map((c) => (
           <button
             key={c}
             onClick={() => setActive(c)}
-            className={`cursor-pointer ${
+            className={`tap shrink-0 cursor-pointer ${
               active === c ? "text-bone-white" : "text-fog-gray hover:text-bone-white"
             }`}
           >

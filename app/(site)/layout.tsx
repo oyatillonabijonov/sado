@@ -66,7 +66,7 @@ export default async function RootLayout({
         </noscript>
       </head>
       <body>
-        <Header />
+        <Header settings={settings} />
         <main className="pt-[72px]">{children}</main>
         <Footer settings={settings} />
       </body>

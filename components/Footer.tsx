@@ -30,7 +30,8 @@ function Newsletter() {
       <button
         type="submit"
         aria-label="Obuna bo'lish"
-        className="shrink-0 cursor-pointer text-fog-gray transition-colors hover:text-bone-white"
+        /* O'q 16×26 edi — saytdagi eng kichik bosish maydoni. */
+        className="flex size-[44px] shrink-0 cursor-pointer items-center justify-end text-fog-gray transition-colors hover:text-bone-white"
       >
         <span aria-hidden>→</span>
       </button>
@@ -61,22 +62,28 @@ function LocalTime() {
    nomi kodda qoladi — ular kontent emas, tuzilma. */
 export default function Footer({ settings }: { settings: SiteSettings }) {
   return (
-    <footer className="mt-[240px] border-t border-graphite">
+    <footer className="mt-section-lg border-t border-graphite">
       <div className="shell py-[48px]">
-      <div className="grid gap-[48px] sm:grid-cols-2 lg:grid-cols-4">
-        <nav className="flex flex-col items-start gap-[12px]">
+      {/*
+       * Mobilda to'rt ustun bittaga tushib, footer 1363px — deyarli ikki
+       * ekran — bo'lib qolardi. Menyu va ijtimoiy tarmoqlar qisqa ro'yxatlar:
+       * ular yonma-yon sig'adi. Aloqa va newsletter to'liq kenglikda qoladi —
+       * email/telefon va input tor ustunda o'raladi.
+       */}
+      <div className="grid grid-cols-2 gap-x-[16px] gap-y-[40px] lg:grid-cols-4 md:gap-[48px]">
+        <nav className="flex flex-col items-start md:gap-[12px]">
           <p className="mb-[12px] text-fog-gray">Menyu</p>
           {site.nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-bone-white transition-colors hover:text-fog-gray"
+              className="tap text-bone-white transition-colors hover:text-fog-gray"
             >
               {item.label}
             </Link>
           ))}
         </nav>
-        <nav className="flex flex-col items-start gap-[12px]">
+        <nav className="flex flex-col items-start md:gap-[12px]">
           <p className="mb-[12px] text-fog-gray">Ijtimoiy tarmoqlar</p>
           {settings.socials.map((s) => (
             <a
@@ -84,7 +91,7 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
               href={s.href}
               target="_blank"
               rel="noreferrer"
-              className="group text-bone-white transition-colors hover:text-fog-gray"
+              className="tap group text-bone-white transition-colors hover:text-fog-gray"
             >
               {s.label}
               <span
@@ -96,24 +103,24 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
             </a>
           ))}
         </nav>
-        <div className="flex flex-col gap-[12px]">
+        <div className="col-span-2 flex flex-col md:col-span-1 md:gap-[12px]">
           <p className="mb-[12px] text-fog-gray">Aloqa</p>
           <a
             href={`mailto:${settings.email}`}
-            className="text-bone-white transition-colors hover:text-fog-gray"
+            className="tap self-start text-bone-white transition-colors hover:text-fog-gray"
           >
             {settings.email}
           </a>
           <a
             href={telHref(settings.phone)}
-            className="text-bone-white transition-colors hover:text-fog-gray"
+            className="tap self-start text-bone-white transition-colors hover:text-fog-gray"
           >
             {settings.phone}
           </a>
-          <p className="text-fog-gray">{settings.address}</p>
+          <p className="mt-[8px] text-fog-gray md:mt-0">{settings.address}</p>
         </div>
-        <div>
-          <p className="mb-[24px] text-fog-gray">Newsletter</p>
+        <div className="col-span-2 md:col-span-1">
+          <p className="mb-[12px] text-fog-gray md:mb-[24px]">Newsletter</p>
           <p className="mb-[16px] text-bone-white">
             Yangi loyihalar va fikrlar haqida obuna bo'ling
           </p>
@@ -121,16 +128,16 @@ export default function Footer({ settings }: { settings: SiteSettings }) {
         </div>
       </div>
 
-      <div className="mt-[120px] flex flex-col gap-[16px] border-t border-graphite pt-[16px] text-fog-gray md:flex-row md:items-center md:justify-between">
+      <div className="mt-section-sm flex flex-col gap-[8px] border-t border-graphite pt-[16px] text-fog-gray md:flex-row md:items-center md:justify-between md:gap-[16px]">
         <p>
           © {new Date().getFullYear()} {site.name}. Barcha huquqlar himoyalangan.
         </p>
         <LocalTime />
-        <div className="flex gap-[16px]">
-          <a href="#" className="transition-colors hover:text-bone-white">
+        <div className="flex gap-[24px] md:gap-[16px]">
+          <a href="#" className="tap transition-colors hover:text-bone-white">
             Cookie siyosati
           </a>
-          <a href="#" className="transition-colors hover:text-bone-white">
+          <a href="#" className="tap transition-colors hover:text-bone-white">
             Maxfiylik siyosati
           </a>
         </div>

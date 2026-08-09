@@ -17,14 +17,16 @@ export default function SectionHeading({
   lead?: string;
 }) {
   return (
-    <div className="mb-[64px] border-t border-graphite pt-[20px]">
+    <div className="mb-block border-t border-graphite pt-[20px]">
       <div className="flex flex-wrap items-baseline justify-between gap-x-[24px] gap-y-[16px]">
         {/* Kicker bo'lmasa ham bo'sh element qoladi: justify-between bitta
             bolada action'ni chapga tortib ketardi. */}
         <p className="text-fog-gray">{kicker}</p>
         {action}
       </div>
-      <div className="mt-[40px] grid gap-[24px] lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-end">
+      {/* 40px sarlavhagacha 1440px kanvasda o'lchangan. 375px da kicker,
+          sarlavha va lead uchgalasi ekranning yarmini bo'sh joyga berardi. */}
+      <div className="mt-[24px] grid gap-[16px] md:mt-[40px] md:gap-[24px] lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-end">
         <h2 className="heading">{children}</h2>
         {/* Seksiya nima uchun borligini bir jumlada aytadi — sarlavhaning
             o'zi buni ayta olmaydi va o'quvchi taxmin qilishga majbur bo'ladi. */}

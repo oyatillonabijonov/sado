@@ -16,20 +16,26 @@ export default function PortfolioGrid({
     active === "Barchasi" ? projects : projects.filter((p) => p.category === active);
   return (
     <div>
-      <div className="mb-[48px] flex flex-wrap gap-[16px]" role="tablist" aria-label="Kategoriya filtri">
+      {/* Chip'lar: ilgari filtr oddiy matn qatori edi va bosilishi mumkinligi
+          ko'rinmasdi — faol variantni faqat kichik qizil nuqta ajratardi.
+          Zamin bilan ular boshqariladigan element ekani o'qiladi. */}
+      <div
+        className="mb-[48px] flex flex-wrap gap-[8px]"
+        role="tablist"
+        aria-label="Kategoriya filtri"
+      >
         {(["Barchasi", ...categories] as const).map((c) => (
           <button
             key={c}
             role="tab"
             aria-selected={active === c}
             onClick={() => setActive(c)}
-            className={`cursor-pointer ${
-              active === c ? "text-bone-white" : "text-fog-gray hover:text-bone-white"
+            className={`cursor-pointer rounded-full px-[20px] py-[10px] transition-colors ${
+              active === c
+                ? "bg-bone-white text-pure-black"
+                : "bg-soft-black text-fog-gray hover:text-bone-white"
             }`}
           >
-            {active === c && (
-              <span aria-hidden className="mr-[8px] inline-block size-[6px] rounded-full bg-scarlet-signal align-middle" />
-            )}
             {c}
           </button>
         ))}

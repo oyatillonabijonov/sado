@@ -14,7 +14,12 @@ export default async function PortfolioPage() {
   const projects = await getProjects();
   return (
     <div className="shell pt-[120px]">
-      <SectionHeading kicker="Ishlarimiz">Portfolio</SectionHeading>
+      <SectionHeading
+        kicker="Ishlarimiz"
+        lead="Brending, veb, UI/UX va print. Har bir keys strategiyadan yechimgacha bo'lgan yo'lni ko'rsatadi."
+      >
+        Portfolio
+      </SectionHeading>
       {projects.length === 0 ? (
         <EmptyState
           title="Ishlar tez orada shu yerda bo'ladi."

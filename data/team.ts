@@ -1,16 +1,19 @@
 export interface TeamMember {
   name: string;
   role: string;
-  photo: string;
+  /** Yo'q bo'lsa bosh harflar chiqadi. Placeholder surat qo'ymang: ular
+   *  ichida hardcode qilingan fon bilan keladi va light mode'da qora
+   *  plitaga aylanadi. */
+  photo?: string;
 }
 
 export const team: TeamMember[] = [
-  { name: "Aziz Rahimov", role: "Asoschi, kreativ direktor", photo: "/images/team/1.svg" },
-  { name: "Malika Yusupova", role: "Dizayn direktori", photo: "/images/team/2.svg" },
-  { name: "Jasur Karimov", role: "Katta brend dizayneri", photo: "/images/team/3.svg" },
-  { name: "Nilufar Azimova", role: "UX yetakchisi", photo: "/images/team/4.svg" },
-  { name: "Sardor Toshev", role: "Frontend muhandisi", photo: "/images/team/5.svg" },
-  { name: "Zilola Nazarova", role: "Loyiha menejeri", photo: "/images/team/6.svg" },
+  { name: "Aziz Rahimov", role: "Asoschi, kreativ direktor" },
+  { name: "Malika Yusupova", role: "Dizayn direktori" },
+  { name: "Jasur Karimov", role: "Katta brend dizayneri" },
+  { name: "Nilufar Azimova", role: "UX yetakchisi" },
+  { name: "Sardor Toshev", role: "Frontend muhandisi" },
+  { name: "Zilola Nazarova", role: "Loyiha menejeri" },
 ];
 
 export const values = [

@@ -41,7 +41,7 @@ o'giradi: panelda `BlockEditor`, saytda `toText` → `MDXRemote`. `panel/lexical
 o'girmani qo'riqlaydi — **o'chirmang**, undagi drift mijozning yozganini yo'qotadi.
 
 **Panel** (`/panel`). Ekranlar qo'lda yozilgan, sxemadan generatsiya qilinmagan: `panel/` —
-toolkit (`ui.tsx`, `ItemList`, `MediaPicker`, `BlockEditor`, `auth.ts`), `app/panel/(app)/` —
+toolkit (`ui.tsx`, `ItemList`, `ImageDrop`, `BlockEditor`, `auth.ts`), `app/panel/(app)/` —
 ekranlar. Kolleksiya qo'shish = 4 ta fayl (`<x>-data.ts`, `<x>-actions.ts`, `<X>Form.tsx`,
 `app/panel/(app)/<nom>/`) + `Nav.tsx` da bitta qator. Har bir server action `requireUser()` bilan
 boshlanadi — action o'z HTTP kirish nuqtasi, layout'ning qorovuli uni qamramaydi.
@@ -72,9 +72,10 @@ formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `sa
 
 **Umumiy util klasslar** (`globals.css`, komponent emas):
 - `.btn-fill` — tugma hover'da chapdan o'ngga to'ladigan fill animatsiya. `RedDotLink` va formadagi submit shuni ishlatadi.
-- `.hero-frame` + `hero-loop` — hero'dagi 5 ta rasm (`public/sd1–sd5`) 0.5s CSS loop bilan almashadi.
+- `.hero-frame` + `hero-loop` — hero'dagi 5 ta rasm (`public/sd1–sd5`) 15s CSS loop bilan almashadi (kadr boshiga 3s).
 - `.prose-oker` — blog maqola matni uchun long-form stillar.
-- `.sado-marquee` — mijozlar logo qatori.
+- `.sado-marquee` — mijozlar logo qatori; `.sado-rail` — otzivlar qatori (sekinroq, hover'da to'xtaydi).
+- `.shell` / `.bleed` — sahifa gutteri va undan chetga chiqish, `--gutter` va `--content` orqali.
 
 **Interaktiv komponentlar `"use client"`.** `Header` (toggle+soat+menyu), `ContactForm`, `Select` (native `<select>` o'rniga dizayn tizimiga mos custom dropdown), `Stats` (IntersectionObserver bilan count-up). Qolganlari server komponent.
 

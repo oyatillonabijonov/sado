@@ -34,7 +34,7 @@ export default async function ProjectPage({
   const { next } = await adjacentProjects(slug);
 
   return (
-    <article className="shell pt-[120px]">
+    <article className="shell pt-[48px]">
       <h1 className="display max-w-[900px]">{project.title}</h1>
 
       {/* Meta row */}

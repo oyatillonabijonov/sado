@@ -15,7 +15,7 @@ export default async function ServicesPage() {
   const services = await getServices();
 
   return (
-    <div className="shell pt-[120px]">
+    <div className="shell pt-[48px]">
       <SectionHeading
         kicker="Xizmatlar"
         lead="Ko'pincha bularning bir nechtasi bitta loyihada birga ketadi — qaysi biri kerakligini o'zimiz aytamiz."

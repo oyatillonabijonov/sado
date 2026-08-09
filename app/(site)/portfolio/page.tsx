@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default async function PortfolioPage() {
   const projects = await getProjects();
   return (
-    <div className="shell pt-[120px]">
+    <div className="shell pt-[48px]">
       <SectionHeading
         kicker="Ishlarimiz"
         lead="Brending, veb, UI/UX va print. Har bir keys strategiyadan yechimgacha bo'lgan yo'lni ko'rsatadi."

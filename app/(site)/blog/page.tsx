@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default async function BlogPage() {
   const [posts, categories] = await Promise.all([getAllPosts(), getBlogCategories()]);
   return (
-    <div className="shell pt-[120px]">
+    <div className="shell pt-[48px]">
       <SectionHeading kicker="Fikrlar">Blog</SectionHeading>
       {posts.length === 0 ? (
         <EmptyState

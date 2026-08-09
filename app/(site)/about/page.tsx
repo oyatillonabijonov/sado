@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="shell pt-[120px]">
+    <div className="shell pt-[48px]">
       <SectionHeading
         kicker="Agentlik"
         lead="Mustaqil, kichik va ataylab shunday: har bir loyihada shu sahifadagi odamlar ishlaydi."

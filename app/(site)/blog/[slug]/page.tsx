@@ -36,7 +36,7 @@ export default async function BlogPostPage({
   const related = await getRelatedPosts(slug, post.meta.category);
 
   return (
-    <article className="shell pt-[120px]">
+    <article className="shell pt-[48px]">
       {/* Sarlavha — saytning chapga tekislangan tizimida */}
       <header className="border-t border-graphite pt-[20px]">
         <Link href="/blog" className="text-fog-gray hover:text-bone-white">

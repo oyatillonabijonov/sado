@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="shell pt-[120px]">
+    <div className="shell pt-[48px]">
       <SectionHeading kicker="Aloqa">
         Loyihangizni muhokama qilamiz
       </SectionHeading>

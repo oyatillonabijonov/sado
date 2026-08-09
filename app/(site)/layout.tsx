@@ -11,6 +11,21 @@ const interTight = Inter_Tight({
   variable: "--font-sans",
 });
 
+/**
+ * Butun sayt so'rov paytida render qilinadi — statik emas.
+ *
+ * Sabab Dockerfile'da: `next build` prodda bazani ko'rmaydi (volume hali
+ * yo'q), shuning uchun `cp schema.sqlite db.sqlite` — 0 qatorli sxema. Statik
+ * qurilgan sahifalar o'sha bo'sh bazadan yozilardi va yangi konteyner mijoz
+ * kiritgan hamma narsani "yo'q" deb ko'rsatardi: kontent joyida, HTML esa
+ * build paytidagi bo'shligi bilan qotgan. `revalidatePath` buni faqat mijoz
+ * navbatdagi safar biror narsani saqlaganda tuzatardi.
+ *
+ * Narxi arzimas: SQLite lokal fayl, Payload konteyner umrida bir marta init
+ * bo'ladi. Rasm optimizatsiyasi keshi esa bundan mustaqil.
+ */
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSettings();
   return {

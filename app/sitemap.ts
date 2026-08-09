@@ -3,6 +3,10 @@ import { getProjects } from "@/lib/content";
 import { getAllPosts } from "@/lib/blog";
 import { site } from "@/data/site";
 
+/* Sahifalar kabi so'rov paytida: build bazani ko'rmaydi va statik sitemap
+   Google'ga faqat beshta sahifadan iborat sayt ko'rsatardi. */
+export const dynamic = "force-dynamic";
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = ["", "/portfolio", "/services", "/about", "/blog"].map(
     (p) => ({

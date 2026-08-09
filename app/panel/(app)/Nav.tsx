@@ -32,7 +32,7 @@ import {
 const GROUPS = [
   {
     label: null,
-    items: [{ href: '/panel', label: 'Boshqaruv', Icon: InboxIcon }],
+    items: [{ href: '/panel', label: 'So‘rovlar', Icon: InboxIcon }],
   },
   {
     label: 'Sayt',

@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import { getPayload } from "payload";
+import config from "@payload-config";
 import { contactSchema } from "@/lib/contact";
 
 export async function POST(req: Request) {
@@ -20,8 +22,20 @@ export async function POST(req: Request) {
     );
   }
 
-  // TODO: email integratsiyasi (Resend / Nodemailer). Hozircha log.
-  console.log("[SADO contact]", parsed.data);
+  /* Local API — `submissions` da barcha access yopiq, tashqaridan yozib
+     bo'lmaydi. Yozuv yiqilsa foydalanuvchiga xato qaytadi: "yuborildi" deb
+     ko'rsatib so'rovni yo'qotish — mijoz kutgan qo'ng'iroqni yo'qotish. */
+  try {
+    const payload = await getPayload({ config });
+    await payload.create({ collection: "submissions", data: parsed.data });
+  } catch (err) {
+    console.error("[SADO contact] saqlanmadi", err);
+    return NextResponse.json(
+      { ok: false, error: "Serverda xatolik. Iltimos, qayta urinib ko'ring." },
+      { status: 500 }
+    );
+  }
 
+  // TODO: xabarnoma (email/Telegram) — hozircha panelda ko'rinadi.
   return NextResponse.json({ ok: true });
 }

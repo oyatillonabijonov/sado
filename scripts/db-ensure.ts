@@ -8,14 +8,18 @@ import { copyFileSync, existsSync } from "node:fs";
  * konteynerdagi bun ostida ishonchli ishlaydi (db-init.ts esa yiqilardi).
  *
  * 1. Volume bo'sh (baza yo'q) → image ichidagi sxema-only nusxani ko'chiradi.
- * 2. Baza bor, lekin schema.sqlite'da bo'lган jadval unда yo'q (sxema eskirgan):
- *    - foydalanuvchi 0 bo'lsa → bazani yangi sxema bilan almashtiradi (xavfsiz,
- *      kontent yo'q);
- *    - foydalanuvchi bor bo'lsa → tegmaydi, ogohlantiradi (qo'lda migratsiya
- *      kerak — kontent yo'qolmasin).
+ * 2. Baza bor, lekin schema.sqlite'da bo'lган jadval unда yo'q (yangi
+ *    kolleksiya qo'shilgan) → o'sha jadval(lar)ning CREATE'ini sxemadan o'qib
+ *    bajaradi. Mavjud jadvallarga tegmaydi, ya'ni kontent ham, foydalanuvchilar
+ *    ham joyida qoladi.
  *
- * Ustun-ichidagi o'zgarishlarni aniqlamaydi, faqat yangi jadvallarni — Payload
- * yangi kolleksiya/relation qo'shganda odatda yangi jadval paydo bo'ladi.
+ * Ilgari bu shox butun faylni almashtirardi va shuning uchun faqat baza bo'sh
+ * (0 foydalanuvchi) bo'lganda ishlardi — birinchi hisob ochilgan zahoti har
+ * qanday yangi kolleksiya qo'lda migratsiya talab qilib qolardi. Jadvalni
+ * qo'shish esa yo'qotadigan hech narsasi yo'q amal.
+ *
+ * Hamon aniqlamaydigan narsa — MAVJUD jadvaldagi ustun o'zgarishi (maydon
+ * qo'shildi/nomi o'zgardi). Unisi qo'lda ALTER talab qiladi.
  */
 
 const uri = process.env.DATABASE_URI || "file:/app/data/db.sqlite";
@@ -40,21 +44,19 @@ if (!existsSync(LIVE)) {
   const missing = [...schema].filter((t) => !live.has(t));
 
   if (missing.length) {
-    let users = 0;
-    if (live.has("users")) {
-      const db = new Database(LIVE, { readonly: true });
-      users = (db.query("select count(*) as c from users").get() as { c: number }).c;
-      db.close();
+    const src = new Database(SCHEMA, { readonly: true });
+    const target = new Database(LIVE);
+    for (const table of missing) {
+      // `order by type desc` — 'table' 'index'dan oldin keladi, ya'ni indeks
+      // o'zi tegishli jadval yaratilgandan keyin quriladi.
+      const rows = src
+        .query("select sql from sqlite_master where tbl_name = ? and sql is not null order by type desc")
+        .all(table) as { sql: string }[];
+      for (const row of rows) target.run(row.sql);
     }
-    if (users === 0) {
-      copyFileSync(SCHEMA, LIVE);
-      console.log(`[db-ensure] Bo'sh baza — sxema yangilandi (yangi: ${missing.join(", ")}).`);
-    } else {
-      console.warn(
-        `[db-ensure] Sxema eskirgan, lekin ${users} foydalanuvchi bor — qo'lda migratsiya kerak. ` +
-          `Yetishmayotgan jadvallar: ${missing.join(", ")}`,
-      );
-    }
+    target.close();
+    src.close();
+    console.log(`[db-ensure] Yangi jadval(lar) qo'shildi: ${missing.join(", ")}`);
   }
 }
 

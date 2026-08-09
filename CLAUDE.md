@@ -101,12 +101,14 @@ o'qish uchun `cp schema.sqlite db.sqlite`; SIGTRAP-on-exit `.next/BUILD_ID` bila
 tashqarida ishga tushirib bo'lmaydi (bun ostida payload CLI/tsx va lexical yiqiladi), shuning
 uchun **sxema `schema.sqlite`** — sxema-only, 0 qatorli SQLite repoda commit qilingan.
 `scripts/db-ensure.ts` (bun:sqlite, payload'siz) entrypoint'da: bo'sh volume'ga sxemani
-ko'chiradi; baza eskirgan (jadval yetishmayapti) va **0 foydalanuvchi** bo'lsa yangilaydi;
-kontent bor bo'lsa tegmaydi. **Kolleksiya/global o'zgarsa:** `bunx payload generate:types`
-(payload-types.ts, u ham commit qilinadi) + `schema.sqlite` ni qayta yarat
-(`NODE_ENV=development DATABASE_URI=file:./schema.sqlite bun scripts/db-init.ts`). Mavjud
-kontentli prod uchun ustun-o'zgarishlar qo'lda migratsiya talab qiladi (db-ensure faqat yangi
-jadvalni aniqlaydi). Baza `/app/data`, rasmlar `/app/media` — Coolify volume'lari. Repoga push
+ko'chiradi; sxemada bor jadval bazada yo'q bo'lsa (yangi kolleksiya) o'sha jadvalning
+CREATE'ini bajaradi — mavjud jadvallarga tegmaydi, ya'ni kontent ham, foydalanuvchilar ham
+joyida qoladi (`scripts/db-ensure.test.ts` shuni qo'riqlaydi). **Kolleksiya/global
+o'zgarsa:** `bunx payload generate:types` (payload-types.ts, u ham commit qilinadi) +
+`schema.sqlite` ni qayta yarat
+(`rm schema.sqlite && NODE_ENV=development DATABASE_URI=file:./schema.sqlite bun scripts/db-init.ts`).
+Aniqlanmaydigan yagona narsa — **mavjud jadvaldagi ustun o'zgarishi** (maydon qo'shildi yoki
+nomi o'zgardi); u prodda qo'lda ALTER talab qiladi. Baza `/app/data`, rasmlar `/app/media` — Coolify volume'lari. Repoga push
 = avtodeploy (GitHub App webhook).
 
 **Lokalizatsiya o'chirilgan.** Header'dagi til tanlagich hozircha faqat `<html lang>` ni
@@ -144,7 +146,12 @@ paneldan kelib o'zgargani uchun qat'iy N-kadrli CSS loop yaramaydi.
 
 **Interaktiv komponentlar `"use client"`.** `Header` (toggle+soat+menyu), `ContactForm`, `Select` (native `<select>` o'rniga dizayn tizimiga mos custom dropdown), `Stats` (IntersectionObserver bilan count-up). Qolganlari server komponent.
 
-**Contact form.** `ContactForm` (client, zod validatsiya) → `POST /api/contact` (`lib/contact.ts` dagi bir xil `contactSchema` bilan qayta tekshiradi). Route hozircha faqat `console.log` qiladi — email integratsiyasi TODO. Forma uch joyda: bosh sahifa CTA, `/services` va `/about#aloqa`. Alohida `/contact` sahifasi yo'q — `app/(site)/contact/route.ts` eski havolalarni `/about#aloqa` ga yo'naltiradi.
+**Contact form.** `ContactForm` (client, zod validatsiya) → `POST /api/contact` (`lib/contact.ts` dagi bir xil `contactSchema` bilan qayta tekshiradi). Route so'rovni `submissions` kolleksiyasiga yozadi va panelning bosh ekranida
+(`/panel`) ro'yxat bo'lib chiqadi — xabarnoma (email/Telegram) hali TODO.
+`submissions` da **barcha `access` yopiq**: bu yerda odamlarning telefon
+raqamlari turadi va REST API ularni aks holda `/api/submissions` da ochib
+qo'yardi. Forma Local API orqali yozadi, panel esa `requireUser()` ortidan
+o'qiydi — ikkalasi ham access'dan o'tmaydi. Forma uch joyda: bosh sahifa CTA, `/services` va `/about#aloqa`. Alohida `/contact` sahifasi yo'q — `app/(site)/contact/route.ts` eski havolalarni `/about#aloqa` ga yo'naltiradi.
 
 ## Til / konvensiyalar
 

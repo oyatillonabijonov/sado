@@ -1,7 +1,7 @@
 "use client";
 
 import { getImageProps } from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 
 /**
@@ -45,13 +45,47 @@ export default function HeroSlideshow({
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
   const [rest, setRest] = useState(false);
+  const first = useRef<HTMLImageElement>(null);
   const shown = rest ? images : images.slice(0, 1);
 
+  /*
+   * Qolgan kadrlar birinchisi yuklangach mount bo'ladi — lekin buni `onLoad`
+   * bilan kutib bo'lmaydi.
+   *
+   * React `onLoad` ni faqat hydration paytida ulaydi. Rasm undan oldin
+   * yuklanib bo'lsa `load` hodisasi allaqachon o'tib ketgan bo'ladi va handler
+   * hech qachon chaqirilmaydi: `rest` `false` bo'lib qoladi, ikkinchi kadr
+   * mount bo'lmaydi, interval boshlanmaydi — hero birinchi rasmda muzlab
+   * qoladi. Dev'da ko'rinmaydi (rasm sekin optimizatsiya qilinadi, hydration
+   * ulguradi), prodda esa odatiy hol: HTML tez keladi, LCP kadri `priority`
+   * bilan preload qilinadi va takroriy tashrifda u keshdan chiqadi.
+   *
+   * Shuning uchun holat hodisadan emas, `img.complete` dan o'qiladi.
+   * `error` ham tinglanadi: bitta rasm yuklanmagani butun slayd-shouni
+   * o'ldirmasin.
+   */
   useEffect(() => {
-    if (!rest || images.length <= 1) return;
+    if (reduce) return;
+    const img = first.current;
+    if (!img) return;
+    if (img.complete) {
+      setRest(true);
+      return;
+    }
+    const arm = () => setRest(true);
+    img.addEventListener("load", arm);
+    img.addEventListener("error", arm);
+    return () => {
+      img.removeEventListener("load", arm);
+      img.removeEventListener("error", arm);
+    };
+  }, [reduce]);
+
+  useEffect(() => {
+    if (reduce || !rest || images.length <= 1) return;
     const id = setInterval(() => setActive((a) => (a + 1) % images.length), 3000);
     return () => clearInterval(id);
-  }, [rest, images.length]);
+  }, [reduce, rest, images.length]);
 
   return (
     <>
@@ -85,7 +119,7 @@ export default function HeroSlideshow({
             <img
               {...desktop}
               aria-hidden
-              onLoad={i === 0 ? () => setRest(!reduce) : undefined}
+              ref={i === 0 ? first : undefined}
               className="object-cover transition-opacity duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
               style={{ ...desktop.style, opacity: i === active ? 1 : 0 }}
             />

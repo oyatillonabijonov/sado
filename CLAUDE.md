@@ -23,6 +23,13 @@ bun scripts/seed.ts     # bo'sh bazani boshlang'ich kontent bilan to'ldirish
 Verifikatsiya = `bunx tsc --noEmit` + `bun test` + brauzerda ko'zdan kechirish. Seed va dev
 server bir vaqtda ishlamaydi — ikkalasi ham SQLite sxemasini push qiladi va bir-birini kutib qoladi.
 
+**Hydration bilan bog'liq narsani dev'da tekshirmang.** `.claude/launch.json` da
+`prod` konfiguratsiyasi bor (`bun run start`, port 3006): `bun run build` dan keyin
+shuni oching va sahifani **ikki marta** yuklang. Dev'da rasm har safar qaytadan
+optimizatsiya qilinadi va sekin keladi, ya'ni hydration doim ulguradi — keshdan
+kelgan rasm bilan bog'liq xatolar faqat shu yerda ko'rinadi (`HeroSlideshow` ni
+qarang).
+
 ## Arxitektura
 
 **Ikkita root layout.** `app/(site)/` — publik sayt (Header/Footer/globals.css), `app/panel/` —

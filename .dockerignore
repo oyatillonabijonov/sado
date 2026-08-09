@@ -1,0 +1,19 @@
+# Image ichida bulardan yangisi quriladi — lokal nusxalari kirmasin.
+node_modules
+.next
+.git
+.env
+.env*.local
+
+# Doimiy volume'larda yashaydi, image'ga kirmasligi kerak.
+db.sqlite
+media
+
+# Kesh va generatsiya
+*.tsbuildinfo
+payload-types.ts
+.DS_Store
+
+# Deploy'ga aloqasiz
+.claude
+scratchpad

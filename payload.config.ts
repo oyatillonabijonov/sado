@@ -39,9 +39,18 @@ export default buildConfig({
       })
     : undefined,
   secret: process.env.PAYLOAD_SECRET || "",
-  // ponytail: fayl-baza — server ham, connection string ham kerak emas.
-  // Vercel'ga chiqarilsa disk vaqtinchalik: DATABASE_URI ni Turso/Postgres'ga almashtiring.
-  db: sqliteAdapter({ client: { url: process.env.DATABASE_URI || "file:./db.sqlite" } }),
+  // ponytail: fayl-baza — server ham, connection string ham kerak emas. Prodda
+  // (Coolify) doimiy volume'da yashaydi. Vercel kabi vaqtinchalik diskli joyda
+  // ishlamaydi — o'sha yerda DATABASE_URI ni Turso/Postgres'ga almashtiring.
+  //
+  // push: true — sxemani har init'da bazaga sinxronlaydi. Busiz prodda
+  // (NODE_ENV=production) Payload sxema push qilmaydi va bo'sh volume'dagi
+  // baza jadvalsiz qolib, sayt ishlamaydi. Migratsiya kerak bo'lsa (xavfsiz
+  // ustun o'chirish) push'ni o'chirib `payload migrate` ga o'tiladi.
+  db: sqliteAdapter({
+    client: { url: process.env.DATABASE_URI || "file:./db.sqlite" },
+    push: true,
+  }),
   // ponytail: localization o'chirilgan — sayt bitta tilda chiqadi. Kerak bo'lganda
   // shu yerga `localization: { locales: ["uz","ru","en"], defaultLocale: "uz" }`
   // va maydonlarga `localized: true` qo'shiladi.

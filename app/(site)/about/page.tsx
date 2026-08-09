@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import RedDotLink from "@/components/RedDotLink";
+import ContactForm from "@/components/ContactForm";
 import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
 import { team, values } from "@/data/team";
+import { getSettings } from "@/lib/settings";
+import { telHref } from "@/lib/site-format";
 
 export const metadata: Metadata = {
   title: "Biz haqimizda",
@@ -11,7 +13,8 @@ export const metadata: Metadata = {
     "SADO — 2018-yildan beri Toshkentda ishlaydigan mustaqil dizayn agentligi.",
 };
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const settings = await getSettings();
   return (
     <div className="shell pt-[48px]">
       <SectionHeading
@@ -105,10 +108,47 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="mt-[160px] border-t border-graphite pt-[120px] pb-[48px]">
-        <h2 className="display max-w-[900px]">Jamoamiz bilan ishlang.</h2>
-        <div className="mt-[48px]">
-          <RedDotLink href="/contact">Bog'lanish</RedDotLink>
+      {/* Aloqa — ilgari alohida /contact sahifasi edi. Bitta forma va uchta
+          qator uchun alohida sahifa navigatsiyada joy egallardi, mazmunan esa
+          "biz kimmiz" bilan bir joyda turishi tabiiyroq. `id` bo'sh holatlar va
+          boshqa sahifalardagi havolalar shu yerga tushishi uchun. */}
+      <section
+        id="aloqa"
+        className="mt-[160px] scroll-mt-[88px] border-t border-graphite pt-[120px] pb-[48px]"
+      >
+        <div className="grid gap-[80px] lg:grid-cols-2">
+          <div className="lg:sticky lg:top-[120px] lg:self-start">
+            <p className="mb-[24px] text-fog-gray">Aloqa</p>
+            <h2 className="display max-w-[560px]">Jamoamiz bilan ishlang.</h2>
+            <p className="mt-[32px] max-w-[46ch] text-fog-gray">
+              Vazifangizni qisqacha yozing — bir ish kuni ichida javob beramiz.
+            </p>
+            <div className="mt-[48px] flex flex-col gap-[8px]">
+              <a href={`mailto:${settings.email}`} className="text-fog-gray hover:text-bone-white">
+                {settings.email}
+              </a>
+              <a href={telHref(settings.phone)} className="text-fog-gray hover:text-bone-white">
+                {settings.phone}
+              </a>
+              <p className="text-fog-gray">{settings.address}</p>
+            </div>
+            <div className="mt-[32px] flex flex-wrap gap-x-[24px] gap-y-[8px]">
+              {settings.socials.map((s) => (
+                <a
+                  key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-fog-gray hover:text-bone-white"
+                >
+                  {s.label} ↗
+                </a>
+              ))}
+            </div>
+          </div>
+          <div className="max-w-[640px]">
+            <ContactForm />
+          </div>
         </div>
       </section>
     </div>

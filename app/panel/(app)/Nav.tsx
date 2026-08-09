@@ -3,7 +3,14 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/panel/session-actions';
-import { ArticleIcon, ImageIcon, InboxIcon, LayersIcon, TagIcon } from '@/panel/nav-icons';
+import {
+  ArticleIcon,
+  BuildingIcon,
+  ImageIcon,
+  InboxIcon,
+  LayersIcon,
+  TagIcon,
+} from '@/panel/nav-icons';
 
 /**
  * The rail, on obsidian.
@@ -34,6 +41,7 @@ const GROUPS = [
       { href: '/panel/xizmatlar', label: 'Xizmatlar', Icon: TagIcon },
       { href: '/panel/maqolalar', label: 'Maqolalar', Icon: ArticleIcon },
       { href: '/panel/rasmlar', label: 'Rasmlar', Icon: ImageIcon },
+      { href: '/panel/sozlamalar', label: 'Sozlamalar', Icon: BuildingIcon },
     ],
   },
 ] as const;

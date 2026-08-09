@@ -47,7 +47,7 @@ export default async function ServicesPage() {
         <EmptyState
           title="Xizmatlar ro'yxati yangilanmoqda."
           hint="Nima kerakligini yozib qoldiring — to'g'ridan-to'g'ri javob beramiz."
-          action={{ href: "/contact", label: "Bog'lanish" }}
+          action={{ href: "/about#aloqa", label: "Bog'lanish" }}
         />
       ) : (
         /* Har biri alohida karta va hammasi bitta ko'rinishda.

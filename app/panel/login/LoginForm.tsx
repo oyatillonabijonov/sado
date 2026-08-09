@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { signIn, type SignInState } from '@/panel/session-actions';
@@ -16,6 +17,13 @@ export function LoginForm() {
       {state.error && <p className="text-body-sm text-ember">{state.error}</p>}
 
       <Submit />
+
+      <Link
+        href="/panel/parol"
+        className="text-body-sm text-pebble transition-colors hover:text-obsidian"
+      >
+        Parolni unutdingizmi?
+      </Link>
     </form>
   );
 }

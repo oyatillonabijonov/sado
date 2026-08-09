@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { site } from "@/data/site";
+import { telHref, type SiteSettings } from "@/lib/site-format";
 
 function Newsletter() {
   const [status, setStatus] = useState<"idle" | "done">("idle");
@@ -56,7 +57,9 @@ function LocalTime() {
   return <span suppressHydrationWarning>Toshkent {time}</span>;
 }
 
-export default function Footer() {
+/* Aloqa ma'lumotlari va ijtimoiy tarmoqlar paneldan keladi; menyu va sayt
+   nomi kodda qoladi — ular kontent emas, tuzilma. */
+export default function Footer({ settings }: { settings: SiteSettings }) {
   return (
     <footer className="mt-[240px] border-t border-graphite">
       <div className="shell py-[48px]">
@@ -75,7 +78,7 @@ export default function Footer() {
         </nav>
         <nav className="flex flex-col items-start gap-[12px]">
           <p className="mb-[12px] text-fog-gray">Ijtimoiy tarmoqlar</p>
-          {site.socials.map((s) => (
+          {settings.socials.map((s) => (
             <a
               key={s.label}
               href={s.href}
@@ -96,18 +99,18 @@ export default function Footer() {
         <div className="flex flex-col gap-[12px]">
           <p className="mb-[12px] text-fog-gray">Aloqa</p>
           <a
-            href={`mailto:${site.email}`}
+            href={`mailto:${settings.email}`}
             className="text-bone-white transition-colors hover:text-fog-gray"
           >
-            {site.email}
+            {settings.email}
           </a>
           <a
-            href={`tel:${site.phone.replace(/\s/g, "")}`}
+            href={telHref(settings.phone)}
             className="text-bone-white transition-colors hover:text-fog-gray"
           >
-            {site.phone}
+            {settings.phone}
           </a>
-          <p className="text-fog-gray">{site.address}</p>
+          <p className="text-fog-gray">{settings.address}</p>
         </div>
         <div>
           <p className="mb-[24px] text-fog-gray">Newsletter</p>

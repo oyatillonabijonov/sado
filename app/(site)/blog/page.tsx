@@ -18,7 +18,7 @@ export default async function BlogPage() {
         <EmptyState
           title="Birinchi maqola yozilmoqda."
           hint="Dizayn va brending haqidagi kuzatuvlarimizni shu yerda chop etamiz."
-          action={{ href: "/contact", label: "Bog'lanish" }}
+          action={{ href: "/about#aloqa", label: "Bog'lanish" }}
         />
       ) : (
         <BlogFilterGrid posts={posts} categories={categories} />

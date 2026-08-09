@@ -6,6 +6,7 @@
       "name": "sado-agency",
       "dependencies": {
         "@payloadcms/db-sqlite": "3.87.0",
+        "@payloadcms/email-nodemailer": "3.87.0",
         "@payloadcms/next": "3.87.0",
         "@payloadcms/richtext-lexical": "3.87.0",
         "@react-three/fiber": "^9.0.0",
@@ -338,6 +339,8 @@
     "@payloadcms/db-sqlite": ["@payloadcms/db-sqlite@3.87.0", "", { "dependencies": { "@libsql/client": "0.14.0", "@payloadcms/drizzle": "3.87.0", "console-table-printer": "2.12.1", "drizzle-kit": "0.31.7", "drizzle-orm": "0.45.2", "prompts": "2.4.2", "to-snake-case": "1.0.0", "uuid": "13.0.2" }, "peerDependencies": { "payload": "3.87.0" } }, "sha512-pbefxzHDUoZ/FZxNzO5yjF/so/tLTZQ+9xECWks/c+nOFxlARJMjArR3PjmFlfkom/9lFQGjn/V56t2CN636ew=="],
 
     "@payloadcms/drizzle": ["@payloadcms/drizzle@3.87.0", "", { "dependencies": { "console-table-printer": "2.12.1", "dequal": "2.0.3", "drizzle-orm": "0.45.2", "prompts": "2.4.2", "to-snake-case": "1.0.0", "uuid": "13.0.2" }, "peerDependencies": { "payload": "3.87.0" } }, "sha512-q0hbfPRYKlbdHDfFDLfQ1jgy+WFU2ED9LPTz0MftIYa34nY6xWCH9z71w44+EzdjWuO01xx9kJGMmo9aVpwIVQ=="],
+
+    "@payloadcms/email-nodemailer": ["@payloadcms/email-nodemailer@3.87.0", "", { "dependencies": { "nodemailer": "^9.0.1" }, "peerDependencies": { "payload": "3.87.0" } }, "sha512-P3ihUFJFWJLwrXGoHAmOLKEOHllS2FVwIKTdIny5BQOUumCARr3PNFX0H3HukIVoIAaoDaWdZ4sBkelTfWVUfQ=="],
 
     "@payloadcms/graphql": ["@payloadcms/graphql@3.87.0", "", { "dependencies": { "graphql-scalars": "1.22.2", "pluralize": "8.0.0", "ts-essentials": "10.0.3", "tsx": "4.22.4" }, "peerDependencies": { "graphql": "^16.8.1", "payload": "3.87.0" }, "bin": { "payload-graphql": "bin.js" } }, "sha512-P5p/AS2rdpbrHrM7lhHH8vb4LcDBxWwPQvVJf0r2hCFSX1IYg5/JcX+/By2SwOY9ybBZFiOtDTzfoXl7Kkfhrg=="],
 
@@ -858,6 +861,8 @@
     "node-domexception": ["node-domexception@1.0.0", "", {}, "sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ=="],
 
     "node-fetch": ["node-fetch@3.3.2", "", { "dependencies": { "data-uri-to-buffer": "^4.0.0", "fetch-blob": "^3.1.4", "formdata-polyfill": "^4.0.10" } }, "sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA=="],
+
+    "nodemailer": ["nodemailer@9.0.5", "", {}, "sha512-wvjiKvjczmsN7U/8006JOdXubgBk2XFAbioDMbT+sM7cPs0QrhJTa6KBRX7P5REGGkDcLUz/EarWidb8G8C1jQ=="],
 
     "normalize-path": ["normalize-path@3.0.0", "", {}, "sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA=="],
 

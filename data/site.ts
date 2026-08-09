@@ -19,6 +19,5 @@ export const site = {
     { label: "Xizmatlar", href: "/services" },
     { label: "Biz haqimizda", href: "/about" },
     { label: "Blog", href: "/blog" },
-    { label: "Aloqa", href: "/contact" },
   ],
 };

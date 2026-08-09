@@ -3,6 +3,7 @@ import { Inter_Tight } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { site } from "@/data/site";
+import { getSettings } from "@/lib/settings";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -10,25 +11,29 @@ const interTight = Inter_Tight({
   variable: "--font-sans",
 });
 
-export const metadata: Metadata = {
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  return {
   metadataBase: new URL(site.url),
   title: {
     default: `${site.name} — ${site.tagline}`,
     template: `%s — ${site.name}`,
   },
-  description: site.description,
+  description: settings.description,
   openGraph: {
     siteName: site.name,
     type: "website",
     images: ["/images/og.svg"],
   },
-};
+  };
+}
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const settings = await getSettings();
   return (
     <html lang="uz" className={interTight.variable} suppressHydrationWarning>
       {/* FOUC oldini olish: saqlangan rejimni birinchi bo'yashdan oldin qo'llaymiz.
@@ -43,7 +48,7 @@ export default function RootLayout({
       <body>
         <Header />
         <main className="pt-[72px]">{children}</main>
-        <Footer />
+        <Footer settings={settings} />
       </body>
     </html>
   );

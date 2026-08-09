@@ -4,7 +4,7 @@ import { getAllPosts } from "@/lib/blog";
 import { site } from "@/data/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticPages = ["", "/portfolio", "/services", "/about", "/blog", "/contact"].map(
+  const staticPages = ["", "/portfolio", "/services", "/about", "/blog"].map(
     (p) => ({
       url: `${site.url}${p}`,
       lastModified: new Date(),

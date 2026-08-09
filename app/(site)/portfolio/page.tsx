@@ -24,7 +24,7 @@ export default async function PortfolioPage() {
         <EmptyState
           title="Ishlar tez orada shu yerda bo'ladi."
           hint="Birinchi loyihalarimizni joylayapmiz. Shu orada bevosita bog'lanishingiz mumkin."
-          action={{ href: "/contact", label: "Bog'lanish" }}
+          action={{ href: "/about#aloqa", label: "Bog'lanish" }}
         />
       ) : (
         <PortfolioGrid projects={projects} categories={projectCategories} />

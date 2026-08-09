@@ -1,0 +1,61 @@
+import type { GlobalConfig } from "payload";
+
+/**
+ * Sayt sozlamalari — bitta hujjat, kolleksiya emas.
+ *
+ * Bu yerga faqat **mijoz o'zgartiradigan matn** kiradi: aloqa ma'lumotlari,
+ * ijtimoiy tarmoqlar, bosh sahifaning birinchi ekrani. Sayt nomi, manzili va
+ * navigatsiya tuzilishi kodda qoladi — ular kontent emas, arxitektura, va
+ * ularni paneldan o'zgartirish saytni buzishi mumkin.
+ */
+export const Settings: GlobalConfig = {
+  slug: "settings",
+  label: "Sozlamalar",
+  access: { read: () => true },
+  fields: [
+    {
+      type: "group",
+      name: "hero",
+      label: "Bosh sahifa — birinchi ekran",
+      fields: [
+        {
+          name: "kicker",
+          type: "text",
+          label: "Sarlavha ustidagi qator",
+          admin: { description: "Masalan: Dizayn agentligi — Toshkent, 2018-yildan" },
+        },
+        {
+          name: "heading",
+          type: "textarea",
+          label: "Katta sarlavha",
+          admin: { description: "Yangi qatordan boshlansa, saytda ham yangi qatorga tushadi." },
+        },
+      ],
+    },
+    {
+      type: "group",
+      name: "contact",
+      label: "Aloqa",
+      fields: [
+        { name: "email", type: "text" },
+        { name: "phone", type: "text" },
+        { name: "address", type: "text", label: "Manzil" },
+      ],
+    },
+    {
+      name: "socials",
+      type: "array",
+      label: "Ijtimoiy tarmoqlar",
+      fields: [
+        { name: "label", type: "text", required: true, label: "Nomi" },
+        { name: "href", type: "text", required: true, label: "Havola" },
+      ],
+    },
+    {
+      name: "description",
+      type: "textarea",
+      label: "Qidiruv tizimlari uchun tavsif",
+      admin: { description: "Google natijalarida sayt ostida chiqadigan matn." },
+    },
+  ],
+};

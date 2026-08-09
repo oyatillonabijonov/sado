@@ -8,17 +8,23 @@ import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
 import { getProjects } from "@/lib/content";
 import { testimonials } from "@/data/testimonials";
-import { site } from "@/data/site";
+import { getSettings } from "@/lib/settings";
+import { telHref } from "@/lib/site-format";
 import { getAllPosts } from "@/lib/blog";
 
-export const metadata: Metadata = {
-  title: "SADO — Dizayn agentligi",
-  description:
-    "Toshkentdagi dizayn agentligi. Brend strategiyasi, vizual identifikatsiya, veb va UI/UX — 2018-yildan beri 120 dan ortiq loyiha.",
-};
+/* Tavsif ham paneldan: `export const metadata` qat'iy qiymat bo'lardi va
+   sozlamalardagi matnni bosib ketardi. */
+export async function generateMetadata(): Promise<Metadata> {
+  const { description } = await getSettings();
+  return { title: "SADO — Dizayn agentligi", description };
+}
 
 export default async function HomePage() {
-  const [allProjects, allPosts] = await Promise.all([getProjects(), getAllPosts()]);
+  const [allProjects, allPosts, settings] = await Promise.all([
+    getProjects(),
+    getAllPosts(),
+    getSettings(),
+  ]);
   const featured = allProjects.filter((p) => p.featured).slice(0, 4);
   const posts = allPosts.slice(0, 3);
 
@@ -41,15 +47,14 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-pure-black via-pure-black/40 to-pure-black/10" />
         </div>
         <div className="shell relative z-10">
-          <p className="mb-[24px] text-fog-gray">
-            {site.tagline} — Toshkent, {site.founded}-yildan
-          </p>
+          <p className="mb-[24px] text-fog-gray">{settings.heroKicker}</p>
+          {/* whitespace-pre-line: paneldagi yangi qator saytda ham qator
+              bo'lib tushadi, mijoz <br /> yozishi shart emas. */}
           <h1
-            className="display"
+            className="display whitespace-pre-line"
             style={{ fontSize: "clamp(32px, 4.5vw, 60px)" }}
           >
-            Brendlarning vizual ko'rinishini
-            <br className="hidden sm:inline" /> shakllantiramiz.
+            {settings.heroHeading}
           </h1>
         </div>
       </section>
@@ -161,16 +166,13 @@ export default async function HomePage() {
             </p>
             <div className="mt-[48px] flex flex-col gap-[8px]">
               <a
-                href={`mailto:${site.email}`}
+                href={`mailto:${settings.email}`}
                 className="text-fog-gray hover:text-bone-white"
               >
-                {site.email}
+                {settings.email}
               </a>
-              <a
-                href={`tel:${site.phone.replace(/\s/g, "")}`}
-                className="text-fog-gray hover:text-bone-white"
-              >
-                {site.phone}
+              <a href={telHref(settings.phone)} className="text-fog-gray hover:text-bone-white">
+                {settings.phone}
               </a>
             </div>
           </div>

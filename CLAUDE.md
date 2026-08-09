@@ -69,6 +69,22 @@ o'qiydi, aks holda qoralama chop etilgandan boshqacha saqlanib qolardi.
 Avtosaqlash faqat **mavjud** yozuv uchun: yangi maqolada har bir tugmacha yangi hujjat
 yaratib ketardi, shuning uchun birinchi "Saqlash" dan keyin yoqiladi.
 
+**Sozlamalar globali.** `globals/Settings.ts` — mijoz o'zgartiradigan sayt matni: bosh
+sahifaning birinchi ekrani, aloqa ma'lumotlari, ijtimoiy tarmoqlar, meta tavsif. Sayt uni
+`lib/getSettings()` orqali o'qiydi va har bir maydon uchun `data/site.ts` dagi qiymat
+zaxira. Sayt nomi, manzili va navigatsiya tuzilishi kodda qoladi — ular kontent emas.
+
+**Client komponentga `lib/settings.ts` dan qiymat import qilmang.** U Payload'ni tortadi,
+Payload esa sharp va nodemailer'ni — build `child_process` topilmadi deb yiqiladi. Tip va
+sof yordamchilar `lib/site-format.ts` da (direktivasiz, Payload'ga tegmaydi).
+
+**Parol tiklash.** `/panel/parol` → Payload `forgotPassword` token yaratadi → xat
+`/panel/parol/yangilash?token=…` ga havola beradi (`collections/Users.ts` dagi
+`generateEmailHTML`; Payload'ning zavod havolasi o'chirilgan `/admin` ga ketardi). SMTP
+sozlanmagan bo'lsa xat server konsoliga yoziladi — oqim dev'da to'liq ishlaydi,
+productionda `.env` dagi to'rtta SMTP qiymati kerak. `nodemailer` `next.config.mjs` da
+`serverExternalPackages` ro'yxatida.
+
 **Lokalizatsiya o'chirilgan.** Header'dagi til tanlagich hozircha faqat `<html lang>` ni
 almashtiradi. Yoqish = `payload.config.ts` ga `localization` bloki, maydonlarga `localized: true`,
 formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `saveLocalized`
@@ -92,7 +108,7 @@ formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `sa
 
 **Interaktiv komponentlar `"use client"`.** `Header` (toggle+soat+menyu), `ContactForm`, `Select` (native `<select>` o'rniga dizayn tizimiga mos custom dropdown), `Stats` (IntersectionObserver bilan count-up). Qolganlari server komponent.
 
-**Contact form.** `ContactForm` (client, zod validatsiya) → `POST /api/contact` (`lib/contact.ts` dagi bir xil `contactSchema` bilan qayta tekshiradi). Route hozircha faqat `console.log` qiladi — email integratsiyasi TODO. Forma ikki joyda: bosh sahifa CTA va `/contact`.
+**Contact form.** `ContactForm` (client, zod validatsiya) → `POST /api/contact` (`lib/contact.ts` dagi bir xil `contactSchema` bilan qayta tekshiradi). Route hozircha faqat `console.log` qiladi — email integratsiyasi TODO. Forma uch joyda: bosh sahifa CTA, `/services` va `/about#aloqa`. Alohida `/contact` sahifasi yo'q — `app/(site)/contact/route.ts` eski havolalarni `/about#aloqa` ga yo'naltiradi.
 
 ## Til / konvensiyalar
 

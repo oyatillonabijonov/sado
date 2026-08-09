@@ -58,11 +58,17 @@ export function makeRichReader() {
   return { read, get lossy() { return lossy; } };
 }
 
-/** `locale: 'all'`, `depth: 0`, `null` instead of a throw when the id is wrong. */
+/**
+ * `depth: 0`, noto'g'ri id'da throw emas `null`.
+ *
+ * `draft: true` — tahrirlagich eng oxirgi holatni ko'rsatishi kerak, chop
+ * etilganini emas. Busiz avtosaqlangan matn sahifani yangilaganda yo'qolgandek
+ * ko'rinardi: baza saqlagan, forma esa eski chop etilgan versiyani yuklagan.
+ */
 export async function findRaw(collection: CollectionSlug, id: number) {
   const payload = await payloadClient();
   const doc = await payload
-    .findByID({ collection, id, locale: 'all', depth: 0 })
+    .findByID({ collection, id, depth: 0, draft: true })
     .catch(() => null);
   return doc as unknown as Record<string, unknown> | null;
 }

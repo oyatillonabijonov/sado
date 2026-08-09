@@ -403,10 +403,18 @@ export function LangTabs({ children }: { children: (lang: Lang) => ReactNode }) 
  * supplementing it, which silently drops the blur (the same trap the site's
  * header hit).
  */
-export function SaveBar({ children, note }: { children?: ReactNode; note?: string }) {
+export function SaveBar({
+  children,
+  note,
+  label,
+}: {
+  children?: ReactNode;
+  note?: string;
+  label?: string;
+}) {
   return (
     <div className="sticky bottom-0 z-10 -mx-4 mt-4 flex flex-wrap items-center gap-4 border-t border-mist bg-white/85 px-4 py-5 backdrop-blur-md lg:-mx-12 lg:px-12">
-      <SaveButton />
+      <SaveButton label={label} />
       {children}
       {note && (
         <span className="flex items-center gap-2 text-body-sm text-pebble">

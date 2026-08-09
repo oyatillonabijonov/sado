@@ -9,6 +9,8 @@ export default async function PostsListPage() {
   const payload = await payloadClient();
   const { docs } = await payload.find({
     collection: "posts",
+    // Qoralamalar ham ko'rinsin — busiz mijoz yozganini ro'yxatda topolmaydi.
+    draft: true,
     depth: 1,
     limit: 100,
     sort: "-date",
@@ -22,6 +24,7 @@ export default async function PostsListPage() {
       title: String(doc.title ?? ""),
       subtitle: String(doc.category ?? ""),
       meta: formatDate(doc.date as string, false),
+      badge: doc._status === "draft" ? "Qoralama" : null,
       image: cover && typeof cover === "object" ? ((cover.url as string) ?? null) : null,
     };
   });

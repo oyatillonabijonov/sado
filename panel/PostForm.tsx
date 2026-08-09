@@ -1,19 +1,22 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { BlockEditor } from "@/panel/BlockEditor";
 import type { FormState } from "@/panel/form-state";
 import { ImageDrop } from "@/panel/ImageDrop";
 import type { MediaOption } from "@/panel/media";
 import type { PostFormData } from "@/panel/posts-data";
 import { savePost } from "@/panel/posts-actions";
+import { autosaveLabel, useAutosave } from "@/panel/useAutosave";
 import { BigField, Card, Collapse, Field, Grid, SaveBar } from "@/panel/ui";
 
 export function PostForm({ data, media }: { data: PostFormData; media: MediaOption[] }) {
   const [state, action] = useActionState<FormState, FormData>(savePost.bind(null, data.id), {});
+  const form = useRef<HTMLFormElement>(null);
+  const auto = useAutosave(form, data.id);
 
   return (
-    <form action={action} className="flex flex-col gap-8">
+    <form ref={form} data-collection="posts" action={action} className="flex flex-col gap-8">
       {/* Sarlavha va lid — hujjatning o'zi, shuning uchun ramkasiz. */}
       <div className="flex flex-col gap-2">
         <BigField name="title" defaultValue={data.title} placeholder="Maqola sarlavhasi" required />
@@ -51,7 +54,7 @@ export function PostForm({ data, media }: { data: PostFormData; media: MediaOpti
           </p>
         </Card>
       ) : (
-        <SaveBar note={state.ok ? "Saqlandi." : undefined} />
+        <SaveBar label="Saqlash va chop etish" note={state.ok ? "Chop etildi." : autosaveLabel(auto)} />
       )}
     </form>
   );

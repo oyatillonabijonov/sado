@@ -8,6 +8,8 @@ export default async function ProjectsListPage() {
   const payload = await payloadClient();
   const { docs } = await payload.find({
     collection: "projects",
+    // Qoralamalar ham ko'rinsin — busiz mijoz yozganini ro'yxatda topolmaydi.
+    draft: true,
     depth: 1,
     limit: 100,
     sort: "order",
@@ -21,7 +23,8 @@ export default async function ProjectsListPage() {
       title: String(doc.title ?? ""),
       subtitle: String(doc.client ?? ""),
       meta: String(doc.year ?? ""),
-      badge: doc.featured ? "Bosh sahifada" : null,
+      badge:
+        doc._status === "draft" ? "Qoralama" : doc.featured ? "Bosh sahifada" : null,
       image: cover && typeof cover === "object" ? ((cover.url as string) ?? null) : null,
     };
   });

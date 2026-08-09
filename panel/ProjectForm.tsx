@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import type { FormState } from "@/panel/form-state";
 import { ImageDrop, ImageStack } from "@/panel/ImageDrop";
 import type { MediaOption } from "@/panel/media";
 import type { ProjectFormData } from "@/panel/projects-data";
 import { saveProject } from "@/panel/projects-actions";
+import { autosaveLabel, useAutosave } from "@/panel/useAutosave";
 import { SLOTS } from "@/panel/slots";
 import { Area, Card, Choice, Collapse, Field, Grid, SaveBar, Toggle } from "@/panel/ui";
 
@@ -13,9 +14,11 @@ const CATEGORIES = ["Branding", "Web", "UI/UX", "Print"].map((c) => ({ value: c,
 
 export function ProjectForm({ data, media }: { data: ProjectFormData; media: MediaOption[] }) {
   const [state, action] = useActionState<FormState, FormData>(saveProject.bind(null, data.id), {});
+  const form = useRef<HTMLFormElement>(null);
+  const auto = useAutosave(form, data.id);
 
   return (
-    <form action={action} className="flex flex-col gap-8">
+    <form ref={form} data-collection="projects" action={action} className="flex flex-col gap-8">
       <Card title="Loyiha haqida">
         <Field label="Nomi" name="title" defaultValue={data.title} required />
         <Grid>
@@ -83,7 +86,7 @@ export function ProjectForm({ data, media }: { data: ProjectFormData; media: Med
       <input type="hidden" name="order" value={data.order} />
 
       {state.error && <p className="text-body text-ember">{state.error}</p>}
-      <SaveBar note={state.ok ? "Saqlandi." : undefined} />
+      <SaveBar label="Saqlash va chop etish" note={state.ok ? "Chop etildi." : autosaveLabel(auto)} />
     </form>
   );
 }

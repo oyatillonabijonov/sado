@@ -9,6 +9,10 @@ export const Projects: CollectionConfig = {
   labels: { singular: "Loyiha", plural: "Loyihalar" },
   admin: { useAsTitle: "title" },
   access: { read: () => true },
+  // Avtosaqlash uchun: qoralama yozuvda majburiy maydonlar tekshirilmaydi,
+  // shuning uchun yarim yozilgan matn ham saqlanadi. Sayt faqat chop
+  // etilganini o'qiydi — Payload `find` sukut bo'yicha shunday ishlaydi.
+  versions: { drafts: true },
   defaultSort: "order",
   fields: [
     { name: "title", type: "text", required: true },

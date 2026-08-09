@@ -56,6 +56,19 @@ Alt matni yuklashda so'ralmaydi (oqimni to'xtatadi) — fayl nomidan qo'yiladi v
 ostida tahrirlanadi (`PATCH /api/panel/upload`). Fayllar `media/` da,
 `/api/media/file/<nom>` orqali uzatiladi (`app/(payload)/api/[...slug]`).
 
+**Qoralama va avtosaqlash.** `posts` va `projects` da `versions: { drafts: true }`. Forma
+o'zgargach 2s jimlikdan keyin `POST /api/panel/autosave` qoralama yozadi (`draft: true`) —
+qoralamada majburiy maydonlar tekshirilmaydi, shuning uchun yarim yozilgan matn ham
+saqlanadi. "Saqlash va chop etish" tugmasi esa `_status: 'published'` qo'yadi.
+
+Sayt faqat chop etilganini o'qiydi (Payload `find` sukut bo'yicha shunday), panel esa
+`draft: true` bilan eng oxirgi holatni ko'radi — `findRaw` va ro'yxat ekranlari. Forma
+ma'lumotini yig'ish `panel/form-map.ts` da: action ham, avtosaqlash route'i ham shundan
+o'qiydi, aks holda qoralama chop etilgandan boshqacha saqlanib qolardi.
+
+Avtosaqlash faqat **mavjud** yozuv uchun: yangi maqolada har bir tugmacha yangi hujjat
+yaratib ketardi, shuning uchun birinchi "Saqlash" dan keyin yoqiladi.
+
 **Lokalizatsiya o'chirilgan.** Header'dagi til tanlagich hozircha faqat `<html lang>` ni
 almashtiradi. Yoqish = `payload.config.ts` ga `localization` bloki, maydonlarga `localized: true`,
 formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `saveLocalized`

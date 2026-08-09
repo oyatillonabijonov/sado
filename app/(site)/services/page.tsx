@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import ContactForm from "@/components/ContactForm";
 import EmptyState from "@/components/EmptyState";
-import RedDotLink from "@/components/RedDotLink";
 import SectionHeading from "@/components/SectionHeading";
 import { getServices } from "@/lib/content";
 
@@ -12,53 +12,79 @@ export const metadata: Metadata = {
 
 export default async function ServicesPage() {
   const services = await getServices();
+
   return (
     <div className="shell pt-[120px]">
-      <SectionHeading kicker="Xizmatlar">Nima qilamiz</SectionHeading>
-      {services.length === 0 && (
+      <SectionHeading
+        kicker="Xizmatlar"
+        lead="Ko'pincha bularning bir nechtasi bitta loyihada birga ketadi — qaysi biri kerakligini o'zimiz aytamiz."
+      >
+        Nima qilamiz
+      </SectionHeading>
+
+      {services.length === 0 ? (
         <EmptyState
           title="Xizmatlar ro'yxati yangilanmoqda."
           hint="Nima kerakligini yozib qoldiring — to'g'ridan-to'g'ri javob beramiz."
           action={{ href: "/contact", label: "Bog'lanish" }}
         />
-      )}
-      <div className="flex flex-col">
-        {services.map((s) => (
-          <section
-            key={s.slug}
-            id={s.slug}
-            className="grid gap-[48px] border-t border-graphite py-[120px] lg:grid-cols-[1fr_1fr_1fr] scroll-mt-[72px]"
-          >
-            <div>
-              <h2 className="text-heading-sm font-medium text-bone-white">
-                {s.title}
-              </h2>
-              <p className="mt-[16px] max-w-[420px] text-fog-gray">
-                {s.description}
-              </p>
-            </div>
-            <div>
-              <p className="text-fog-gray">Nimalar kiradi</p>
-              <ul className="mt-[16px] flex flex-col gap-[8px]">
+      ) : (
+        /* Har biri alohida karta va hammasi bitta ko'rinishda.
+           Ilgari bitta xizmat butun ekranni egallab, uch ustunga yoyilardi:
+           "SADO nima qiladi?" degan savolga javob hech qachon bir joyda
+           ko'rinmasdi va ko'z bitta xizmatni o'qish uchun 1400px yurardi. */
+        <div className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-3">
+          {services.map((s) => (
+            <section
+              key={s.slug}
+              id={s.slug}
+              className="flex scroll-mt-[88px] flex-col gap-[24px] rounded-[10px] bg-soft-black p-[32px]"
+            >
+              <div>
+                <h2 className="text-heading-sm font-medium text-bone-white">
+                  {s.title}
+                </h2>
+                <p className="mt-[16px] text-fog-gray">{s.description}</p>
+              </div>
+
+              {/* Yorliqsiz: "Nimalar kiradi" degan sarlavha o'rniga ro'yxatning
+                  o'zi — nuqta bilan boshlangan qator baribir ro'yxat ekanini
+                  aytadi va bitta kartada uchta yorliq o'qishni og'irlashtiradi. */}
+              <ul className="flex flex-col gap-[8px]">
                 {s.deliverables.map((d) => (
-                  <li key={d} className="text-bone-white">
-                    {d}
+                  <li key={d} className="flex gap-[12px] text-bone-white">
+                    <span
+                      aria-hidden
+                      className="mt-[11px] size-[4px] shrink-0 rounded-full bg-scarlet-signal"
+                    />
+                    <span>{d}</span>
                   </li>
                 ))}
               </ul>
-            </div>
-            <div className="flex flex-col justify-between gap-[48px]">
-              <div>
-                <p className="text-fog-gray">Kimga mos</p>
-                <p className="mt-[16px] max-w-[360px] text-bone-white">
-                  {s.fitFor}
-                </p>
-              </div>
-              <RedDotLink href="/contact">Shu xizmat kerak</RedDotLink>
-            </div>
-          </section>
-        ))}
-      </div>
+
+              <p className="mt-auto text-fog-gray">{s.fitFor}</p>
+            </section>
+          ))}
+        </div>
+      )}
+
+      {/* Bitta CTA. Ilgari har bir xizmatda "Shu xizmat kerak" tugmasi turardi —
+          oltita takror, va tugma xizmat nomidan og'irroq ko'rinardi. */}
+      <section className="mt-[160px] border-t border-graphite pt-[120px] pb-[48px]">
+        <div className="grid gap-[80px] lg:grid-cols-2">
+          <div className="lg:sticky lg:top-[120px] lg:self-start">
+            <p className="mb-[24px] text-fog-gray">Aloqa</p>
+            <h2 className="display max-w-[560px]">Qaysi biri kerakligini bilmaysizmi?</h2>
+            <p className="mt-[32px] max-w-[46ch] text-fog-gray">
+              Vazifangizni qisqacha yozing — mos xizmatni o'zimiz aytamiz va
+              taxminiy muddat bilan javob beramiz.
+            </p>
+          </div>
+          <div className="max-w-[640px]">
+            <ContactForm />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

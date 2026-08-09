@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import BlogCard from "@/components/BlogCard";
+import { Stagger, StaggerItem } from "@/components/motion/Reveal";
 import type { PostMeta } from "@/lib/blog";
 
 export default function BlogFilterGrid({
@@ -32,11 +33,13 @@ export default function BlogFilterGrid({
           </button>
         ))}
       </div>
-      <div className="grid gap-[16px] md:grid-cols-2 lg:grid-cols-3">
+      <Stagger key={active} className="grid gap-[16px] md:grid-cols-2 lg:grid-cols-3">
         {shown.map((p) => (
-          <BlogCard key={p.slug} post={p} />
+          <StaggerItem key={p.slug}>
+            <BlogCard post={p} />
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
     </div>
   );
 }

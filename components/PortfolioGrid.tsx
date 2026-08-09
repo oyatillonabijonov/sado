@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Stagger, StaggerItem } from "@/components/motion/Reveal";
 import ProjectTile from "@/components/ProjectTile";
 import type { Project, ProjectCategory } from "@/data/projects";
 
@@ -40,11 +41,15 @@ export default function PortfolioGrid({
           </button>
         ))}
       </div>
-      <div className="grid gap-[16px] md:grid-cols-2 lg:grid-cols-3">
+      {/* `key={active}` — filtr almashganda to'r qaytadan ochiladi, aks holda
+          yangi kartalar animatsiyasiz paydo bo'lib qolardi. */}
+      <Stagger key={active} className="grid gap-[16px] md:grid-cols-2 lg:grid-cols-3">
         {shown.map((p) => (
-          <ProjectTile key={p.slug} project={p} />
+          <StaggerItem key={p.slug}>
+            <ProjectTile project={p} />
+          </StaggerItem>
         ))}
-      </div>
+      </Stagger>
     </div>
   );
 }

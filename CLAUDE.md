@@ -99,6 +99,18 @@ formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `sa
 
 **Seksiya naqshi.** Bosh sahifa seksiyalari izchil ritmda: `pt-[80px]`/`pt-[160px]`, hairline `border-t border-graphite` + kulrang kicker (`SectionHeading` komponenti buni inkassa qiladi).
 
+**Motion.** `components/motion/Reveal.tsx` — `Reveal` (skrollda ochiladi), `Stagger` +
+`StaggerItem` (to'r bolalari ketma-ket), `Rise` (sahifa ochilishida, hero uchun). Hammasi
+`once: true` va `prefers-reduced-motion` da butunlay o'chadi.
+
+Client komponent, lekin `children` server komponentlardan uzatiladi — sahifalar server
+bo'lib qoladi. Har biri `data-motion` belgisini oladi: SSR'da ular `opacity:0` bilan
+chiqadi, shuning uchun `layout.tsx` dagi `<noscript>` ularni ko'rinadigan qiladi (JS
+yuklanmasa sahifa bo'sh ko'rinardi).
+
+Marquee, `.btn-fill`, `.nav-flip` va hero loop **CSS'da qoladi** — ularni JS'ga ko'chirish
+bundle'ni og'irlashtiradi, foyda bermaydi.
+
 **Umumiy util klasslar** (`globals.css`, komponent emas):
 - `.btn-fill` — tugma hover'da chapdan o'ngga to'ladigan fill animatsiya. `RedDotLink` va formadagi submit shuni ishlatadi.
 - `.hero-frame` + `hero-loop` — hero'dagi 5 ta rasm (`public/sd1–sd5`) 15s CSS loop bilan almashadi (kadr boshiga 3s).

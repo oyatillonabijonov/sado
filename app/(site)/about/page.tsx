@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
 import { team, values } from "@/data/team";
@@ -39,41 +40,40 @@ export default async function AboutPage() {
         </p>
       </div>
 
-      <div className="mt-[80px] rounded-[10px] bg-soft-black p-[32px] lg:p-[48px]">
+      <Reveal className="mt-[80px] rounded-[10px] bg-soft-black p-[32px] lg:p-[48px]">
         <Stats />
-      </div>
+      </Reveal>
 
       {/* Qadriyatlar va madaniyat — ilgari ikkita alohida seksiya edi, ikkalasi
           ham "biz qanday ishlaymiz" haqida. Bittasi uchta yalang'och xatboshi,
           ikkinchisi bitta xatboshi uchun butun seksiya sarlavhasi bilan. */}
       <section className="pt-[160px]">
         <SectionHeading kicker="Qadriyatlar">Qanday ishlaymiz</SectionHeading>
-        <div className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-4">
+        <Stagger className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-4">
           {values.map((v) => (
-            <div
-              key={v.title}
-              className="flex flex-col gap-[16px] rounded-[10px] bg-soft-black p-[32px]"
-            >
+            <StaggerItem key={v.title} className="h-full">
+            <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-[32px]">
               <p className="text-subheading text-bone-white">{v.title}</p>
               <p className="text-fog-gray">{v.text}</p>
             </div>
+            </StaggerItem>
           ))}
-          <div className="flex flex-col gap-[16px] rounded-[10px] bg-soft-black p-[32px]">
+          <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-[32px]">
             <p className="text-subheading text-bone-white">Ish muhiti</p>
             <p className="text-fog-gray">
               Ochiq muhokama va halol fikr. Har juma — ichki dizayn tanqidi kuni.
               Yiliga ikki marta jamoa bilan tog'larga chiqamiz.
             </p>
           </div>
-        </div>
+        </Stagger>
       </section>
 
       {/* Jamoa — bu yerda zamin allaqachon bor: suratning o'zi. */}
       <section className="pt-[160px]">
         <SectionHeading kicker="Jamoa">Kim ishlaydi</SectionHeading>
-        <div className="grid gap-[16px] sm:grid-cols-2 lg:grid-cols-3">
+        <Stagger className="grid gap-[16px] sm:grid-cols-2 lg:grid-cols-3">
           {team.map((m) => (
-            <div key={m.name}>
+            <StaggerItem key={m.name}>
               <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-[10px] bg-soft-black">
                 {m.photo ? (
                   <Image
@@ -103,9 +103,9 @@ export default async function AboutPage() {
               </div>
               <p className="mt-[16px] text-subheading text-bone-white">{m.name}</p>
               <p className="text-fog-gray">{m.role}</p>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
 
       {/* Aloqa — ilgari alohida /contact sahifasi edi. Bitta forma va uchta

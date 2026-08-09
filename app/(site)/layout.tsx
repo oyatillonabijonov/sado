@@ -44,6 +44,11 @@ export default async function RootLayout({
             __html: `try{var t=localStorage.theme;if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`,
           }}
         />
+        {/* JS ishlamasa animatsiya boshlang'ich holatida qotib qoladi va
+            kontent ko'rinmaydi. Belgilangan elementlarni joyiga qaytaramiz. */}
+        <noscript>
+          <style>{`[data-motion]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
       </head>
       <body>
         <Header />

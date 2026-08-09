@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
 import EmptyState from "@/components/EmptyState";
+import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import { getServices } from "@/lib/content";
 
@@ -32,7 +33,7 @@ export default async function ServicesPage() {
           Almashtirish = shu `src` ni o'zgartirish (public/). */}
       {/* Mobilda 16:5 atigi 105px baland chiziqqa aylanadi va rasmdan hech
           narsa o'qilmaydi — tor ekranda balandroq nisbat. */}
-      <div className="relative mb-[48px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black sm:aspect-[16/5]">
+      <Reveal className="relative mb-[48px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black sm:aspect-[16/5]">
         <Image
           src="/sd2.png"
           alt="Atlas naqshli samolyot liveriyasi — SADO ishi"
@@ -41,7 +42,7 @@ export default async function ServicesPage() {
           sizes="(max-width: 768px) 100vw, 1440px"
           className="object-cover"
         />
-      </div>
+      </Reveal>
 
       {services.length === 0 ? (
         <EmptyState
@@ -54,12 +55,12 @@ export default async function ServicesPage() {
            Ilgari bitta xizmat butun ekranni egallab, uch ustunga yoyilardi:
            "SADO nima qiladi?" degan savolga javob hech qachon bir joyda
            ko'rinmasdi va ko'z bitta xizmatni o'qish uchun 1400px yurardi. */
-        <div className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-3">
+        <Stagger className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-3">
           {services.map((s) => (
+            <StaggerItem key={s.slug}>
             <section
-              key={s.slug}
               id={s.slug}
-              className="flex scroll-mt-[88px] flex-col gap-[24px] rounded-[10px] bg-soft-black p-[32px]"
+              className="flex h-full scroll-mt-[88px] flex-col gap-[24px] rounded-[10px] bg-soft-black p-[32px]"
             >
               <div>
                 <h2 className="text-heading-sm font-medium text-bone-white">
@@ -85,8 +86,9 @@ export default async function ServicesPage() {
 
               <p className="mt-auto text-fog-gray">{s.fitFor}</p>
             </section>
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       )}
 
       {/* Bitta CTA. Ilgari har bir xizmatda "Shu xizmat kerak" tugmasi turardi —

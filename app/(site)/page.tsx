@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ClientsMarquee from "@/components/ClientsMarquee";
+import { Reveal, Rise, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import ContactForm from "@/components/ContactForm";
 import ProjectTile from "@/components/ProjectTile";
 import BlogCard from "@/components/BlogCard";
@@ -47,15 +48,19 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-pure-black via-pure-black/40 to-pure-black/10" />
         </div>
         <div className="shell relative z-10">
-          <p className="mb-[24px] text-fog-gray">{settings.heroKicker}</p>
+          <Rise>
+            <p className="mb-[24px] text-fog-gray">{settings.heroKicker}</p>
+          </Rise>
           {/* whitespace-pre-line: paneldagi yangi qator saytda ham qator
               bo'lib tushadi, mijoz <br /> yozishi shart emas. */}
-          <h1
-            className="display whitespace-pre-line"
-            style={{ fontSize: "clamp(32px, 4.5vw, 60px)" }}
-          >
-            {settings.heroHeading}
-          </h1>
+          <Rise delay={0.08}>
+            <h1
+              className="display whitespace-pre-line"
+              style={{ fontSize: "clamp(32px, 4.5vw, 60px)" }}
+            >
+              {settings.heroHeading}
+            </h1>
+          </Rise>
         </div>
       </section>
 
@@ -74,11 +79,13 @@ export default async function HomePage() {
         >
           So'nggi loyihalar.
         </SectionHeading>
-        <div className="grid gap-x-[16px] gap-y-[64px] md:grid-cols-2">
+        <Stagger className="grid gap-x-[16px] gap-y-[64px] md:grid-cols-2">
           {featured.map((p) => (
-            <ProjectTile key={p.slug} project={p} />
+            <StaggerItem key={p.slug}>
+              <ProjectTile project={p} />
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
       )}
 
@@ -129,9 +136,9 @@ export default async function HomePage() {
           </ul>
         </div>
 
-        <div className="mt-[120px]">
+        <Reveal className="mt-[120px]">
           <Stats />
-        </div>
+        </Reveal>
         </div>
       </section>
 
@@ -144,11 +151,13 @@ export default async function HomePage() {
         >
           Fikrlar va kuzatuvlar.
         </SectionHeading>
-        <div className="grid gap-x-[16px] gap-y-[48px] md:grid-cols-3">
+        <Stagger className="grid gap-x-[16px] gap-y-[48px] md:grid-cols-3">
           {posts.map((p) => (
-            <BlogCard key={p.slug} post={p} />
+            <StaggerItem key={p.slug}>
+              <BlogCard post={p} />
+            </StaggerItem>
           ))}
-        </div>
+        </Stagger>
       </section>
       )}
 

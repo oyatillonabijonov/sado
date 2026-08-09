@@ -9,21 +9,34 @@ RUN bun install --frozen-lockfile
 
 COPY . .
 
-# Payload sxemasini va tiplarni build'dan OLDIN yaratamiz.
-# Sabab: `next build` sahifalarni 9 ta ishchi bilan parallel quradi va ular
-# birinchi getPayload'da sxemani bir vaqtda push qilsa, SQLite qulflanib qoladi.
-# generate:types Payload'ni bir marta init qiladi (sxemani ./db.sqlite ga push
-# qiladi) va payload-types.ts ni yozadi — build'gacha hammasi tayyor bo'ladi.
-# Bu build-context bazasi image ichida qoladi, prod esa /app/data volume'ini
-# ishlatadi (DATABASE_URI), shuning uchun bir-biriga xalaqit bermaydi.
-RUN bunx payload generate:types
-RUN bun run build
+# Sxema-only SQLite (schema.sqlite) repoda commit qilingan. Payload'ni prodda
+# (NODE_ENV=production) sxema push qilmaydi va uni konteynerda Next'dan tashqarida
+# ishga tushirib bo'lmaydi (bun ostida payload CLI/tsx va lexical yiqiladi) —
+# shuning uchun sxema shu tayyor fayldan keladi.
+#
+# Build paytida SSG sahifalar Payload'ni init qilib bazani o'qiydi; shuning
+# uchun sxemani ./db.sqlite ga qo'yamiz (so'rovlar bo'sh natija qaytaradi).
+# PAYLOAD_DISABLE_PUSH=1 — push urinmaydi; PAYLOAD_SECRET faqat shu build RUN
+# doirasida (runtime'da Coolify haqiqiysini beradi, image ENV'iga saqlanmaydi).
+# Eslatma: `bun run build` Next 16 build TUGAGACH SIGTRAP (exit 133) bilan
+# chiqadi — bu bun'ning chiqishdagi ma'lum krashi, artefaktlar to'liq tayyor
+# bo'ladi. Shuning uchun chiqish kodini e'tiborsiz qoldirib, haqiqiy muvaffaqiyat
+# belgisini — `.next/BUILD_ID` mavjudligini — tekshiramiz. Build chindan yiqilsa
+# BUILD_ID bo'lmaydi va RUN xato beradi.
+RUN cp schema.sqlite db.sqlite \
+ && { PAYLOAD_SECRET=build-only-placeholder PAYLOAD_DISABLE_PUSH=1 bun run build || true; } \
+ && test -f .next/BUILD_ID
 
 ENV NODE_ENV=production
 ENV PORT=3000
+# Runtime'da ham push o'chiq — sxema volume'dagi bazadan (entrypoint ko'chiradi).
+ENV PAYLOAD_DISABLE_PUSH=1
 
 # Baza va yuklangan rasmlar doimiy volume'larda (Coolify persistent storage).
 RUN mkdir -p /app/data /app/media
 
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 EXPOSE 3000
-CMD ["bun", "run", "start"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

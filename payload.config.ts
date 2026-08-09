@@ -49,7 +49,11 @@ export default buildConfig({
   // ustun o'chirish) push'ni o'chirib `payload migrate` ga o'tiladi.
   db: sqliteAdapter({
     client: { url: process.env.DATABASE_URI || "file:./db.sqlite" },
-    push: true,
+    // Build paytida `next build` ning parallel ishchilari bo'sh SQLite'ni bir
+    // vaqtda push qilib qulflamasligi uchun push o'chiriladi (PAYLOAD_DISABLE_PUSH=1);
+    // sxema `scripts/db-init.ts` da oldindan yaratiladi. Prod runtime'da push
+    // yoqiq: bo'sh volume'dagi baza birinchi ishga tushishda sxemani oladi.
+    push: process.env.PAYLOAD_DISABLE_PUSH !== "1",
   }),
   // ponytail: localization o'chirilgan — sayt bitta tilda chiqadi. Kerak bo'lganda
   // shu yerga `localization: { locales: ["uz","ru","en"], defaultLocale: "uz" }`

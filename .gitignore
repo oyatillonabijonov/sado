@@ -31,4 +31,3 @@ yarn-error.log*
 # payload
 /media
 db.sqlite
-payload-types.ts

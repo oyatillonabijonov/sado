@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
 import EmptyState from "@/components/EmptyState";
 import SectionHeading from "@/components/SectionHeading";
@@ -21,6 +22,26 @@ export default async function ServicesPage() {
       >
         Nima qilamiz
       </SectionHeading>
+
+      {/* Muqova — xizmatlar ro'yxatidan oldin qilingan ishning o'zi turadi.
+          3:1 nisbat ataylab: 21:9 bo'lsa birinchi qator kartalar ekrandan
+          tushib ketardi va butun taklifni bir ko'rinishda ko'rish yo'qolardi.
+          Rasm shu nisbatga qarab tanlangan — diagonal kompozitsiya va tepadagi
+          osmon kesilganda ham butun qoladi. Vertikal sub'ektli kadr (masalan
+          sd5 dagi shishalar) bu yerda tepasidan qirqiladi.
+          Almashtirish = shu `src` ni o'zgartirish (public/). */}
+      {/* Mobilda 16:5 atigi 105px baland chiziqqa aylanadi va rasmdan hech
+          narsa o'qilmaydi — tor ekranda balandroq nisbat. */}
+      <div className="relative mb-[48px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black sm:aspect-[16/5]">
+        <Image
+          src="/sd2.png"
+          alt="Atlas naqshli samolyot liveriyasi — SADO ishi"
+          fill
+          priority
+          sizes="(max-width: 768px) 100vw, 1440px"
+          className="object-cover"
+        />
+      </div>
 
       {services.length === 0 ? (
         <EmptyState

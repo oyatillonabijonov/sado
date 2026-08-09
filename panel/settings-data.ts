@@ -3,7 +3,9 @@ import { payloadClient } from "@/panel/auth";
 import { relIds } from "@/panel/doc";
 
 export type SocialRow = { label: string; href: string };
+export type StatRow = { value: string; label: string };
 export type SettingsFormData = {
+  stats: StatRow[];
   heroKicker: string;
   heroHeading: string;
   heroImages: number[];
@@ -33,6 +35,12 @@ export async function loadSettings(): Promise<SettingsFormData> {
     phone: String(contact.phone ?? ""),
     address: String(contact.address ?? ""),
     description: String(doc.description ?? ""),
+    stats: Array.isArray(doc.stats)
+      ? (doc.stats as StatRow[]).map((s) => ({
+          value: String(s.value ?? ""),
+          label: String(s.label ?? ""),
+        }))
+      : [],
     socials: Array.isArray(doc.socials)
       ? (doc.socials as SocialRow[]).map((s) => ({
           label: String(s.label ?? ""),

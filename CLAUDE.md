@@ -31,12 +31,21 @@ CMS paneli (o'z `<html>`, `panel.css`). Ular alohida root bo'lgani uchun mos kel
 
 **Kontent Payload'da.** `collections/*.ts` sxema, `payload.config.ts` konfiguratsiya, baza —
 `db.sqlite` (`DATABASE_URI`). Sayt uni faqat ikki modul orqali o'qiydi:
-- `lib/content.ts` — `getProjects`, `getProject`, `adjacentProjects`, `getServices`
+- `lib/content.ts` — `getProjects`, `getProject`, `adjacentProjects`, `getServices`,
+  `getTestimonials`
 - `lib/blog.ts` — `getAllPosts`, `getPost`, `getBlogCategories`, `getRelatedPosts`
 
 Bu funksiyalar Payload hujjatlarini `data/projects.ts` / `data/services.ts` dagi **tiplarga**
 o'giradi, shuning uchun komponentlar o'zgarmadi. O'sha fayllardagi massivlar va
 `content/blog/*.mdx` endi faqat `scripts/seed.ts` uchun — ularni tahrirlash saytni o'zgartirmaydi.
+
+Istisno — **`getTestimonials` da zaxira bor**: jadval bo'sh bo'lsa
+`data/testimonials.ts` dagi otzivlar chiqadi. Sabab `db-ensure`: u yangi
+jadvalni bo'sh yaratadi, ya'ni bu kolleksiya qo'shilgan deploy'dan keyin prod
+bazasida bitta ham otziv bo'lmasdi va ishonch bandi mijozning haqiqiy
+otzivlarisiz chiqardi. Yon ta'siri: oxirgi otzivni o'chirish kodagilarni
+qaytaradi. Mijoz logolari (`clients`) va jamoa (`team`, `values`) hali ham
+faqat kodda.
 
 **Sayt so'rov paytida render qilinadi — `app/(site)/layout.tsx` dagi
 `export const dynamic = "force-dynamic"` ni olib tashlamang.** Dockerfile build
@@ -81,11 +90,24 @@ Avtosaqlash faqat **mavjud** yozuv uchun: yangi maqolada har bir tugmacha yangi 
 yaratib ketardi, shuning uchun birinchi "Saqlash" dan keyin yoqiladi.
 
 **Sozlamalar globali.** `globals/Settings.ts` — mijoz o'zgartiradigan sayt matni: bosh
-sahifaning birinchi ekrani (matn + `heroImages`), aloqa ma'lumotlari, ijtimoiy tarmoqlar,
-meta tavsif. Sayt uni `lib/getSettings()` orqali o'qiydi va har bir maydon uchun
-`data/site.ts` dagi qiymat zaxira (hero rasmlari uchun `public/sd1–sd5`). Sayt nomi, manzili
+sahifaning birinchi ekrani (matn + `heroImages`), aloqa ma'lumotlari, ishonch bandidagi
+`stats` raqamlari, ijtimoiy tarmoqlar, meta tavsif. Sayt uni `lib/getSettings()` orqali
+o'qiydi va har bir maydon uchun zaxira bor — `data/site.ts`, raqamlar uchun `data/team.ts`
+dagi `stats`, hero rasmlari uchun `public/sd1–sd5`. Sayt nomi, manzili
 va navigatsiya tuzilishi kodda qoladi — ular kontent emas. Hero'ni `HeroSlideshow` (client,
 JS crossfade) render qiladi — rasm soni paneldan kelgani uchun har qanday songa moslashadi.
+
+`stats` va `socials` — o'zgaruvchan sonli qatorlar. Formada ikkalasini ham
+`SettingsForm.tsx` dagi `RepeatRows` chizadi va u qatorni **indeks bilan emas,
+o'sib boradigan kalit bilan** belgilaydi: `Field` boshqarilmaydigan input
+ustiga qurilgan, indeks bilan kalitlanganda o'rtadagi qator o'chirilsa React
+DOM tugunini qayta ishlatardi va ekranda o'chirilgan qatorning matni qolib
+ketardi. `settings-actions.ts` esa `<prefix>.<i>.<field>` kalitlarini o'qiydi
+va faqat to'liq to'ldirilgan qatorni saqlaydi.
+
+**`Stats` — client komponent va qiymatni prop orqali oladi.** `lib/settings.ts`
+dan **qiymat** import qilib bo'lmaydi (u Payload'ni tortadi va build yiqiladi) —
+sahifa server tomonda o'qiydi, komponentga tayyor massiv keladi.
 
 **Rasm = LCP. Ikki qoida buzilmasin.** Sayt rasmlari `next/image` orqali ketadi (istisno:
 mijoz logolari — o'nlab turli nisbatda, ular tayyor 224px WebP va `loading="lazy"`).
@@ -151,7 +173,25 @@ formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `sa
 
 **Tipografika.** `Inter Tight` (`next/font`, `--font-sans` o'zgaruvchisi orqali `app/(site)/layout.tsx` da). Sarlavha darajalari `.display` (hero/CTA) va `.heading` (seksiyalar) — `globals.css` da `clamp()` bilan. Seksiya oʻlchamlari `text-subheading`/`text-heading-sm` tokenlarda.
 
-**Seksiya naqshi.** Bosh sahifa seksiyalari izchil ritmda: `pt-[80px]`/`pt-[160px]`, hairline `border-t border-graphite` + kulrang kicker (`SectionHeading` komponenti buni inkassa qiladi).
+**Seksiya naqshi.** Bosh sahifa seksiyalari izchil ritmda, hairline `border-t border-graphite` + kulrang kicker (`SectionHeading` komponenti buni inkassa qiladi).
+
+**Vertikal ritm — token orqali, `pt-[160px]` deb yozmang.** `globals.css` `@theme` da
+`--spacing-section-lg` / `-section` / `-section-sm` / `-block` / `-card`, ya'ni
+`pt-section`, `mt-block`, `p-card`. Ular 768px dan pastda kichrayadi (240→88, 160→72,
+120→56, 64→40, 32→20). Ilgari har bir seksiya o'z qiymatini qo'lda olib yurardi va
+mobilda qisqarmasdi: 375px ekranda bosh sahifa 11 ekranga cho'zilardi. **Yangi mobil
+qiymat qo'shganda `md:` dan foydalaning, `lg:` dan emas** — desktop chegarasi 768px, va
+`lg:` bilan yozilgan tuzatish 768–1023px oralig'ida qo'llanmay qoladi.
+
+**Mobilda barmoq uchun 44px.** Matn havolasiga `.tap` klassi vertikal padding beradi
+(faqat <768px). Salbiy margin ataylab yo'q: u qo'shni havolalarning bosish maydonlarini
+ustma-ust tushirardi — o'rniga konteynerdagi `gap` kichraytiriladi.
+
+**Otzivlar qatori mobilda marquee emas.** `.sado-rail` animatsiyasi va
+`.sado-rail-mask` `@media (min-width: 768px)` ichida. Telefonda `hover` yo'q, ya'ni
+suzib ketayotgan otzivni to'xtatib o'qib bo'lmasdi; u yerda `overflow-x-auto snap-x`
+qoladi, karta `w-[85vw]` (keyingisining cheti ko'rinib turadi — surish ishorasi), va
+takror `<li>` lar `max-md:hidden` — aks holda swipe uzunligi ikki baravar bo'lardi.
 
 **Motion.** `components/motion/Reveal.tsx` — `Reveal` (skrollda ochiladi), `Stagger` +
 `StaggerItem` (to'r bolalari ketma-ket), `Rise` (sahifa ochilishida, hero uchun). Hammasi
@@ -172,7 +212,7 @@ paneldan kelib o'zgargani uchun qat'iy N-kadrli CSS loop yaramaydi.
 - `.sado-marquee` — mijozlar logo qatori; `.sado-rail` — otzivlar qatori (sekinroq, hover'da to'xtaydi).
 - `.shell` / `.bleed` — sahifa gutteri va undan chetga chiqish, `--gutter` va `--content` orqali.
 
-**Interaktiv komponentlar `"use client"`.** `Header` (toggle+soat+menyu), `ContactForm`, `Select` (native `<select>` o'rniga dizayn tizimiga mos custom dropdown), `Stats` (IntersectionObserver bilan count-up). Qolganlari server komponent.
+**Interaktiv komponentlar `"use client"`.** `Header` (tema+til+to'liq ekranli mobil menyu, aloqa Sozlamalardan `settings` prop orqali), `ContactForm`, `Select` (native `<select>` o'rniga dizayn tizimiga mos custom dropdown), `Stats` (IntersectionObserver bilan count-up). Qolganlari server komponent.
 
 **Contact form.** `ContactForm` (client, zod validatsiya) → `POST /api/contact` (`lib/contact.ts` dagi bir xil `contactSchema` bilan qayta tekshiradi). Route so'rovni `submissions` kolleksiyasiga yozadi va panelning bosh ekranida
 (`/panel`) ro'yxat bo'lib chiqadi — xabarnoma (email/Telegram) hali TODO.

@@ -43,7 +43,7 @@ export default async function AboutPage() {
       {/* Raqamlar endi o'zi karta — panelning 32/48px paddingi ustiga qo'shilib
           ikki qavat ramka berardi. Panel yupqa zamin bo'lib qoladi. */}
       <Reveal className="mt-[40px] rounded-[10px] bg-soft-black p-[16px] md:mt-[80px] md:p-[24px]">
-        <Stats />
+        <Stats stats={settings.stats} />
       </Reveal>
 
       {/* Qadriyatlar va madaniyat — ilgari ikkita alohida seksiya edi, ikkalasi

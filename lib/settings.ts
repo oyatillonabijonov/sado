@@ -1,6 +1,7 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { site } from "@/data/site";
+import { stats } from "@/data/team";
 import type { SiteSettings } from "@/lib/site-format";
 
 export type { SiteSettings };
@@ -31,6 +32,7 @@ const FALLBACK: SiteSettings = {
   phone: site.phone,
   address: site.address,
   description: site.description,
+  stats: stats.map((s) => ({ value: s.value, label: s.label })),
   socials: [...site.socials],
 };
 
@@ -53,6 +55,11 @@ export async function getSettings(): Promise<SiteSettings> {
         .map((s) => ({ label: String(s.label ?? ""), href: String(s.href ?? "") }))
         .filter((s) => s.label && s.href)
     : [];
+  const statRows = Array.isArray(doc.stats)
+    ? (doc.stats as { value?: string; label?: string }[])
+        .map((s) => ({ value: String(s.value ?? ""), label: String(s.label ?? "") }))
+        .filter((s) => s.value && s.label)
+    : [];
 
   // Ikkalasi ham upload hasMany: depth bilan populatsiya qilingan media obyektlari.
   const urls = (value: unknown) =>
@@ -73,6 +80,7 @@ export async function getSettings(): Promise<SiteSettings> {
     phone: text(contact.phone, FALLBACK.phone),
     address: text(contact.address, FALLBACK.address),
     description: text(doc.description, FALLBACK.description),
+    stats: statRows.length ? statRows : FALLBACK.stats,
     socials: socials.length ? socials : FALLBACK.socials,
   };
 }

@@ -5,6 +5,8 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { projects } from "@/data/projects";
 import { services } from "@/data/services";
+import { stats } from "@/data/team";
+import { testimonials } from "@/data/testimonials";
 import { fromText } from "@/panel/lexical";
 
 /**
@@ -45,7 +47,7 @@ async function media(publicPath: string, alt: string): Promise<number> {
   return id;
 }
 
-async function wipe(collection: "projects" | "services" | "posts") {
+async function wipe(collection: "projects" | "services" | "posts" | "testimonials") {
   await payload.delete({ collection, where: { id: { greater_than: 0 } } });
 }
 
@@ -110,6 +112,24 @@ for (const [order, file] of files.entries()) {
   });
   console.log(`maqola: ${file}`);
 }
+
+/* --------------------------------------------------------------- otzivlar -- */
+
+await wipe("testimonials");
+for (const [order, t] of testimonials.entries()) {
+  await payload.create({ collection: "testimonials", data: { ...t, order } });
+  console.log(`otziv: ${t.name}`);
+}
+
+/* --------------------------------------------------------------- raqamlar -- */
+
+/* Boshqa maydonlarga tegmaydi: sozlamalar globali bitta hujjat va uni to'liq
+   qayta yozish mijoz kiritgan hero matnini, aloqa ma'lumotlarini o'chirardi. */
+await payload.updateGlobal({
+  slug: "settings",
+  data: { stats: stats.map((s) => ({ value: s.value, label: s.label })) } as never,
+});
+console.log(`raqamlar: ${stats.length} ta`);
 
 console.log("\nTayyor.");
 process.exit(0);

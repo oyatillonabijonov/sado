@@ -9,6 +9,7 @@ import {
   ImageIcon,
   InboxIcon,
   LayersIcon,
+  PeopleIcon,
   TagIcon,
 } from '@/panel/nav-icons';
 
@@ -40,6 +41,7 @@ const GROUPS = [
       { href: '/panel/loyihalar', label: 'Loyihalar', Icon: LayersIcon },
       { href: '/panel/xizmatlar', label: 'Xizmatlar', Icon: TagIcon },
       { href: '/panel/maqolalar', label: 'Maqolalar', Icon: ArticleIcon },
+      { href: '/panel/otzivlar', label: 'Otzivlar', Icon: PeopleIcon },
       { href: '/panel/rasmlar', label: 'Rasmlar', Icon: ImageIcon },
       { href: '/panel/sozlamalar', label: 'Sozlamalar', Icon: BuildingIcon },
     ],

@@ -10,6 +10,7 @@ import { Posts } from "@/collections/Posts";
 import { Projects } from "@/collections/Projects";
 import { Services } from "@/collections/Services";
 import { Submissions } from "@/collections/Submissions";
+import { Testimonials } from "@/collections/Testimonials";
 import { Users } from "@/collections/Users";
 import { Settings } from "@/globals/Settings";
 
@@ -17,7 +18,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default buildConfig({
   admin: { user: Users.slug },
-  collections: [Users, Media, Projects, Services, Posts, Submissions],
+  collections: [Users, Media, Projects, Services, Posts, Testimonials, Submissions],
   globals: [Settings],
   editor: lexicalEditor(),
   /**

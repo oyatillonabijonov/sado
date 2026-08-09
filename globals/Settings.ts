@@ -64,6 +64,24 @@ export const Settings: GlobalConfig = {
       ],
     },
     {
+      /* Alohida kolleksiya bo'lishga arzimaydi: to'rtta qator, tartibi
+         o'zgarmaydi va ular sayt matni — otziv kabi mustaqil yozuv emas. */
+      name: "stats",
+      type: "array",
+      label: "Raqamlar",
+      admin: { description: "Ishonch bandidagi kartalar. Masalan: 120+ / Yakunlangan loyihalar." },
+      fields: [
+        {
+          name: "value",
+          type: "text",
+          required: true,
+          label: "Raqam",
+          admin: { description: "Raqam bilan boshlansa saytda sanab chiqiladi: 120+ → 0 dan 120 gacha." },
+        },
+        { name: "label", type: "text", required: true, label: "Yorliq" },
+      ],
+    },
+    {
       name: "socials",
       type: "array",
       label: "Ijtimoiy tarmoqlar",

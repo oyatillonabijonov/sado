@@ -18,6 +18,8 @@ export type SiteSettings = {
   phone: string;
   address: string;
   description: string;
+  /** Ishonch bandidagi kartalar. `value` raqam bilan boshlansa sanab chiqiladi. */
+  stats: { value: string; label: string }[];
   socials: { label: string; href: string }[];
 };
 

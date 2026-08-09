@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { stats } from "@/data/team";
+import type { SiteSettings } from "@/lib/site-format";
 
 /** "120+" → { n: 120, suffix: "+" } */
 function parseValue(v: string): { n: number; suffix: string } {
@@ -11,8 +11,15 @@ function parseValue(v: string): { n: number; suffix: string } {
 
 const easeOutCubic = (p: number) => 1 - Math.pow(1 - p, 3);
 
-/** Metrikalar — ekranga kirganda count-up animatsiya bilan chiqadi. */
-export default function Stats() {
+/**
+ * Metrikalar — ekranga kirganda count-up animatsiya bilan chiqadi.
+ *
+ * Qiymatlar prop orqali: bu client komponent, `lib/settings.ts` esa Payload'ni
+ * (sharp, nodemailer, SQLite drayveri) tortadi va undan **qiymat** import
+ * qilish build'ni yiqitadi. Server sahifa o'qiydi, bu yerga tayyor massiv
+ * keladi.
+ */
+export default function Stats({ stats }: { stats: SiteSettings["stats"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 

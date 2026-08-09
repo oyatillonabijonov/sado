@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Select from "@/components/Select";
 import { contactSchema, serviceOptions } from "@/lib/contact";
 
@@ -19,6 +19,12 @@ const card = "rounded-[10px] bg-soft-black p-[24px] sm:p-[40px]";
 export default function ContactForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
+
+  /* Callback ref: element DOM'ga tushgan payt chaqiriladi, ya'ni useEffect'siz
+     ham "endi ko'rinsin" deyish uchun eng erta nuqta. */
+  const focusSuccess = useCallback((node: HTMLDivElement | null) => {
+    node?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, []);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -51,7 +57,11 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className={card}>
+      /* `role="status"` + `aria-live` — screen reader uchun; `ref` esa ko'z
+         uchun. Forma ~400px, bu blok ~60px: forma o'rnini bo'shatganda kontent
+         yuqoriga siljiydi va tasdiq ekrandan chiqib ketardi (o'lchandi:
+         top -34px). Odam "Yuborish" bosib bo'sh joyga qarab qolardi. */
+      <div className={card} role="status" aria-live="polite" ref={focusSuccess}>
         <p className="text-subheading text-bone-white">Xabaringiz yuborildi.</p>
         <p className="mt-[16px] text-fog-gray">
           Bir ish kuni ichida siz bilan bog'lanamiz.

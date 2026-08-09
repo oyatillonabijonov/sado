@@ -85,7 +85,10 @@ html {
     --color-pure-black: #f7f7f5;
     --color-soft-black: #ececea;
     --color-bone-white: #111111;
-    --color-fog-gray: #6f6f6f;
+    /* #6f6f6f edi — `--color-soft-black` (#ececea) karta foni ustida 4.24:1
+       berardi, WCAG AA esa kichik matn uchun 4.5 talab qiladi (axe `serious`,
+       16 ta node). #666 shu fonda 4.83:1. Dark mode qiymatiga tegilmagan. */
+    --color-fog-gray: #666666;
     --color-graphite: #dcdcd8;
     --logo-invert: 1;
   }
@@ -94,7 +97,9 @@ html {
   --color-pure-black: #f7f7f5;
   --color-soft-black: #ececea;
   --color-bone-white: #111111;
-  --color-fog-gray: #6f6f6f;
+  /* Yuqoridagi media-blok bilan bir xil bo'lishi shart — aks holda toggle
+     bilan tanlangan light mode kontrast tekshiruvidan o'tmay qoladi. */
+  --color-fog-gray: #666666;
   --color-graphite: #dcdcd8;
   --logo-invert: 1;
 }

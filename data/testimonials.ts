@@ -56,16 +56,16 @@ export interface Client {
 }
 
 export const clients: Client[] = [
-  { name: "AIFU", logo: "/images/clients/aifu.png" },
-  { name: "Yetakchilar Akademiyasi", logo: "/images/clients/yetakchilar.png" },
-  { name: "Melek", logo: "/images/clients/melek.png" },
-  { name: "AllSolar", logo: "/images/clients/allsolar.png" },
-  { name: "Kiias", logo: "/images/clients/kiias.png" },
-  { name: "Oxus University", logo: "/images/clients/oxus.png" },
-  { name: "Andy's Kitchen", logo: "/images/clients/andys.png" },
-  { name: "Arbol", logo: "/images/clients/arbol.png" },
-  { name: "Mohir", logo: "/images/clients/mohir.png" },
-  { name: "Ansor", logo: "/images/clients/ansor.png" },
+  { name: "AIFU", logo: "/images/clients/aifu.webp" },
+  { name: "Yetakchilar Akademiyasi", logo: "/images/clients/yetakchilar.webp" },
+  { name: "Melek", logo: "/images/clients/melek.webp" },
+  { name: "AllSolar", logo: "/images/clients/allsolar.webp" },
+  { name: "Kiias", logo: "/images/clients/kiias.webp" },
+  { name: "Oxus University", logo: "/images/clients/oxus.webp" },
+  { name: "Andy's Kitchen", logo: "/images/clients/andys.webp" },
+  { name: "Arbol", logo: "/images/clients/arbol.webp" },
+  { name: "Mohir", logo: "/images/clients/mohir.webp" },
+  { name: "Ansor", logo: "/images/clients/ansor.webp" },
 ];
 
 export const processSteps = [

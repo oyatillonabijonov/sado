@@ -6,6 +6,11 @@ export const Media: CollectionConfig = {
   admin: { group: 'Контент' },
   access: { read: () => true },
   upload: {
+    // Original ham chegaralanadi: mijoz kameradan chiqqan 8 MB'lik faylni
+    // yuklaganda u diskda ham, `next/image` kirishida ham o'shancha qolib
+    // ketardi. 2400px — hero to'liq ekran uchun yetarli.
+    // Sxemaga tegmaydi (faqat sharp resize) — schema.sqlite qayta kerak emas.
+    resizeOptions: { width: 2400, height: 2400, fit: 'inside', withoutEnlargement: true },
     // Ratios the design fixes: 4:3 cards, 16:9 heroes, 16:10 works list, 3:4 portraits.
     imageSizes: [
       { name: 'card', width: 800, height: 600, position: 'centre' },

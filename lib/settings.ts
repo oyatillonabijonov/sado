@@ -15,7 +15,10 @@ export type { SiteSettings };
  */
 
 /** Panelda hero rasmlari tanlanmasa ishlatiladigan standart rasmlar. */
-const DEFAULT_HERO_IMAGES = ["/sd1.png", "/sd2.png", "/sd3.png", "/sd4.png", "/sd5.webp"];
+/* WebP: bular fotosurat edi va PNG'da 1.4–2.1 MB tortardi (jami 6.8 MB).
+   `next/image` baribir qayta siqadi, lekin manba og'ir bo'lsa Docker image
+   ham, har bir sovuq optimizatsiya ham o'shancha qimmatga tushardi. */
+const DEFAULT_HERO_IMAGES = ["/sd1.webp", "/sd2.webp", "/sd3.webp", "/sd4.webp", "/sd5.webp"];
 
 const FALLBACK: SiteSettings = {
   heroKicker: `${site.tagline} — Toshkent, ${site.founded}-yildan`,

@@ -319,35 +319,6 @@ body {
   }
 }
 
-/* Hero case loop — 5 frames, 0.5s each, CSS-only */
-/* 5 kadr × 3s. Ilgari butun sikl 2.5s edi — har yarim soniyada sakrab
-   turgan rasm stroboskopdek ko'rinadi va ishning o'zini ko'rsatmaydi.
-   Kesim o'rniga fade: 20% ning ichida 4% ustma-ust tushadi. */
-.hero-frame {
-  opacity: 0;
-  animation: hero-loop 15s infinite;
-}
-@keyframes hero-loop {
-  0% {
-    opacity: 0;
-  }
-  2%,
-  18% {
-    opacity: 1;
-  }
-  20%,
-  100% {
-    opacity: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hero-frame {
-    animation: none;
-  }
-  .hero-frame:first-child {
-    opacity: 1;
-  }
-}
 
 /* Clients marquee */
 @keyframes sado-marquee {

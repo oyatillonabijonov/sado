@@ -76,6 +76,14 @@ meta tavsif. Sayt uni `lib/getSettings()` orqali o'qiydi va har bir maydon uchun
 va navigatsiya tuzilishi kodda qoladi — ular kontent emas. Hero'ni `HeroSlideshow` (client,
 JS crossfade) render qiladi — rasm soni paneldan kelgani uchun har qanday songa moslashadi.
 
+**Rasm = LCP. Ikki qoida buzilmasin.** Sayt rasmlari `next/image` orqali ketadi (istisno:
+mijoz logolari — o'nlab turli nisbatda, ular tayyor 224px WebP va `loading="lazy"`).
+Hero'da esa faqat **birinchi kadr** darrov yuklanadi, qolganlari o'sha kadr chizilgach
+mount bo'ladi: beshtasi barobar yuklanganda LCP rasm bandwidth talashib qolardi. Bu
+o'lchangan regressiya — hero 6.8 MB PNG'da, `<img>` bilan turganda mobil LCP 42 s edi.
+Manba fayllar ham WebP: `next/image` baribir siqadi, lekin og'ir manba Docker image'ni
+va har bir sovuq optimizatsiyani qimmatlashtiradi.
+
 **Client komponentga `lib/settings.ts` dan qiymat import qilmang.** U Payload'ni tortadi,
 Payload esa sharp va nodemailer'ni — build `child_process` topilmadi deb yiqiladi. Tip va
 sof yordamchilar `lib/site-format.ts` da (direktivasiz, Payload'ga tegmaydi).
@@ -111,7 +119,7 @@ formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `sa
 - Token nomlari tarixiy (dark-first) lekin qiymatlari **semantik** — light modeda `bone-white` qora bo'ladi. Yangi komponentda hardcoded hex yoki `bg-white`/`text-black` ishlatmang, aks holda light mode buziladi.
 - **Light/dark mode:** header'dagi toggle `<html data-theme>` ni o'zgartiradi va `localStorage.theme` ga saqlaydi; `app/(site)/layout.tsx` inline skripti FOUC oldini olish uchun birinchi bo'yashdan oldin qo'llaydi. `data-theme` tizim sozlamasidan (`prefers-color-scheme`) ustun turadi.
 
-**Tipografika.** `Inter Tight` (`next/font`, `--font-sans` o'zgaruvchisi orqali `app/layout.tsx` da). Sarlavha darajalari `.display` (hero/CTA) va `.heading` (seksiyalar) — `globals.css` da `clamp()` bilan. Seksiya oʻlchamlari `text-subheading`/`text-heading-sm` tokenlarda.
+**Tipografika.** `Inter Tight` (`next/font`, `--font-sans` o'zgaruvchisi orqali `app/(site)/layout.tsx` da). Sarlavha darajalari `.display` (hero/CTA) va `.heading` (seksiyalar) — `globals.css` da `clamp()` bilan. Seksiya oʻlchamlari `text-subheading`/`text-heading-sm` tokenlarda.
 
 **Seksiya naqshi.** Bosh sahifa seksiyalari izchil ritmda: `pt-[80px]`/`pt-[160px]`, hairline `border-t border-graphite` + kulrang kicker (`SectionHeading` komponenti buni inkassa qiladi).
 
@@ -124,12 +132,12 @@ bo'lib qoladi. Har biri `data-motion` belgisini oladi: SSR'da ular `opacity:0` b
 chiqadi, shuning uchun `layout.tsx` dagi `<noscript>` ularni ko'rinadigan qiladi (JS
 yuklanmasa sahifa bo'sh ko'rinardi).
 
-Marquee, `.btn-fill`, `.nav-flip` va hero loop **CSS'da qoladi** — ularni JS'ga ko'chirish
-bundle'ni og'irlashtiradi, foyda bermaydi.
+Marquee, `.btn-fill` va `.nav-flip` **CSS'da qoladi** — ularni JS'ga ko'chirish bundle'ni
+og'irlashtiradi, foyda bermaydi. Hero esa aksincha JS'ga o'tdi (`HeroSlideshow`): rasm soni
+paneldan kelib o'zgargani uchun qat'iy N-kadrli CSS loop yaramaydi.
 
 **Umumiy util klasslar** (`globals.css`, komponent emas):
 - `.btn-fill` — tugma hover'da chapdan o'ngga to'ladigan fill animatsiya. `RedDotLink` va formadagi submit shuni ishlatadi.
-- `.hero-frame` + `hero-loop` — hero'dagi 5 ta rasm (`public/sd1–sd5`) 15s CSS loop bilan almashadi (kadr boshiga 3s).
 - `.prose-oker` — blog maqola matni uchun long-form stillar.
 - `.sado-marquee` — mijozlar logo qatori; `.sado-rail` — otzivlar qatori (sekinroq, hover'da to'xtaydi).
 - `.shell` / `.bleed` — sahifa gutteri va undan chetga chiqish, `--gutter` va `--content` orqali.

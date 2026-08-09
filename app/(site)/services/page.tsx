@@ -35,7 +35,7 @@ export default async function ServicesPage() {
           narsa o'qilmaydi — tor ekranda balandroq nisbat. */}
       <Reveal className="relative mb-[48px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black sm:aspect-[16/5]">
         <Image
-          src="/sd2.png"
+          src="/sd2.webp"
           alt="Atlas naqshli samolyot liveriyasi — SADO ishi"
           fill
           priority

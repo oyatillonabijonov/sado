@@ -13,7 +13,9 @@ bun install
 bun run dev             # dev server
 bun run build           # productionga build
 bunx tsc --noEmit       # type-check
-bun test                # lexical round-trip guard
+bun test                # hamma testlar
+bun test scripts/db-ensure.test.ts   # bitta fayl (yo'l bo'yicha filtr)
+bun test -t "yangi jadval"           # bitta test (nom bo'yicha)
 bunx payload generate:types   # payload-types.ts ni yangilash (kolleksiya o'zgargach)
 bun scripts/seed.ts     # bo'sh bazani boshlang'ich kontent bilan to'ldirish
 ```
@@ -35,6 +37,15 @@ CMS paneli (o'z `<html>`, `panel.css`). Ular alohida root bo'lgani uchun mos kel
 Bu funksiyalar Payload hujjatlarini `data/projects.ts` / `data/services.ts` dagi **tiplarga**
 o'giradi, shuning uchun komponentlar o'zgarmadi. O'sha fayllardagi massivlar va
 `content/blog/*.mdx` endi faqat `scripts/seed.ts` uchun — ularni tahrirlash saytni o'zgartirmaydi.
+
+**Sayt so'rov paytida render qilinadi — `app/(site)/layout.tsx` dagi
+`export const dynamic = "force-dynamic"` ni olib tashlamang.** Dockerfile build
+paytida `cp schema.sqlite db.sqlite` qiladi (prodda volume hali yo'q), ya'ni
+`next build` **bo'sh** bazani ko'radi. Statik qurilgan sahifalar o'sha bo'sh
+holatni HTML'ga muhrlab qo'yardi va har deploy'dan keyin sayt mijoz kiritgan
+hamma narsani "yo'q" deb ko'rsatardi — kontent joyida turgani holda.
+`revalidatePath` buni faqat mijoz navbatdagi safar biror narsani saqlaganda
+tuzatardi. `app/sitemap.ts` ham shu sababdan dinamik.
 
 Maqola matni Payload'da Lexical formatida. `panel/lexical.ts` uni markdown bilan ikki tomonga
 o'giradi: panelda `BlockEditor`, saytda `toText` → `MDXRemote`. `panel/lexical.test.ts` shu
@@ -104,6 +115,13 @@ sof yordamchilar `lib/site-format.ts` da (direktivasiz, Payload'ga tegmaydi).
 sozlanmagan bo'lsa xat server konsoliga yoziladi — oqim dev'da to'liq ishlaydi,
 productionda `.env` dagi to'rtta SMTP qiymati kerak. `nodemailer` `next.config.mjs` da
 `serverExternalPackages` ro'yxatida.
+
+**Xavfsizlik sarlavhalari `next.config.mjs` da**, Traefik'da emas — proxy o'zgarsa ham
+sayt ularni o'zi bilan olib yuradi: HSTS, `X-Frame-Options`, `X-Content-Type-Options`,
+`Referrer-Policy`, COOP va `Content-Security-Policy: frame-ancestors 'self'`. CSP ataylab
+shu bitta direktiva bilan cheklangan — to'liq XSS siyosati har so'rovga nonce talab qiladi
+(`layout.tsx` dagi FOUC skripti va Next'ning bootstrap'i inline), ya'ni middleware; hozircha
+u yozilmagan. HSTS'da `preload` yo'q: u ro'yxatga tushgach qaytarib bo'lmaydi.
 
 **Deploy (Coolify, Docker).** `Dockerfile` — bun install → `next build` (SSG sxemani
 o'qish uchun `cp schema.sqlite db.sqlite`; SIGTRAP-on-exit `.next/BUILD_ID` bilan ajratiladi)

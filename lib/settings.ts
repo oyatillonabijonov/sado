@@ -14,9 +14,13 @@ export type { SiteSettings };
  * zaxira: global hali to'ldirilmagan bo'lsa ham sayt bo'sh chiqmaydi.
  */
 
+/** Panelda hero rasmlari tanlanmasa ishlatiladigan standart rasmlar. */
+const DEFAULT_HERO_IMAGES = ["/sd1.png", "/sd2.png", "/sd3.png", "/sd4.png", "/sd5.webp"];
+
 const FALLBACK: SiteSettings = {
   heroKicker: `${site.tagline} — Toshkent, ${site.founded}-yildan`,
   heroHeading: "Brendlarning vizual ko'rinishini\nshakllantiramiz.",
+  heroImages: DEFAULT_HERO_IMAGES,
   email: site.email,
   phone: site.phone,
   address: site.address,
@@ -44,9 +48,17 @@ export async function getSettings(): Promise<SiteSettings> {
         .filter((s) => s.label && s.href)
     : [];
 
+  // heroImages — upload hasMany: depth bilan populatsiya qilingan media obyektlari.
+  const heroImages = Array.isArray(doc.heroImages)
+    ? (doc.heroImages as unknown[])
+        .map((m) => (m && typeof m === "object" && "url" in m ? String((m as { url: string }).url) : ""))
+        .filter(Boolean)
+    : [];
+
   return {
     heroKicker: text(hero.kicker, FALLBACK.heroKicker),
     heroHeading: text(hero.heading, FALLBACK.heroHeading),
+    heroImages: heroImages.length ? heroImages : FALLBACK.heroImages,
     email: text(contact.email, FALLBACK.email),
     phone: text(contact.phone, FALLBACK.phone),
     address: text(contact.address, FALLBACK.address),

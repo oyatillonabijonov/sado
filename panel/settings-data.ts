@@ -1,10 +1,12 @@
 import "server-only";
 import { payloadClient } from "@/panel/auth";
+import { relIds } from "@/panel/doc";
 
 export type SocialRow = { label: string; href: string };
 export type SettingsFormData = {
   heroKicker: string;
   heroHeading: string;
+  heroImages: number[];
   email: string;
   phone: string;
   address: string;
@@ -24,6 +26,7 @@ export async function loadSettings(): Promise<SettingsFormData> {
   return {
     heroKicker: String(hero.kicker ?? ""),
     heroHeading: String(hero.heading ?? ""),
+    heroImages: relIds(doc.heroImages),
     email: String(contact.email ?? ""),
     phone: String(contact.phone ?? ""),
     address: String(contact.address ?? ""),

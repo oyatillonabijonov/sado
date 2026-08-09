@@ -11,6 +11,7 @@
 export type SiteSettings = {
   heroKicker: string;
   heroHeading: string;
+  heroImages: string[];
   email: string;
   phone: string;
   address: string;

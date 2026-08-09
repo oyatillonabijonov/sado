@@ -33,6 +33,16 @@ export const Settings: GlobalConfig = {
       ],
     },
     {
+      name: "heroImages",
+      type: "upload",
+      relationTo: "media",
+      hasMany: true,
+      label: "Bosh sahifa — orqa fon rasmlari",
+      admin: {
+        description: "Hero'da almashib turadigan rasmlar. Bo'sh qoldirilsa saytdagi standart rasmlar chiqadi.",
+      },
+    },
+    {
       type: "group",
       name: "contact",
       label: "Aloqa",

@@ -2,11 +2,13 @@
 
 import { useActionState, useState } from "react";
 import type { FormState } from "@/panel/form-state";
+import { ImageStack } from "@/panel/ImageDrop";
+import type { MediaOption } from "@/panel/media";
 import { saveSettings } from "@/panel/settings-actions";
 import type { SettingsFormData, SocialRow } from "@/panel/settings-data";
 import { Area, Card, Field, GhostButton, Grid, SaveBar } from "@/panel/ui";
 
-export function SettingsForm({ data }: { data: SettingsFormData }) {
+export function SettingsForm({ data, media }: { data: SettingsFormData; media: MediaOption[] }) {
   const [state, action] = useActionState<FormState, FormData>(saveSettings, {});
   // Ijtimoiy tarmoqlar soni oldindan ma'lum emas: bugun to'rtta, ertaga
   // beshta bo'lishi mumkin. Shuning uchun qat'iy slot emas, qo'shiladigan
@@ -30,6 +32,13 @@ export function SettingsForm({ data }: { data: SettingsFormData }) {
           name="heroHeading"
           defaultValue={data.heroHeading}
           rows={3}
+        />
+        <ImageStack
+          label="Orqa fon rasmlari"
+          hint="Hero'da 3 soniyada almashib turadi. Sudrab tashlang yoki tanlang; tartibni strelkalar bilan o'zgartiring. Bo'sh qoldirilsa standart rasmlar chiqadi."
+          name="heroImages"
+          options={media}
+          defaultValue={data.heroImages}
         />
       </Card>
 

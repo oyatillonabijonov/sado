@@ -573,6 +573,10 @@ export interface Setting {
      */
     heading?: string | null;
   };
+  /**
+   * Hero'da almashib turadigan rasmlar. Bo'sh qoldirilsa saytdagi standart rasmlar chiqadi.
+   */
+  heroImages?: (number | Media)[] | null;
   contact?: {
     email?: string | null;
     phone?: string | null;
@@ -603,6 +607,7 @@ export interface SettingsSelect<T extends boolean = true> {
         kicker?: T;
         heading?: T;
       };
+  heroImages?: T;
   contact?:
     | T
     | {

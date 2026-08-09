@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ClientsMarquee from "@/components/ClientsMarquee";
+import HeroSlideshow from "@/components/HeroSlideshow";
 import { Reveal, Rise, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import ContactForm from "@/components/ContactForm";
 import ProjectTile from "@/components/ProjectTile";
@@ -34,17 +35,8 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="relative flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden pb-[48px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">
-          {["/sd1.png", "/sd2.png", "/sd3.png", "/sd4.png", "/sd5.webp"].map(
-            (src, i) => (
-              <img
-                key={src}
-                src={src}
-                alt=""
-                className="hero-frame absolute inset-0 h-full w-full object-cover"
-                style={{ animationDelay: `${i * 3}s` }}
-              />
-            ),
-          )}
+          {/* Rasmlar paneldan (Sozlamalar → hero). Bo'sh bo'lsa standartlar. */}
+          <HeroSlideshow images={settings.heroImages} />
           <div className="absolute inset-0 bg-gradient-to-t from-pure-black via-pure-black/40 to-pure-black/10" />
         </div>
         <div className="shell relative z-10">

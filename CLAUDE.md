@@ -37,7 +37,9 @@ CMS paneli (o'z `<html>`, `panel.css`). Ular alohida root bo'lgani uchun mos kel
 `app/global-not-found.tsx` orqali sayt 404'ini qaytaradi — Next'ning zavod 404'i emas.
 
 **Kontent Payload'da.** `collections/*.ts` sxema, `payload.config.ts` konfiguratsiya, baza —
-`db.sqlite` (`DATABASE_URI`). Sayt uni faqat ikki modul orqali o'qiydi:
+`db.sqlite` (`DATABASE_URI`). Kolleksiyalar: `users`, `media`, `projects`, `services`,
+`posts`, `testimonials`, `submissions`; global — `settings`. Sayt ularni faqat ikki
+modul orqali o'qiydi:
 - `lib/content.ts` — `getProjects`, `getProject`, `adjacentProjects`, `getServices`,
   `getTestimonials`
 - `lib/blog.ts` — `getAllPosts`, `getPost`, `getBlogCategories`, `getRelatedPosts`
@@ -157,16 +159,35 @@ o'qish uchun `cp schema.sqlite db.sqlite`; SIGTRAP-on-exit `.next/BUILD_ID` bila
 → `docker-entrypoint.sh`. Prodda Payload sxema push qilmaydi va uni konteynerda Next'dan
 tashqarida ishga tushirib bo'lmaydi (bun ostida payload CLI/tsx va lexical yiqiladi), shuning
 uchun **sxema `schema.sqlite`** — sxema-only, 0 qatorli SQLite repoda commit qilingan.
-`scripts/db-ensure.ts` (bun:sqlite, payload'siz) entrypoint'da: bo'sh volume'ga sxemani
-ko'chiradi; sxemada bor jadval bazada yo'q bo'lsa (yangi kolleksiya) o'sha jadvalning
-CREATE'ini bajaradi — mavjud jadvallarga tegmaydi, ya'ni kontent ham, foydalanuvchilar ham
-joyida qoladi (`scripts/db-ensure.test.ts` shuni qo'riqlaydi). **Kolleksiya/global
-o'zgarsa:** `bunx payload generate:types` (payload-types.ts, u ham commit qilinadi) +
-`schema.sqlite` ni qayta yarat
+`scripts/db-ensure.ts` (bun:sqlite, payload'siz) entrypoint'da uch ish qiladi: bo'sh
+volume'ga sxemani ko'chiradi; sxemada bor **jadval** bazada yo'q bo'lsa (yangi kolleksiya)
+uning CREATE'ini bajaradi; mavjud jadvalda **ustun** yetishmasa `ALTER TABLE ADD COLUMN`
+qiladi va o'sha jadvalning yetishmayotgan indekslarini tiklaydi. Uchalasi ham qo'shuvchi
+amal — kontent ham, foydalanuvchilar ham joyida qoladi (`scripts/db-ensure.test.ts` shuni
+qo'riqlaydi). **Kolleksiya/global o'zgarsa:** `bunx payload generate:types`
+(payload-types.ts, u ham commit qilinadi) + `schema.sqlite` ni qayta yarat
 (`rm schema.sqlite && NODE_ENV=development DATABASE_URI=file:./schema.sqlite bun scripts/db-init.ts`).
-Aniqlanmaydigan yagona narsa — **mavjud jadvaldagi ustun o'zgarishi** (maydon qo'shildi yoki
-nomi o'zgardi); u prodda qo'lda ALTER talab qiladi. Baza `/app/data`, rasmlar `/app/media` — Coolify volume'lari. Repoga push
+Baza `/app/data`, rasmlar `/app/media` — Coolify volume'lari. Repoga push
 = avtodeploy (GitHub App webhook).
+
+**Ustun tekshiruvi nega bor.** U yo'q edi va 2026-08-12 da prodda quyidagi sodir bo'ldi:
+`testimonials` va `submissions` qo'shilgan deploy'da jadvallari yaratildi, lekin mavjud
+`payload_locked_documents_rels` ga `testimonials_id` va `submissions_id` ustunlari
+qo'shilmadi. Payload har bir `update` va `delete` da qulf jadvalini tozalaydi
+(`checkDocumentLockStatus` oxiridagi `db.deleteMany` — `overrideLock` dan **qat'i nazar**
+bajariladi), o'sha so'rov polimorf `_rels` ga JOIN qiladi va yetishmayotgan ustunga
+murojaat qiladi → `SQLITE_ERROR: no such column`. Mijoz paneldan yozuv **qo'sha olardi**
+(`create` bu yo'ldan o'tmaydi), lekin tahrirlay ham, o'chira ham olmasdi va "Saqlash"
+saytda hech narsani o'zgartirmasdi.
+
+**Qoralamasiz kolleksiyaga yangi MAJBURIY maydon qo'shsangiz `defaultValue` bering.**
+Payload `required: true` ni `NOT NULL` qilib chiqaradi (`services.fit_for`), SQLite esa
+sukut qiymatisiz `NOT NULL` ustunni `ALTER` bilan qabul qilmaydi — db-ensure uni
+"QO'LDA KERAK" deb log'ga yozib o'tkazib yuboradi. `defaultValue` bo'lsa
+`NOT NULL default …` chiqadi va migratsiya o'zi o'tadi (`services.order` shunday).
+`projects` va `posts` da bu muammo yo'q: qoralama yoqilgani uchun ularning ustunlari
+nullable. Hamon aniqlanmaydigani — ustun **o'chirilishi** va **nom o'zgarishi**; ataylab,
+chunki ikkalasi ham ma'lumot yo'qotadi. Skript hech qachon `DROP` bajarmaydi.
 
 **Lokalizatsiya o'chirilgan.** Header'dagi til tanlagich hozircha faqat `<html lang>` ni
 almashtiradi. Yoqish = `payload.config.ts` ga `localization` bloki, maydonlarga `localized: true`,
@@ -238,7 +259,17 @@ o'qiydi — ikkalasi ham access'dan o'tmaydi. Forma uch joyda: bosh sahifa CTA, 
 
 ## Til / konvensiyalar
 
-- UI matni va commit tavsiflari **o'zbekcha**. Placeholder kontent "Placeholder matn:" prefiksi bilan belgilangan; UI da `stripPlaceholder`/regex bilan yashiriladi.
+- UI matni va commit tavsiflari **o'zbekcha**.
 - Strict TypeScript, `any` yo'q. Import alias: `@/*` → repo ildizi.
-- Bo'shliqlar Tailwind da aniq piksel bilan: `gap-[16px]`, `pt-[160px]` (tema spacing tokenlari emas).
-- Placeholder rasmlar `public/images/` da SVG — real fotolar bilan almashtiriladi.
+- **Bo'shliqlar:** seksiyalar orasidagi vertikal ritm — yuqoridagi `--spacing-*`
+  tokenlari (`pt-section`, `mt-stack`, `p-card`). Komponent ichidagi mayda
+  oraliqlar esa aniq piksel bilan: `gap-[16px]`, `mt-[8px]`.
+- `public/images/` da SVG placeholder'lar ham, real fotolar ham bor (jpg/webp).
+  Loyiha muqovalari va jamoa suratlari real, blog muqovalari hali SVG.
+
+**Placeholder matn hali saytda ko'rinadi.** `data/*.ts` va `content/blog/*.mdx`
+dagi bir qism matn "Placeholder matn:" prefiksi bilan belgilangan va seed orqali
+bazaga tushgan (hozir 6 ta loyihada). Uni yashiradigan `stripPlaceholder` degan
+yordamchi **yo'q** — ilgari shunday deb yozilgan edi, lekin kodda topilmadi.
+Ya'ni bu matn `/portfolio/<slug>` sahifalarida o'qiladi. Tuzatish yo'li —
+paneldan haqiqiy matn kiritish, kodda filtr yozish emas.

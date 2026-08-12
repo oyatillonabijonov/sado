@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
 import { findRaw, nextOrder, relId } from "@/panel/doc";
 import { toBlocks, type Block } from "@/panel/lexical";
 
@@ -39,8 +40,11 @@ export async function emptyPost(): Promise<PostFormData> {
   };
 }
 
-export async function loadPost(id: number): Promise<PostFormData | null> {
-  const doc = await findRaw("posts", id);
+export async function loadPost(
+  id: number,
+  locale: PanelLocale = DEFAULT_LOCALE,
+): Promise<PostFormData | null> {
+  const doc = await findRaw("posts", id, locale);
   if (!doc) return null;
 
   const { blocks, lossy } = toBlocks(doc.body);

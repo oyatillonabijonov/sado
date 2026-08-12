@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { useId, useRef, useState, type ReactNode } from 'react';
+import { DEFAULT_LOCALE, PANEL_LOCALES, type PanelLocale } from '@/panel/locale';
 import { ImageDrop } from '@/panel/ImageDrop';
 import type { MediaOption } from '@/panel/media';
 
@@ -451,6 +453,52 @@ export function GhostButton({ children, onClick }: { children: ReactNode; onClic
   );
 }
 
+/* --------------------------------------------------------------- tillar -- */
+
+/**
+ * Ekranning tili. Havola, tugma emas — holat URL'da (`?til=ru`), ya'ni
+ * sahifa yangilansa ham, havola ulashilsa ham saqlanadi va orqaga tugmasi
+ * kutilganidek ishlaydi.
+ *
+ * Ogohlantirish matni ataylab: mijoz ruscha ekranda bo'sh maydonlarni
+ * ko'rib "kontent yo'qoldi" deb o'ylamasin.
+ */
+export function LangSwitch({ locale, hint = true }: { locale: PanelLocale; hint?: boolean }) {
+  const params = useSearchParams();
+  const path = usePathname();
+
+  return (
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-1 self-start rounded-pill border border-mist p-1">
+        {PANEL_LOCALES.map((l) => {
+          const next = new URLSearchParams(params);
+          if (l.code === DEFAULT_LOCALE) next.delete('til');
+          else next.set('til', l.code);
+          const qs = next.toString();
+          return (
+            <Link
+              key={l.code}
+              href={qs ? `${path}?${qs}` : path}
+              aria-current={l.code === locale ? 'page' : undefined}
+              className={`rounded-pill px-4 py-1.5 text-body-sm transition-colors ${
+                l.code === locale ? 'bg-obsidian text-white' : 'text-pebble hover:text-obsidian'
+              }`}
+            >
+              {l.label}
+            </Link>
+          );
+        })}
+      </div>
+      {hint && locale !== DEFAULT_LOCALE && (
+        <p className="text-body-sm text-driftwood">
+          Ruscha matn. Bo‘sh qoldirilgan maydon saytda o‘zbekchasini ko‘rsatadi — hech narsa
+          yo‘qolmaydi.
+        </p>
+      )}
+    </div>
+  );
+}
+
 /* ------------------------------------------------------ qo'shiladigan qatorlar -- */
 
 export type RowField = {
@@ -508,6 +556,13 @@ export function RepeatRows({
               : 'flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4'
           }
         >
+          {/*
+           * Payload'dagi qator id'si. Bu ko'rinmaydi, lekin **tarjimani
+           * saqlab qoladigan yagona narsa**: massiv id'siz saqlansa Payload
+           * qatorlarni qaytadan yaratadi va boshqa tildagi matn `null` bo'lib
+           * ketadi (o'lchangan). Yangi qatorda bo'sh — Payload o'zi id beradi.
+           */}
+          <input type="hidden" name={`${name}.${i}.id`} value={row.values.id ?? ''} readOnly />
           {fields.map((f) => (
             <div key={f.key} style={stacked ? undefined : { flex: f.grow ?? 1 }}>
               {f.kind === 'image' ? (

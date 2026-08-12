@@ -21,12 +21,14 @@ export const Settings: GlobalConfig = {
         {
           name: "kicker",
           type: "text",
+          localized: true,
           label: "Sarlavha ustidagi qator",
           admin: { description: "Masalan: Dizayn agentligi — Toshkent, 2018-yildan" },
         },
         {
           name: "heading",
           type: "textarea",
+          localized: true,
           label: "Katta sarlavha",
           admin: { description: "Yangi qatordan boshlansa, saytda ham yangi qatorga tushadi." },
         },
@@ -95,7 +97,7 @@ export const Settings: GlobalConfig = {
           label: "Raqam",
           admin: { description: "Raqam bilan boshlansa saytda sanab chiqiladi: 120+ → 0 dan 120 gacha." },
         },
-        { name: "label", type: "text", required: true, label: "Yorliq" },
+        { name: "label", type: "text", localized: true, label: "Yorliq" },
       ],
     },
     {
@@ -110,6 +112,7 @@ export const Settings: GlobalConfig = {
     {
       name: "description",
       type: "textarea",
+      localized: true,
       label: "Qidiruv tizimlari uchun tavsif",
       admin: { description: "Google natijalarida sayt ostida chiqadigan matn." },
     },

@@ -2,24 +2,34 @@
 
 import { revalidatePath } from "next/cache";
 import { payloadClient, requireUser } from "@/panel/auth";
-import { readRows } from "@/panel/rows";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
+import { readRows, rowId } from "@/panel/rows";
 import { explain, type FormState } from "@/panel/form-state";
 
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? "").trim();
 
-export async function saveSettings(_prev: FormState, fd: FormData): Promise<FormState> {
+export async function saveSettings(
+  locale: PanelLocale,
+  _prev: FormState,
+  fd: FormData,
+): Promise<FormState> {
   await requireUser();
+  const primary = locale === DEFAULT_LOCALE;
 
   // Qatorlar `RepeatRows` dan keladi; `readRows` ularni o'qiydi va
   // to'ldirilmaganini tashlaydi (`panel/form-map.ts`).
-  const socials = readRows(fd, "socials", ["label", "href"]) as unknown as {
-    label: string;
-    href: string;
-  }[];
-  const stats = readRows(fd, "stats", ["value", "label"]) as unknown as {
-    value: string;
-    label: string;
-  }[];
+  // `id` — Payload qator identifikatori. Usiz massiv qaytadan yaratiladi
+  // va **boshqa tildagi matn yo'qoladi** (o'lchangan).
+  const socials = readRows(fd, "socials", ["label", "href"]).map((r) => ({
+    id: rowId(r),
+    label: r.label,
+    href: r.href,
+  }));
+  const stats = readRows(fd, "stats", ["value", "label"]).map((r) => ({
+    id: rowId(r),
+    value: r.value,
+    label: r.label,
+  }));
 
   // Hero rasmlari — ImageStack `heroImages.0`, `heroImages.1`, … beradi.
   const stack = (prefix: string) =>
@@ -39,11 +49,13 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
     const payload = await payloadClient();
     await payload.updateGlobal({
       slug: "settings",
+      locale,
       data: {
         hero: { kicker: str(fd, "heroKicker"), heading: str(fd, "heroHeading") },
-        heroImages,
-        heroImagesMobile,
-        servicesCover,
+        // Rasmlar va havolalar lokalizatsiya qilinmagan — ular hujjatga
+        // tegishli, tilga emas. Faqat asosiy tildan yoziladi, aks holda
+        // ruscha ekran ularni ikkinchi marta yozib chiqardi.
+        ...(primary ? { heroImages, heroImagesMobile, servicesCover } : {}),
         contact: { email: str(fd, "email"), phone: str(fd, "phone"), address: str(fd, "address") },
         stats,
         socials,

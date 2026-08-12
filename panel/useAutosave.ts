@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
 
 export type AutosaveState =
   | { kind: "idle" }
@@ -26,7 +27,11 @@ export type AutosaveState =
  * 3. **Sahifadan chiqishda ogohlantirish.** Saqlanmagan o'zgarish qolgan
  *    bo'lsa brauzer so'raydi.
  */
-export function useAutosave(form: React.RefObject<HTMLFormElement | null>, id: number | null) {
+export function useAutosave(
+  form: React.RefObject<HTMLFormElement | null>,
+  id: number | null,
+  locale: PanelLocale = DEFAULT_LOCALE,
+) {
   const [state, setState] = useState<AutosaveState>({ kind: "idle" });
   const dirty = useRef(false);
   const sending = useRef(false);
@@ -45,6 +50,9 @@ export function useAutosave(form: React.RefObject<HTMLFormElement | null>, id: n
         const fd = new FormData(el);
         fd.set("__collection", el.dataset.collection ?? "");
         fd.set("__id", String(id));
+        // Qoralama qaysi tilga yozilishi kerakligi — usiz ruscha ekranda
+        // yozilgan matn o'zbekcha qoralamani bosib ketardi.
+        fd.set("__locale", locale);
         const res = await fetch("/api/panel/autosave", { method: "POST", body: fd });
         const data = (await res.json()) as { error?: string };
         if (!res.ok) throw new Error(data.error ?? "Saqlanmadi");
@@ -79,7 +87,7 @@ export function useAutosave(form: React.RefObject<HTMLFormElement | null>, id: n
       el.removeEventListener("change", touch);
       window.removeEventListener("beforeunload", warn);
     };
-  }, [form, id]);
+  }, [form, id, locale]);
 
   return state;
 }

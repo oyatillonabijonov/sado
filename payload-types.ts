@@ -96,7 +96,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('uz' | 'ru') | ('uz' | 'ru')[];
   globals: {
     settings: Setting;
     about: About;
@@ -105,7 +105,7 @@ export interface Config {
     settings: SettingsSelect<false> | SettingsSelect<true>;
     about: AboutSelect<false> | AboutSelect<true>;
   };
-  locale: null;
+  locale: 'uz' | 'ru';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -221,20 +221,20 @@ export interface Media {
  */
 export interface Project {
   id: number;
-  title: string;
+  title?: string | null;
   slug: string;
-  client: string;
+  client?: string | null;
   year: string;
   category: 'Branding' | 'Web' | 'UI/UX' | 'Print';
   services?: string[] | null;
   cover: number | Media;
   featured?: boolean | null;
-  brief: string;
-  solution: string;
+  brief?: string | null;
+  solution?: string | null;
   results?:
     | {
-        label: string;
-        value: string;
+        label?: string | null;
+        value?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -250,11 +250,11 @@ export interface Project {
  */
 export interface Service {
   id: number;
-  title: string;
+  title?: string | null;
   slug: string;
-  description: string;
+  description?: string | null;
   deliverables?: string[] | null;
-  fitFor: string;
+  fitFor?: string | null;
   order: number;
   updatedAt: string;
   createdAt: string;
@@ -265,11 +265,11 @@ export interface Service {
  */
 export interface Post {
   id: number;
-  title: string;
+  title?: string | null;
   slug: string;
-  description: string;
+  description?: string | null;
   date: string;
-  category: string;
+  category?: string | null;
   author: string;
   cover: number | Media;
   body?: {
@@ -298,9 +298,9 @@ export interface Post {
  */
 export interface Testimonial {
   id: number;
-  quote: string;
+  quote?: string | null;
   name: string;
-  role: string;
+  role?: string | null;
   company: string;
   order: number;
   updatedAt: string;
@@ -672,7 +672,7 @@ export interface Setting {
          * Raqam bilan boshlansa saytda sanab chiqiladi: 120+ → 0 dan 120 gacha.
          */
         value: string;
-        label: string;
+        label?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -715,8 +715,8 @@ export interface About {
    */
   values?:
     | {
-        title: string;
-        text: string;
+        title?: string | null;
+        text?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -726,7 +726,7 @@ export interface About {
   team?:
     | {
         name: string;
-        role: string;
+        role?: string | null;
         photo?: (number | null) | Media;
         id?: string | null;
       }[]

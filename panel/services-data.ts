@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
 import { findRaw, nextOrder } from "@/panel/doc";
 import { toLines } from "@/panel/lines";
 
@@ -24,8 +25,11 @@ export async function emptyService(): Promise<ServiceFormData> {
   };
 }
 
-export async function loadService(id: number): Promise<ServiceFormData | null> {
-  const doc = await findRaw("services", id);
+export async function loadService(
+  id: number,
+  locale: PanelLocale = DEFAULT_LOCALE,
+): Promise<ServiceFormData | null> {
+  const doc = await findRaw("services", id, locale);
   if (!doc) return null;
   return {
     id: doc.id as number,

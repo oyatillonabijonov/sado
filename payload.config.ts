@@ -58,9 +58,24 @@ export default buildConfig({
     // yoqiq: bo'sh volume'dagi baza birinchi ishga tushishda sxemani oladi.
     push: process.env.PAYLOAD_DISABLE_PUSH !== "1",
   }),
-  // ponytail: localization o'chirilgan — sayt bitta tilda chiqadi. Kerak bo'lganda
-  // shu yerga `localization: { locales: ["uz","ru","en"], defaultLocale: "uz" }`
-  // va maydonlarga `localized: true` qo'shiladi.
+  /**
+   * Ikki til: o'zbekcha (asosiy) va ruscha.
+   *
+   * `fallback: true` — ruscha tarjimasi bo'sh maydon o'zbekchasini
+   * ko'rsatadi. Bu shart: fallback'siz mijoz tarjimani kiritib ulgurmagan
+   * ruscha sahifa yarim bo'sh chiqardi.
+   *
+   * **`slug` lokalizatsiya qilinmaydi** — bitta manzil ikkala tilda.
+   * Saytdagi URL'lar indekslangan va tarjima qilingan slug ularni buzardi.
+   */
+  localization: {
+    locales: [
+      { code: "uz", label: "O'zbekcha" },
+      { code: "ru", label: "Ruscha" },
+    ],
+    defaultLocale: "uz",
+    fallback: true,
+  },
   sharp,
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
 });

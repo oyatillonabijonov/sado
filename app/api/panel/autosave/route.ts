@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { currentUser, payloadClient } from "@/panel/auth";
 import { MAPPERS, isAutosavable } from "@/panel/form-map";
+import { DEFAULT_LOCALE, localeFrom } from "@/panel/locale";
 
 /**
  * Avtosaqlash — qoralama sifatida.
@@ -23,6 +24,9 @@ export async function POST(request: Request) {
   const fd = await request.formData();
   const collection = String(fd.get("__collection") ?? "");
   const id = Number(fd.get("__id"));
+  // Qoralama qaysi tilga yozilishi kerak. Usiz ruscha ekranda yozilgan
+  // matn o'zbekcha qoralamani bosib ketardi.
+  const locale = localeFrom(fd.get("__locale"));
 
   if (!isAutosavable(collection)) {
     return NextResponse.json({ error: "Noma'lum kolleksiya." }, { status: 400 });
@@ -40,7 +44,8 @@ export async function POST(request: Request) {
       collection,
       id,
       draft: true,
-      data: MAPPERS[collection](fd) as never,
+      locale,
+      data: MAPPERS[collection](fd, locale === DEFAULT_LOCALE) as never,
     });
   } catch (error) {
     return NextResponse.json(

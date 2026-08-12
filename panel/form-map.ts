@@ -19,11 +19,19 @@ import { SLOTS } from "@/panel/slots";
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? "").trim();
 const rel = (fd: FormData, key: string) => (str(fd, key) ? Number(str(fd, key)) : null);
 
-export function projectDataFrom(fd: FormData) {
+/**
+ * `primary` — asosiy tildagi ekranmi?
+ *
+ * `slug`, `cover`, `year`, `order` va galereya lokalizatsiya qilinmagan:
+ * ular hujjatga tegishli, tilga emas. Ruscha ekrandan ularni yozish manzilni
+ * o'zgartirib indekslangan URL'ni buzardi va rasmni ikkinchi marta
+ * yozardi — shuning uchun ular faqat asosiy tildan keladi.
+ */
+export function projectDataFrom(fd: FormData, primary = true) {
   const title = str(fd, "title");
   return {
     title,
-    slug: slugify(str(fd, "slug") || title),
+    ...(primary ? { slug: slugify(str(fd, "slug") || title) } : {}),
     client: str(fd, "client"),
     year: str(fd, "year"),
     category: str(fd, "category"),
@@ -32,8 +40,11 @@ export function projectDataFrom(fd: FormData) {
     featured: fd.get("featured") === "on",
     brief: str(fd, "brief"),
     solution: str(fd, "solution"),
-    // Bo'sh slotlar saqlashda tushib qoladi.
+    // Bo'sh slotlar saqlashda tushib qoladi. `id` — Payload qator
+    // identifikatori: usiz ikkinchi tildagi raqamlar yo'qoladi (o'lchangan).
     results: Array.from({ length: SLOTS.metrics }, (_, i) => ({
+      // Matnli id — `Number()` bilan o'girilsa tushib qolardi (rows.ts ga qarang).
+      id: str(fd, `results.${i}.id`) || undefined,
       label: str(fd, `results.${i}.label`),
       value: str(fd, `results.${i}.value`),
     })).filter((r) => r.label && r.value),
@@ -47,11 +58,11 @@ export function projectDataFrom(fd: FormData) {
   };
 }
 
-export function postDataFrom(fd: FormData) {
+export function postDataFrom(fd: FormData, primary = true) {
   const title = str(fd, "title");
   return {
     title,
-    slug: slugify(str(fd, "slug") || title),
+    ...(primary ? { slug: slugify(str(fd, "slug") || title) } : {}),
     description: str(fd, "description"),
     date: str(fd, "date") || new Date().toISOString().slice(0, 10),
     category: str(fd, "category"),

@@ -5,13 +5,23 @@ import { saveAbout } from "@/panel/about-actions";
 import type { AboutFormData } from "@/panel/about-data";
 import type { FormState } from "@/panel/form-state";
 import type { MediaOption } from "@/panel/media";
-import { Area, Card, Field, RepeatRows, SaveBar } from "@/panel/ui";
+import type { PanelLocale } from "@/panel/locale";
+import { Area, Card, Field, LangSwitch, RepeatRows, SaveBar } from "@/panel/ui";
 
-export function AboutForm({ data, media }: { data: AboutFormData; media: MediaOption[] }) {
-  const [state, action] = useActionState<FormState, FormData>(saveAbout, {});
+export function AboutForm({
+  data,
+  media,
+  locale,
+}: {
+  data: AboutFormData;
+  media: MediaOption[];
+  locale: PanelLocale;
+}) {
+  const [state, action] = useActionState<FormState, FormData>(saveAbout.bind(null, locale), {});
 
   return (
     <form action={action} className="flex flex-col gap-8">
+      <LangSwitch locale={locale} />
       <Card title="Sahifa boshi">
         <Area
           label="Sarlavha ostidagi qator"

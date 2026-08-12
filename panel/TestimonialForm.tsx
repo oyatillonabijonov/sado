@@ -4,16 +4,24 @@ import { useActionState } from "react";
 import type { FormState } from "@/panel/form-state";
 import { saveTestimonial } from "@/panel/testimonials-actions";
 import type { TestimonialFormData } from "@/panel/testimonials-data";
-import { Area, Card, Field, Grid, SaveBar } from "@/panel/ui";
+import type { PanelLocale } from "@/panel/locale";
+import { Area, Card, Field, Grid, LangSwitch, SaveBar } from "@/panel/ui";
 
-export function TestimonialForm({ data }: { data: TestimonialFormData }) {
+export function TestimonialForm({
+  data,
+  locale,
+}: {
+  data: TestimonialFormData;
+  locale: PanelLocale;
+}) {
   const [state, action] = useActionState<FormState, FormData>(
-    saveTestimonial.bind(null, data.id),
+    saveTestimonial.bind(null, data.id, locale),
     {},
   );
 
   return (
     <form action={action} className="flex flex-col gap-8">
+      <LangSwitch locale={locale} />
       <Card title="Otziv">
         <Area
           label="Matn"

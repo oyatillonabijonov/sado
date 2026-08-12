@@ -6,13 +6,24 @@ import { ImageDrop, ImageStack } from "@/panel/ImageDrop";
 import type { MediaOption } from "@/panel/media";
 import { saveSettings } from "@/panel/settings-actions";
 import type { SettingsFormData } from "@/panel/settings-data";
-import { Area, Card, Field, Grid, RepeatRows, SaveBar } from "@/panel/ui";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
+import { Area, Card, Field, Grid, LangSwitch, RepeatRows, SaveBar } from "@/panel/ui";
 
-export function SettingsForm({ data, media }: { data: SettingsFormData; media: MediaOption[] }) {
-  const [state, action] = useActionState<FormState, FormData>(saveSettings, {});
+export function SettingsForm({
+  data,
+  media,
+  locale,
+}: {
+  data: SettingsFormData;
+  media: MediaOption[];
+  locale: PanelLocale;
+}) {
+  const [state, action] = useActionState<FormState, FormData>(saveSettings.bind(null, locale), {});
+  const primary = locale === DEFAULT_LOCALE;
 
   return (
     <form action={action} className="flex flex-col gap-8">
+      <LangSwitch locale={locale} />
       <Card title="Bosh sahifa" hint="Saytga kirgan odam birinchi ko'radigan matn.">
         <Field
           label="Sarlavha ustidagi qator"
@@ -27,22 +38,30 @@ export function SettingsForm({ data, media }: { data: SettingsFormData; media: M
           defaultValue={data.heroHeading}
           rows={3}
         />
-        <ImageStack
-          label="Orqa fon rasmlari"
-          hint="Hero'da 3 soniyada almashib turadi. Sudrab tashlang yoki tanlang; tartibni strelkalar bilan o'zgartiring. Bo'sh qoldirilsa standart rasmlar chiqadi."
-          name="heroImages"
-          options={media}
-          defaultValue={data.heroImages}
-        />
-        <ImageStack
-          label="Telefon uchun rasmlar"
-          hint="Tik (vertikal) kadrlar — telefonda shular chiqadi. Tartibi yuqoridagi bilan bir xil bo'lsin: birinchisi birinchisining o'rnini oladi. Bo'sh qoldirilsa yuqoridagi rasmlar ishlatiladi, lekin telefon ekrani tor bo'lgani uchun ularning chetlari qirqiladi."
-          name="heroImagesMobile"
-          options={media}
-          defaultValue={data.heroImagesMobile}
-        />
+        {/* Rasmlar lokalizatsiya qilinmagan — ular hujjatga tegishli, tilga
+            emas. Ruscha ekranda ko'rsatilsa mijoz o'zgartirib, keyin
+            "ruschada boshqa rasm bo'lsin" deb kutardi. */}
+        {primary && (
+          <>
+            <ImageStack
+              label="Orqa fon rasmlari"
+              hint="Hero'da 3 soniyada almashib turadi. Sudrab tashlang yoki tanlang; tartibni strelkalar bilan o'zgartiring. Bo'sh qoldirilsa standart rasmlar chiqadi."
+              name="heroImages"
+              options={media}
+              defaultValue={data.heroImages}
+            />
+            <ImageStack
+              label="Telefon uchun rasmlar"
+              hint="Tik (vertikal) kadrlar — telefonda shular chiqadi. Tartibi yuqoridagi bilan bir xil bo'lsin: birinchisi birinchisining o'rnini oladi. Bo'sh qoldirilsa yuqoridagi rasmlar ishlatiladi, lekin telefon ekrani tor bo'lgani uchun ularning chetlari qirqiladi."
+              name="heroImagesMobile"
+              options={media}
+              defaultValue={data.heroImagesMobile}
+            />
+          </>
+        )}
       </Card>
 
+      {primary && (
       <Card title="Xizmatlar sahifasi">
         <ImageDrop
           label="Muqova rasmi"
@@ -52,7 +71,11 @@ export function SettingsForm({ data, media }: { data: SettingsFormData; media: M
           defaultValue={data.servicesCover}
         />
       </Card>
+      )}
 
+      {/* Aloqa ham lokalizatsiya qilinmagan: email, telefon va manzil ikkala
+          tilda bir xil. */}
+      {primary && (
       <Card title="Aloqa" hint="Bu ma'lumotlar futerda va aloqa bo'limida chiqadi.">
         <Grid>
           <Field label="Email" name="email" type="email" defaultValue={data.email} />
@@ -60,6 +83,7 @@ export function SettingsForm({ data, media }: { data: SettingsFormData; media: M
         </Grid>
         <Field label="Manzil" name="address" defaultValue={data.address} />
       </Card>
+      )}
 
       <Card
         title="Raqamlar"
@@ -75,6 +99,7 @@ export function SettingsForm({ data, media }: { data: SettingsFormData; media: M
         />
       </Card>
 
+      {primary && (
       <Card title="Ijtimoiy tarmoqlar">
         <RepeatRows
           name="socials"
@@ -85,6 +110,7 @@ export function SettingsForm({ data, media }: { data: SettingsFormData; media: M
           ]}
         />
       </Card>
+      )}
 
       <Card title="Qidiruv tizimlari" hint="Google natijalarida sayt nomi ostida chiqadigan matn.">
         <Area label="Tavsif" name="description" defaultValue={data.description} rows={3} />

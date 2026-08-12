@@ -36,18 +36,21 @@ export const About: GlobalConfig = {
         {
           name: "lead",
           type: "textarea",
+          localized: true,
           label: "Sarlavha ostidagi qator",
           admin: { description: "Kulrang kichik matn — «Biz haqimizda» sarlavhasi ostida." },
         },
         {
           name: "story",
           type: "textarea",
+          localized: true,
           label: "Birinchi xatboshi",
           admin: { description: "Kattaroq oq matn: agentlik qachon va kim tomonidan tashkil etilgan." },
         },
         {
           name: "mission",
           type: "textarea",
+          localized: true,
           label: "Ikkinchi xatboshi",
           admin: { description: "Kulrang matn: nima uchun ishlaymiz." },
         },
@@ -59,8 +62,8 @@ export const About: GlobalConfig = {
       label: "Qanday ishlaymiz",
       admin: { description: "Har biri alohida karta bo'lib chiqadi. Tavsiya: to'rtta." },
       fields: [
-        { name: "title", type: "text", required: true, label: "Sarlavha" },
-        { name: "text", type: "textarea", required: true, label: "Matn" },
+        { name: "title", type: "text", localized: true, label: "Sarlavha" },
+        { name: "text", type: "textarea", localized: true, label: "Matn" },
       ],
     },
     {
@@ -73,7 +76,7 @@ export const About: GlobalConfig = {
       },
       fields: [
         { name: "name", type: "text", required: true, label: "Ism" },
-        { name: "role", type: "text", required: true, label: "Lavozimi" },
+        { name: "role", type: "text", localized: true, label: "Lavozimi" },
         { name: "photo", type: "upload", relationTo: "media", label: "Surati" },
       ],
     },
@@ -82,8 +85,8 @@ export const About: GlobalConfig = {
       name: "contact",
       label: "Aloqa bandi",
       fields: [
-        { name: "heading", type: "text", label: "Katta sarlavha" },
-        { name: "text", type: "textarea", label: "Sarlavha ostidagi matn" },
+        { name: "heading", type: "text", localized: true, label: "Katta sarlavha" },
+        { name: "text", type: "textarea", localized: true, label: "Sarlavha ostidagi matn" },
       ],
     },
   ],

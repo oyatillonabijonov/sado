@@ -115,64 +115,63 @@ test("ustun qo'shganda mavjud qatorlar joyida qoladi", async () => {
   const live = fixture();
 
   const before = new Database(live);
-  // `solution` — qoralamali kolleksiyada, ya'ni nullable: ALTER bilan
-  // qo'shsa bo'ladi.
-  rebuildWithout(before, "projects", ["solution"]);
+  // `year` — lokalizatsiya qilinmagan, ya'ni asosiy jadvalda qoladi, va
+  // qoralamali kolleksiyada bo'lgani uchun nullable: ALTER bilan qo'shsa bo'ladi.
+  rebuildWithout(before, "projects", ["year"]);
   before.run(
-    "insert into projects (id, title, slug, brief, updated_at, created_at) " +
-      "values (1, 'KIIAS', 'kiias', 'qisqacha', '2026-01-01', '2026-01-01')",
+    "insert into projects (id, slug, updated_at, created_at) " +
+      "values (1, 'kiias', '2026-01-01', '2026-01-01')",
   );
   before.close();
 
   await ensure(live);
 
   const after = new Database(live, { readonly: true });
-  const row = after.query("select id, title, brief, solution from projects where id = 1").get() as
-    | { id: number; title: string; brief: string; solution: string | null }
+  const row = after.query("select id, slug, year from projects where id = 1").get() as
+    | { id: number; slug: string; year: string | null }
     | null;
-  const has = cols(after, "projects").has("solution");
+  const has = cols(after, "projects").has("year");
   after.close();
 
   expect(has).toBe(true);
-  expect(row?.title).toBe("KIIAS");
-  expect(row?.brief).toBe("qisqacha");
-  expect(row?.solution).toBe(null);
+  expect(row?.slug).toBe("kiias");
+  expect(row?.year).toBe(null);
 });
 
 /**
  * SQLite `NOT NULL` ustunni sukut qiymatisiz `ALTER` bilan qabul qilmaydi.
- * Payload buni qoralamasiz kolleksiyaning `required: true` maydonidan
- * chiqaradi (`services.fit_for`). Skript to'xtamasligi, qolganini bajarishi
- * va buni **baland ovozda** aytishi kerak — jimgina o'tkazib yuborilsa
- * xato yana prodda topilardi.
+ * Payload buni lokalizatsiya qilinmagan `required: true` maydonidan chiqaradi
+ * (`users.email`). Skript to'xtamasligi, qolganini bajarishi va buni **baland
+ * ovozda** aytishi kerak — jimgina o'tkazib yuborilsa xato yana prodda
+ * topilardi.
  *
- * Amaliy qoida: qoralamasiz kolleksiyaga yangi MAJBURIY maydon qo'shilsa,
- * unga `defaultValue` beriladi — o'shanda Drizzle `NOT NULL default …`
- * chiqaradi va ALTER o'tadi (`services.order` shunday).
+ * Amaliy qoida: yangi MAJBURIY maydon qo'shilsa unga `defaultValue` beriladi —
+ * o'shanda Drizzle `NOT NULL default …` chiqaradi va ALTER o'zi o'tadi
+ * (`services.order` shunday). Lokalizatsiya qilingan maydonlar bu muammodan
+ * xoli: ular yangi `<jadval>_locales` jadvalida tug'iladi.
  */
 test("qo'shib bo'lmaydigan ustunni o'tkazib yuboradi va yiqilmaydi", async () => {
   const live = fixture();
 
   const before = new Database(live);
-  rebuildWithout(before, "services", ["fit_for"]);
+  rebuildWithout(before, "users", ["email"]);
   before.run(
-    "insert into services (id, title, slug, description, \"order\", updated_at, created_at) " +
-      "values (1, 'Branding', 'branding', 'tavsif', 0, '2026-01-01', '2026-01-01')",
+    "insert into users (id, updated_at, created_at) values (1, '2026-01-01', '2026-01-01')",
   );
   before.close();
 
   const out = await ensure(live);
 
   const after = new Database(live, { readonly: true });
-  const has = cols(after, "services").has("fit_for");
-  const row = after.query("select title from services where id = 1").get() as { title: string } | null;
+  const has = cols(after, "users").has("email");
+  const row = after.query("select id from users where id = 1").get() as { id: number } | null;
   after.close();
 
   expect(has).toBe(false);
   expect(out.exitCode).toBe(0);
   expect(out.stdout.toString() + out.stderr.toString()).toContain("QO'LDA KERAK");
   // Eng muhimi: yiqilgan qadam mavjud qatorni olib ketmadi.
-  expect(row?.title).toBe("Branding");
+  expect(row?.id).toBe(1);
 });
 
 test("o'zgarish kerak bo'lmasa bazaga tegmaydi", async () => {

@@ -11,16 +11,16 @@ export const Posts: CollectionConfig = {
   versions: { drafts: true },
   defaultSort: "-date",
   fields: [
-    { name: "title", type: "text", required: true },
+    { name: "title", type: "text", localized: true },
     { name: "slug", type: "text", required: true, unique: true, index: true },
-    { name: "description", type: "textarea", required: true },
+    { name: "description", type: "textarea", localized: true },
     { name: "date", type: "date", required: true },
-    { name: "category", type: "text", required: true },
+    { name: "category", type: "text", localized: true },
     { name: "author", type: "text", required: true },
     { name: "cover", type: "upload", relationTo: "media", required: true },
     // BlockEditor <-> Lexical: panel/lexical.ts ikki tomonga o'giradi,
     // sayt tomonida `toText` markdown qaytaradi va MDXRemote uni render qiladi.
-    { name: "body", type: "richText" },
+    { name: "body", type: "richText", localized: true },
     // Maqolalar sana bo'yicha saralanadi, lekin ItemList strelkalari `order` ni kutadi.
     { name: "order", type: "number", required: true, defaultValue: 0 },
   ],

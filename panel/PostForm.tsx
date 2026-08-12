@@ -8,15 +8,34 @@ import type { MediaOption } from "@/panel/media";
 import type { PostFormData } from "@/panel/posts-data";
 import { savePost } from "@/panel/posts-actions";
 import { autosaveLabel, useAutosave } from "@/panel/useAutosave";
-import { BigField, Card, Collapse, Field, Grid, SaveBar } from "@/panel/ui";
+import type { PanelLocale } from "@/panel/locale";
+import { BigField, Card, Collapse, Field, Grid, LangSwitch, SaveBar } from "@/panel/ui";
 
-export function PostForm({ data, media }: { data: PostFormData; media: MediaOption[] }) {
-  const [state, action] = useActionState<FormState, FormData>(savePost.bind(null, data.id), {});
+export function PostForm({
+  data,
+  media,
+  locale,
+}: {
+  data: PostFormData;
+  media: MediaOption[];
+  locale: PanelLocale;
+}) {
+  const [state, action] = useActionState<FormState, FormData>(
+    savePost.bind(null, data.id, locale),
+    {},
+  );
   const form = useRef<HTMLFormElement>(null);
-  const auto = useAutosave(form, data.id);
+  const auto = useAutosave(form, data.id, locale);
 
   return (
-    <form ref={form} data-collection="posts" action={action} className="flex flex-col gap-8">
+    <form
+      ref={form}
+      data-collection="posts"
+      data-locale={locale}
+      action={action}
+      className="flex flex-col gap-8"
+    >
+      <LangSwitch locale={locale} />
       {/* Sarlavha va lid — hujjatning o'zi, shuning uchun ramkasiz. */}
       <div className="flex flex-col gap-2">
         <BigField name="title" defaultValue={data.title} placeholder="Maqola sarlavhasi" required />

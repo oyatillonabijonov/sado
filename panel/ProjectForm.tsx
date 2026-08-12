@@ -8,17 +8,36 @@ import type { ProjectFormData } from "@/panel/projects-data";
 import { saveProject } from "@/panel/projects-actions";
 import { autosaveLabel, useAutosave } from "@/panel/useAutosave";
 import { SLOTS } from "@/panel/slots";
-import { Area, Card, Choice, Collapse, Field, Grid, SaveBar, Toggle } from "@/panel/ui";
+import type { PanelLocale } from "@/panel/locale";
+import { Area, Card, Choice, Collapse, Field, Grid, LangSwitch, SaveBar, Toggle } from "@/panel/ui";
 
 const CATEGORIES = ["Branding", "Web", "UI/UX", "Print"].map((c) => ({ value: c, label: c }));
 
-export function ProjectForm({ data, media }: { data: ProjectFormData; media: MediaOption[] }) {
-  const [state, action] = useActionState<FormState, FormData>(saveProject.bind(null, data.id), {});
+export function ProjectForm({
+  data,
+  media,
+  locale,
+}: {
+  data: ProjectFormData;
+  media: MediaOption[];
+  locale: PanelLocale;
+}) {
+  const [state, action] = useActionState<FormState, FormData>(
+    saveProject.bind(null, data.id, locale),
+    {},
+  );
   const form = useRef<HTMLFormElement>(null);
-  const auto = useAutosave(form, data.id);
+  const auto = useAutosave(form, data.id, locale);
 
   return (
-    <form ref={form} data-collection="projects" action={action} className="flex flex-col gap-8">
+    <form
+      ref={form}
+      data-collection="projects"
+      data-locale={locale}
+      action={action}
+      className="flex flex-col gap-8"
+    >
+      <LangSwitch locale={locale} />
       <Card title="Loyiha haqida">
         <Field label="Nomi" name="title" defaultValue={data.title} required />
         <Grid>
@@ -63,6 +82,8 @@ export function ProjectForm({ data, media }: { data: ProjectFormData; media: Med
       <Collapse title="Natijalar" hint="Raqamlar — ixtiyoriy. To'ldirilmagani chiqmaydi.">
         {Array.from({ length: SLOTS.metrics }, (_, i) => (
           <Grid key={i}>
+            {/* Qator id'si — usiz ikkinchi tildagi raqamlar yo'qoladi. */}
+            <input type="hidden" name={`results.${i}.id`} value={data.results[i]?.id ?? ""} readOnly />
             <Field
               label={`${i + 1}-ko'rsatkich`}
               name={`results.${i}.label`}

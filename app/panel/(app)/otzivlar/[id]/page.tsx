@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { DEFAULT_LOCALE, localeFrom } from "@/panel/locale";
 import { DeleteItem } from "@/panel/DeleteItem";
 import { TestimonialForm } from "@/panel/TestimonialForm";
 import { emptyTestimonial, loadTestimonial } from "@/panel/testimonials-data";
@@ -8,15 +9,19 @@ export const dynamic = "force-dynamic";
 
 export default async function TestimonialEditor({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ til?: string }>;
 }) {
   const { id } = await params;
   const isNew = id === "yangi";
+  // Yangi yozuv faqat asosiy tilda yaratiladi.
+  const locale = isNew ? DEFAULT_LOCALE : localeFrom((await searchParams).til);
   const numericId = isNew ? null : Number(id);
   if (!isNew && Number.isNaN(numericId)) notFound();
 
-  const data = isNew ? await emptyTestimonial() : await loadTestimonial(numericId as number);
+  const data = isNew ? await emptyTestimonial() : await loadTestimonial(numericId as number, locale);
   if (!data) notFound();
 
   return (
@@ -26,7 +31,7 @@ export default async function TestimonialEditor({
         back={<BackLink href="/panel/otzivlar">Otzivlar</BackLink>}
       />
 
-      <TestimonialForm data={data} />
+      <TestimonialForm key={locale} data={data} locale={locale} />
 
       {!isNew && (
         <DeleteItem

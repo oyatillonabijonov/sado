@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
 import { findRaw, nextOrder } from "@/panel/doc";
 
 export type TestimonialFormData = {
@@ -21,8 +22,11 @@ export async function emptyTestimonial(): Promise<TestimonialFormData> {
   };
 }
 
-export async function loadTestimonial(id: number): Promise<TestimonialFormData | null> {
-  const doc = await findRaw("testimonials", id);
+export async function loadTestimonial(
+  id: number,
+  locale: PanelLocale = DEFAULT_LOCALE,
+): Promise<TestimonialFormData | null> {
+  const doc = await findRaw("testimonials", id, locale);
   if (!doc) return null;
   return {
     id: doc.id as number,

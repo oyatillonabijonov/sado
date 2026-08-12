@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { readRows } from "@/panel/rows";
+import { readRows, rowId } from "@/panel/rows";
 
 /**
  * `readRows` — `RepeatRows` yozgan `<prefix>.<i>.<maydon>` kalitlarini o'qiydi.
@@ -24,8 +24,8 @@ test("qatorlarni tartibda o'qiydi", () => {
     "stats.1.label": "Mijozlar",
   });
   expect(readRows(fd, "stats", ["value", "label"])).toEqual([
-    { value: "120+", label: "Loyihalar" },
-    { value: "66", label: "Mijozlar" },
+    { id: "", value: "120+", label: "Loyihalar" },
+    { id: "", value: "66", label: "Mijozlar" },
   ]);
 });
 
@@ -52,7 +52,7 @@ test("to'ldirilmagan qatorni tashlaydi", () => {
     "v.2.title": "Yarim",
     "v.2.text": "",
   });
-  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ title: "Bor", text: "matn" }]);
+  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ id: "", title: "Bor", text: "matn" }]);
 });
 
 test("ixtiyoriy maydon bo'sh bo'lishi mumkin", () => {
@@ -67,13 +67,13 @@ test("ixtiyoriy maydon bo'sh bo'lishi mumkin", () => {
     "team.1.photo": "7",
   });
   expect(readRows(fd, "team", ["name", "role", "photo"], ["photo"])).toEqual([
-    { name: "Aziz", role: "Direktor", photo: "" },
+    { id: "", name: "Aziz", role: "Direktor", photo: "" },
   ]);
 });
 
 test("bo'shliqlarni kesadi va bo'sh prefiksda bo'sh massiv qaytaradi", () => {
   const fd = form({ "v.0.title": "  Bor  ", "v.0.text": "  matn " });
-  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ title: "Bor", text: "matn" }]);
+  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ id: "", title: "Bor", text: "matn" }]);
   expect(readRows(fd, "boshqa", ["title", "text"])).toEqual([]);
 });
 
@@ -85,5 +85,39 @@ test("boshqa prefiks bilan boshlanuvchi kalitlarni aralashtirmaydi", () => {
     "vMobile.0.title": "Boshqa",
     "vMobile.0.text": "matn",
   });
-  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ title: "Asosiy", text: "matn" }]);
+  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ id: "", title: "Asosiy", text: "matn" }]);
+});
+
+/* ------------------------------------------------------------ qator id -- */
+
+/**
+ * Qator id'si — lokalizatsiyadagi eng jimgina yo'qotish nuqtasi.
+ *
+ * O'lchangan: massiv `id` siz saqlansa Payload qatorlarni qaytadan yaratadi
+ * va **boshqa tildagi matn `null` bo'lib ketadi**. Ya'ni mijoz ruscha
+ * tarjimani saqlasa o'zbekchasi yo'qolardi. Shuning uchun `id` har doim
+ * o'qiladi va hech qachon "to'ldirilmagan qator" deb hisoblanmaydi.
+ */
+test("qator id'sini o'qiydi", () => {
+  const fd = form({
+    "v.0.id": "7",
+    "v.0.title": "Bor",
+    "v.0.text": "matn",
+  });
+  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ id: "7", title: "Bor", text: "matn" }]);
+});
+
+test("id yo'q bo'lsa ham qator to'liq hisoblanadi (yangi qator)", () => {
+  const fd = form({ "v.0.id": "", "v.0.title": "Yangi", "v.0.text": "matn" });
+  expect(readRows(fd, "v", ["title", "text"])).toEqual([{ id: "", title: "Yangi", text: "matn" }]);
+});
+
+test("rowId: id'ni O'ZGARTIRMASDAN qaytaradi, yangi qatorda undefined", () => {
+  // Payload massiv qatorlariga MATNLI id beradi. `Number()` bilan o'girilsa
+  // `NaN` bo'lib tushib qolardi va Payload qatorni qaytadan yaratib
+  // ikkinchi tildagi matnni o'chirib yuborardi.
+  expect(rowId({ id: "6a78b734d1eac6b95233b0fe" })).toBe("6a78b734d1eac6b95233b0fe");
+  expect(rowId({ id: "7" })).toBe("7");
+  expect(rowId({ id: "" })).toBeUndefined();
+  expect(rowId({})).toBeUndefined();
 });

@@ -1,4 +1,5 @@
 import "server-only";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
 import { findRaw, nextOrder, relId, relIds } from "@/panel/doc";
 import { toLines } from "@/panel/lines";
 import { SLOTS } from "@/panel/slots";
@@ -15,13 +16,14 @@ export type ProjectFormData = {
   featured: boolean;
   brief: string;
   solution: string;
-  results: { label: string; value: string }[];
+  /** `id` — Payload qator identifikatori; usiz ikkinchi tildagi matn yo'qoladi. */
+  results: { id: string; label: string; value: string }[];
   gallery: number[];
   order: number;
 };
 
-const padResults = (rows: { label: string; value: string }[]) =>
-  Array.from({ length: SLOTS.metrics }, (_, i) => rows[i] ?? { label: "", value: "" });
+const padResults = (rows: { id: string; label: string; value: string }[]) =>
+  Array.from({ length: SLOTS.metrics }, (_, i) => rows[i] ?? { id: "", label: "", value: "" });
 
 export async function emptyProject(): Promise<ProjectFormData> {
   return {
@@ -42,12 +44,16 @@ export async function emptyProject(): Promise<ProjectFormData> {
   };
 }
 
-export async function loadProject(id: number): Promise<ProjectFormData | null> {
-  const doc = await findRaw("projects", id);
+export async function loadProject(
+  id: number,
+  locale: PanelLocale = DEFAULT_LOCALE,
+): Promise<ProjectFormData | null> {
+  const doc = await findRaw("projects", id, locale);
   if (!doc) return null;
 
   const results = Array.isArray(doc.results)
-    ? (doc.results as { label?: string; value?: string }[]).map((r) => ({
+    ? (doc.results as { id?: string | number; label?: string; value?: string }[]).map((r) => ({
+        id: r.id === undefined || r.id === null ? "" : String(r.id),
         label: String(r.label ?? ""),
         value: String(r.value ?? ""),
       }))

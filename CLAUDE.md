@@ -221,6 +221,10 @@ o'qish uchun `cp schema.sqlite db.sqlite`; SIGTRAP-on-exit `.next/BUILD_ID` bila
 → `docker-entrypoint.sh`. Prodda Payload sxema push qilmaydi va uni konteynerda Next'dan
 tashqarida ishga tushirib bo'lmaydi (bun ostida payload CLI/tsx va lexical yiqiladi), shuning
 uchun **sxema `schema.sqlite`** — sxema-only, 0 qatorli SQLite repoda commit qilingan.
+Entrypoint ikkita skriptni ketma-ket ishlatadi: `db-ensure` (sxema), keyin
+`migrate-locales` (kontent). Ikkinchisi birinchisiga bog'liq — `_locales`
+jadvallari avval yaratilishi kerak.
+
 `scripts/db-ensure.ts` (bun:sqlite, payload'siz) entrypoint'da uch ish qiladi: bo'sh
 volume'ga sxemani ko'chiradi; sxemada bor **jadval** bazada yo'q bo'lsa (yangi kolleksiya)
 uning CREATE'ini bajaradi; mavjud jadvalda **ustun** yetishmasa `ALTER TABLE ADD COLUMN`
@@ -242,19 +246,62 @@ murojaat qiladi → `SQLITE_ERROR: no such column`. Mijoz paneldan yozuv **qo'sh
 (`create` bu yo'ldan o'tmaydi), lekin tahrirlay ham, o'chira ham olmasdi va "Saqlash"
 saytda hech narsani o'zgartirmasdi.
 
+**`scripts/migrate-locales.ts` — lokalizatsiya migratsiyasi.** Maydonga
+`localized: true` qo'yilganda Payload uni asosiy jadvaldan `<jadval>_locales`
+ga ko'chiradi. `db-ensure` yangi jadvalni **bo'sh** yaratadi va eski ustunni
+o'chirmaydi — ya'ni migratsiyasiz matn bazada qolib, Payload uni topmasdi va
+sayt loyihalarni **nomsiz** ko'rsatardi. Skript ro'yxatni qo'lda emas,
+`schema.sqlite` dan hisoblab oladi (13 jadval, 30+ ustun).
+
+U bitta joyda `DROP` bajaradi va bu ataylab: Payload `update` ni upsert bilan
+qiladi va yetim qolgan `NOT NULL` ustunni to'ldirmaydi →
+`NOT NULL constraint failed: services.title` → **har qanday saqlash yiqiladi**.
+Shuning uchun yangi sxemada yo'q + `NOT NULL` + sukut qiymatisiz + qiymati
+ko'chirilgani tasdiqlangan ustunlar (9 ta) olib tashlanadi. Nullable yetimlar
+(28 ta) tegilmaydi — orqaga qaytish yo'li ular orqali ochiq qoladi.
+`scripts/migrate-locales.test.ts` shuni qo'riqlaydi.
+
 **Qoralamasiz kolleksiyaga yangi MAJBURIY maydon qo'shsangiz `defaultValue` bering.**
 Payload `required: true` ni `NOT NULL` qilib chiqaradi (`services.fit_for`), SQLite esa
 sukut qiymatisiz `NOT NULL` ustunni `ALTER` bilan qabul qilmaydi — db-ensure uni
 "QO'LDA KERAK" deb log'ga yozib o'tkazib yuboradi. `defaultValue` bo'lsa
 `NOT NULL default …` chiqadi va migratsiya o'zi o'tadi (`services.order` shunday).
 `projects` va `posts` da bu muammo yo'q: qoralama yoqilgani uchun ularning ustunlari
-nullable. Hamon aniqlanmaydigani — ustun **o'chirilishi** va **nom o'zgarishi**; ataylab,
+nullable. **Lokalizatsiya qilingan maydonga `required` qo'ymang** — Payload har tilni
+alohida tekshiradi va mijoz ruschani kiritmaguncha o'zbekchani ham saqlab bo'lmasdi.
+Formadagi HTML `required` o'z o'rnida qoladi. Hamon aniqlanmaydigani — ustun **o'chirilishi** va **nom o'zgarishi**; ataylab,
 chunki ikkalasi ham ma'lumot yo'qotadi. Skript hech qachon `DROP` bajarmaydi.
 
-**Lokalizatsiya o'chirilgan.** Header'dagi til tanlagich hozircha faqat `<html lang>` ni
-almashtiradi. Yoqish = `payload.config.ts` ga `localization` bloki, maydonlarga `localized: true`,
-formalarga `LangTabs` (`panel/ui.tsx` da tayyor) va massivli maydonlar uchun `saveLocalized`
-(o'chirilgan — Payload massiv qatorlaridagi tarjimalarni qator id'siz yozsang jimgina yo'qotadi).
+**Ikki til: UZ (asosiy) va RU.** `payload.config.ts` da `localization`,
+`fallback: true` — tarjimasi bo'sh maydon o'zbekchasini ko'rsatadi. **Sayt hozircha
+faqat o'zbekcha chiqadi**: `/ru` marshrutlari va UI lug'ati hali yozilmagan
+(keyingi bosqich). Panel esa ikkala tilni ham yozadi.
+
+`slug` lokalizatsiya qilinmaydi — indekslangan URL'lar buzilmasin. Rasm, aloqa,
+ijtimoiy tarmoqlar, yil, tartib ham: ular hujjatga tegishli, tilga emas.
+Ruscha ekranda ular umuman ko'rsatilmaydi va action ularni yozmaydi.
+
+**Panelda til URL orqali:** `/panel/xizmatlar/1?til=ru` (`panel/locale.ts`,
+`LangSwitch`). Yonma-yon tab emas — mijoz bir vaqtda bitta tilda yozadi va
+ikkita to'plam maydon formani ikki barobar uzaytirardi. Yuklovchilar
+`fallbackLocale: false` bilan o'qiydi: ruscha ekranda mijoz **o'zi
+yozganini** ko'rishi kerak, aks holda bo'sh maydondagi o'zbekcha matn
+saqlanganda ruscha bo'lib yozilib qolardi.
+
+**Formaga `key={locale}` shart.** `Field` va `Area` boshqarilmaydigan input
+ustiga qurilgan; kalitsiz React til almashganda komponentni qayta ishlatardi
+va `<textarea>` eski tildagi matnni ekranda ushlab qolardi (o'lchangan:
+`<input>` yangilanadi, `<textarea>` — yo'q).
+
+**Massiv qatorlari `id` bilan saqlanadi.** `RepeatRows` har qatorga yashirin
+`<prefix>.<i>.id` qo'yadi, `readRows` uni o'qiydi, action `rowId` orqali
+uzatadi. Usiz Payload qatorlarni qaytadan yaratadi va **ikkinchi tildagi matn
+`null` bo'lib ketadi** — o'lchangan, bu eng jimgina yo'qotish nuqtasi.
+`rowId` id'ni **raqamga o'girmaydi**: Payload massiv qatorlariga matnli id
+beradi (`6a78b734d1eac6b95233b0fe`) va `Number()` uni `NaN` qilardi.
+
+Yangi yozuv faqat asosiy tilda yaratiladi (`slug` bo'sh qolmasin), tarjima
+birinchi saqlashdan keyin.
 
 **Rang tizimi — token orqali, hech qachon hardcode qilinmaydi.** Barcha ranglar `app/(site)/globals.css` `@theme` blokidagi CSS o'zgaruvchilar (`--color-pure-black` = fon, `--color-bone-white` = matn, `--color-fog-gray` = ikkinchi matn, `--color-graphite` = chiziq, `--color-soft-black` = ikkinchi fon, `--color-scarlet-signal` = yagona aksent). Tailwind bularni `bg-pure-black`, `text-fog-gray` kabi util sifatida taniydi.
 

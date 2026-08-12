@@ -1,6 +1,7 @@
 import "server-only";
 import { payloadClient } from "@/panel/auth";
 import { relId } from "@/panel/doc";
+import { DEFAULT_LOCALE, type PanelLocale } from "@/panel/locale";
 
 /**
  * «Biz haqimizda» formasining ma'lumoti.
@@ -20,12 +21,14 @@ export type AboutFormData = {
   contactText: string;
 };
 
-export async function loadAbout(): Promise<AboutFormData> {
+export async function loadAbout(locale: PanelLocale = DEFAULT_LOCALE): Promise<AboutFormData> {
   const payload = await payloadClient();
-  const doc = (await payload.findGlobal({ slug: "about", depth: 0 })) as unknown as Record<
-    string,
-    unknown
-  >;
+  const doc = (await payload.findGlobal({
+    slug: "about",
+    depth: 0,
+    locale,
+    fallbackLocale: false,
+  })) as unknown as Record<string, unknown>;
   const intro = (doc.intro ?? {}) as Record<string, unknown>;
   const contact = (doc.contact ?? {}) as Record<string, unknown>;
 
@@ -35,18 +38,23 @@ export async function loadAbout(): Promise<AboutFormData> {
     mission: String(intro.mission ?? ""),
     contactHeading: String(contact.heading ?? ""),
     contactText: String(contact.text ?? ""),
+    // `id` — usiz ikkinchi tildagi matn yo'qoladi.
     values: Array.isArray(doc.values)
-      ? (doc.values as { title?: string; text?: string }[]).map((v) => ({
+      ? (doc.values as { id?: string | number; title?: string; text?: string }[]).map((v) => ({
+          id: v.id == null ? "" : String(v.id),
           title: String(v.title ?? ""),
           text: String(v.text ?? ""),
         }))
       : [],
     team: Array.isArray(doc.team)
-      ? (doc.team as { name?: string; role?: string; photo?: unknown }[]).map((m) => ({
-          name: String(m.name ?? ""),
-          role: String(m.role ?? ""),
-          photo: relId(m.photo) === null ? "" : String(relId(m.photo)),
-        }))
+      ? (doc.team as { id?: string | number; name?: string; role?: string; photo?: unknown }[]).map(
+          (m) => ({
+            id: m.id == null ? "" : String(m.id),
+            name: String(m.name ?? ""),
+            role: String(m.role ?? ""),
+            photo: relId(m.photo) === null ? "" : String(relId(m.photo)),
+          }),
+        )
       : [],
   };
 }

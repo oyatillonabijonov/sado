@@ -15,9 +15,9 @@ export const Testimonials: CollectionConfig = {
   access: { read: () => true },
   defaultSort: "order",
   fields: [
-    { name: "quote", type: "textarea", required: true, label: "Otziv matni" },
+    { localized: true, name: "quote", type: "textarea", label: "Otziv matni" },
     { name: "name", type: "text", required: true, label: "Ism" },
-    { name: "role", type: "text", required: true, label: "Lavozim" },
+    { localized: true, name: "role", type: "text", label: "Lavozim" },
     { name: "company", type: "text", required: true, label: "Kompaniya" },
     { name: "order", type: "number", required: true, defaultValue: 0 },
   ],

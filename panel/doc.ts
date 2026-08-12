@@ -1,6 +1,7 @@
 import 'server-only';
 import type { CollectionSlug } from 'payload';
 import { payloadClient } from '@/panel/auth';
+import { DEFAULT_LOCALE, type PanelLocale } from '@/panel/locale';
 import { toText } from '@/panel/lexical';
 import type { MediaOption } from '@/panel/media';
 
@@ -65,10 +66,13 @@ export function makeRichReader() {
  * etilganini emas. Busiz avtosaqlangan matn sahifani yangilaganda yo'qolgandek
  * ko'rinardi: baza saqlagan, forma esa eski chop etilgan versiyani yuklagan.
  */
-export async function findRaw(collection: CollectionSlug, id: number) {
+export async function findRaw(collection: CollectionSlug, id: number, locale: PanelLocale = DEFAULT_LOCALE) {
   const payload = await payloadClient();
   const doc = await payload
-    .findByID({ collection, id, depth: 0, draft: true })
+    // `fallbackLocale: false` — ruscha ekranda mijoz **o'zi yozganini**
+    // ko'rishi kerak. Fallback bilan bo'sh maydon o'zbekcha matnni
+    // ko'rsatardi va saqlaganda o'sha matn ruscha bo'lib yozilib qolardi.
+    .findByID({ collection, id, depth: 0, draft: true, locale, fallbackLocale: false })
     .catch(() => null);
   return doc as unknown as Record<string, unknown> | null;
 }

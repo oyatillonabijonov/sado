@@ -42,6 +42,7 @@ const GROUPS = [
       { href: '/panel/xizmatlar', label: 'Xizmatlar', Icon: TagIcon },
       { href: '/panel/maqolalar', label: 'Maqolalar', Icon: ArticleIcon },
       { href: '/panel/otzivlar', label: 'Otzivlar', Icon: PeopleIcon },
+      { href: '/panel/biz-haqimizda', label: 'Biz haqimizda', Icon: PeopleIcon },
       { href: '/panel/rasmlar', label: 'Rasmlar', Icon: ImageIcon },
       { href: '/panel/sozlamalar', label: 'Sozlamalar', Icon: BuildingIcon },
     ],

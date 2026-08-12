@@ -12,6 +12,7 @@ import { Services } from "@/collections/Services";
 import { Submissions } from "@/collections/Submissions";
 import { Testimonials } from "@/collections/Testimonials";
 import { Users } from "@/collections/Users";
+import { About } from "@/globals/About";
 import { Settings } from "@/globals/Settings";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,7 +20,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 export default buildConfig({
   admin: { user: Users.slug },
   collections: [Users, Media, Projects, Services, Posts, Testimonials, Submissions],
-  globals: [Settings],
+  globals: [Settings, About],
   editor: lexicalEditor(),
   /**
    * Parol tiklash uchun pochta.

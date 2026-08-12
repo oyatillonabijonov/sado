@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { payloadClient, requireUser } from "@/panel/auth";
+import { readRows } from "@/panel/rows";
 import { explain, type FormState } from "@/panel/form-state";
 
 const str = (fd: FormData, key: string) => String(fd.get(key) ?? "").trim();
@@ -9,30 +10,16 @@ const str = (fd: FormData, key: string) => String(fd.get(key) ?? "").trim();
 export async function saveSettings(_prev: FormState, fd: FormData): Promise<FormState> {
   await requireUser();
 
-  // Qatorlar soni oldindan ma'lum emas — formadagi kalitlardan o'qiladi.
-  // `<prefix>.<i>.<field>` ko'rinishidagi kalitlar `.label` bo'yicha sanaladi,
-  // keyin har bir indeks uchun ikkala maydon o'qiladi. Ikkalasi ham to'lgan
-  // qatorlargina saqlanadi — bo'sh qator saytda bo'sh joy bo'lib chiqardi.
-  const rows = <T extends Record<string, string>>(
-    prefix: string,
-    read: (i: string) => T,
-  ): T[] =>
-    [...fd.keys()]
-      .filter((k) => k.startsWith(`${prefix}.`) && k.endsWith(".label"))
-      .map((k) => k.split(".")[1])
-      .sort((a, b) => Number(a) - Number(b))
-      .map(read)
-      .filter((row) => Object.values(row).every(Boolean));
-
-  const socials = rows("socials", (i) => ({
-    label: str(fd, `socials.${i}.label`),
-    href: str(fd, `socials.${i}.href`),
-  }));
-
-  const stats = rows("stats", (i) => ({
-    value: str(fd, `stats.${i}.value`),
-    label: str(fd, `stats.${i}.label`),
-  }));
+  // Qatorlar `RepeatRows` dan keladi; `readRows` ularni o'qiydi va
+  // to'ldirilmaganini tashlaydi (`panel/form-map.ts`).
+  const socials = readRows(fd, "socials", ["label", "href"]) as unknown as {
+    label: string;
+    href: string;
+  }[];
+  const stats = readRows(fd, "stats", ["value", "label"]) as unknown as {
+    value: string;
+    label: string;
+  }[];
 
   // Hero rasmlari — ImageStack `heroImages.0`, `heroImages.1`, … beradi.
   const stack = (prefix: string) =>

@@ -99,9 +99,11 @@ export interface Config {
   fallbackLocale: null;
   globals: {
     settings: Setting;
+    about: About;
   };
   globalsSelect: {
     settings: SettingsSelect<false> | SettingsSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
   };
   locale: null;
   widgets: {
@@ -690,6 +692,54 @@ export interface Setting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  intro?: {
+    /**
+     * Kulrang kichik matn — «Biz haqimizda» sarlavhasi ostida.
+     */
+    lead?: string | null;
+    /**
+     * Kattaroq oq matn: agentlik qachon va kim tomonidan tashkil etilgan.
+     */
+    story?: string | null;
+    /**
+     * Kulrang matn: nima uchun ishlaymiz.
+     */
+    mission?: string | null;
+  };
+  /**
+   * Har biri alohida karta bo'lib chiqadi. Tavsiya: to'rtta.
+   */
+  values?:
+    | {
+        title: string;
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Saytda 3:4 tik kadr bo'lib chiqadi. Surat qo'yilmasa odamning bosh harflari ko'rinadi — soxta stok surat qo'yishdan ko'ra shunisi yaxshi.
+   */
+  team?:
+    | {
+        name: string;
+        role: string;
+        photo?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  contact?: {
+    heading?: string | null;
+    text?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "settings_select".
  */
 export interface SettingsSelect<T extends boolean = true> {
@@ -724,6 +774,43 @@ export interface SettingsSelect<T extends boolean = true> {
         id?: T;
       };
   description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  intro?:
+    | T
+    | {
+        lead?: T;
+        story?: T;
+        mission?: T;
+      };
+  values?:
+    | T
+    | {
+        title?: T;
+        text?: T;
+        id?: T;
+      };
+  team?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        photo?: T;
+        id?: T;
+      };
+  contact?:
+    | T
+    | {
+        heading?: T;
+        text?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

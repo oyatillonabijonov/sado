@@ -29,6 +29,13 @@ export const values = [
     title: "Uzoq hamkorlik",
     text: "Mijozlarimizning aksariyati biz bilan yillar davomida ishlaydi.",
   },
+  {
+    // To'rtinchisi ilgari `about/page.tsx` da qo'lda yozilgan karta edi —
+    // uchtasi massivdan, bittasi JSX dan chiqardi. Endi hammasi bir joyda,
+    // ya'ni paneldagi ro'yxat saytdagini to'liq aks ettiradi.
+    title: "Ish muhiti",
+    text: "Ochiq muhokama va halol fikr. Har juma — ichki dizayn tanqidi kuni. Yiliga ikki marta jamoa bilan tog'larga chiqamiz.",
+  },
 ];
 
 export const stats = [

@@ -38,11 +38,12 @@ CMS paneli (o'z `<html>`, `panel.css`). Ular alohida root bo'lgani uchun mos kel
 
 **Kontent Payload'da.** `collections/*.ts` sxema, `payload.config.ts` konfiguratsiya, baza —
 `db.sqlite` (`DATABASE_URI`). Kolleksiyalar: `users`, `media`, `projects`, `services`,
-`posts`, `testimonials`, `submissions`; global — `settings`. Sayt ularni faqat ikki
+`posts`, `testimonials`, `submissions`; globallar — `settings`, `about`. Sayt ularni faqat ikki
 modul orqali o'qiydi:
 - `lib/content.ts` — `getProjects`, `getProject`, `adjacentProjects`, `getServices`,
   `getTestimonials`
 - `lib/blog.ts` — `getAllPosts`, `getPost`, `getBlogCategories`, `getRelatedPosts`
+- `lib/about.ts` — `getAbout` (Biz haqimizda sahifasi)
 
 Bu funksiyalar Payload hujjatlarini `data/projects.ts` / `data/services.ts` dagi **tiplarga**
 o'giradi, shuning uchun komponentlar o'zgarmadi. O'sha fayllardagi massivlar va
@@ -53,8 +54,8 @@ Istisno — **`getTestimonials` da zaxira bor**: jadval bo'sh bo'lsa
 jadvalni bo'sh yaratadi, ya'ni bu kolleksiya qo'shilgan deploy'dan keyin prod
 bazasida bitta ham otziv bo'lmasdi va ishonch bandi mijozning haqiqiy
 otzivlarisiz chiqardi. Yon ta'siri: oxirgi otzivni o'chirish kodagilarni
-qaytaradi. Mijoz logolari (`clients`) va jamoa (`team`, `values`) hali ham
-faqat kodda.
+qaytaradi. Jamoa va qadriyatlar endi `about` globalida (`data/team.ts` zaxira bo'lib
+qoladi); mijoz logolari (`clients`) hali ham faqat kodda.
 
 **Sayt so'rov paytida render qilinadi — `app/(site)/layout.tsx` dagi
 `export const dynamic = "force-dynamic"` ni olib tashlamang.** Dockerfile build
@@ -71,8 +72,8 @@ o'girmani qo'riqlaydi — **o'chirmang**, undagi drift mijozning yozganini yo'qo
 
 **Panel** (`/panel`). Ekranlar qo'lda yozilgan, sxemadan generatsiya qilinmagan: `panel/` —
 toolkit (`ui.tsx`, `ItemList`, `ImageDrop`, `BlockEditor`, `auth.ts`), `app/panel/(app)/` —
-ekranlar. Kolleksiya qo'shish = 4 ta fayl (`<x>-data.ts`, `<x>-actions.ts`, `<X>Form.tsx`,
-`app/panel/(app)/<nom>/`) + `Nav.tsx` da bitta qator. Har bir server action `requireUser()` bilan
+ekranlar. Kolleksiya yoki global qo'shish = 4 ta fayl (`<x>-data.ts`, `<x>-actions.ts`,
+`<X>Form.tsx`, `app/panel/(app)/<nom>/`) + `Nav.tsx` da bitta qator. Har bir server action `requireUser()` bilan
 boshlanadi — action o'z HTTP kirish nuqtasi, layout'ning qorovuli uni qamramaydi.
 
 Rasmlar **forma ichida** yuklanadi: `panel/ImageDrop.tsx` (`ImageDrop` — bitta rasm,
@@ -126,13 +127,34 @@ dagi `stats`, hero rasmlari uchun `public/sd1–sd5`, xizmatlar muqovasi uchun
 va navigatsiya tuzilishi kodda qoladi — ular kontent emas. Hero'ni `HeroSlideshow` (client,
 JS crossfade) render qiladi — rasm soni paneldan kelgani uchun har qanday songa moslashadi.
 
-`stats` va `socials` — o'zgaruvchan sonli qatorlar. Formada ikkalasini ham
-`SettingsForm.tsx` dagi `RepeatRows` chizadi va u qatorni **indeks bilan emas,
-o'sib boradigan kalit bilan** belgilaydi: `Field` boshqarilmaydigan input
-ustiga qurilgan, indeks bilan kalitlanganda o'rtadagi qator o'chirilsa React
-DOM tugunini qayta ishlatardi va ekranda o'chirilgan qatorning matni qolib
-ketardi. `settings-actions.ts` esa `<prefix>.<i>.<field>` kalitlarini o'qiydi
-va faqat to'liq to'ldirilgan qatorni saqlaydi.
+**«Biz haqimizda» globali.** `globals/About.ts` — sahifaning hammasi:
+kirish matni (`intro.lead/story/mission`), «Qanday ishlaymiz» kartalari
+(`values`), jamoa (`team` — ism, lavozim, surat) va aloqa bandining
+sarlavhalari. Sayt uni `lib/about.ts` orqali o'qiydi. Zaxira **maydon
+darajasida**: mijoz faqat hikoyani yozsa jamoa `data/team.ts` dan chiqib
+turaveradi, global umuman bo'sh bo'lsa sahifa avvalgidek ko'rinadi. Raqamlar
+bu yerda emas, Sozlamalarda (`stats`) — ular bosh sahifada ham ishlatiladi.
+
+To'rtinchi qadriyat kartasi («Ish muhiti») ilgari `about/page.tsx` da qo'lda
+yozilgan edi: uchtasi massivdan, bittasi JSX dan chiqardi va paneldagi ro'yxat
+saytdagini to'liq aks ettirmasdi. Endi u ham `data/team.ts` dagi `values` da.
+
+**O'zgaruvchan sonli qatorlar — `RepeatRows` (`panel/ui.tsx`).** Raqamlar,
+ijtimoiy tarmoqlar, qadriyatlar va jamoa shuni ishlatadi. U qatorni **indeks
+bilan emas, o'sib boradigan kalit bilan** belgilaydi: `Field`
+boshqarilmaydigan input ustiga qurilgan, indeks bilan kalitlanganda
+o'rtadagi qator o'chirilsa React DOM tugunini qayta ishlatardi va ekranda
+o'chirilgan qatorning matni qolib ketardi. `kind: 'image'` bo'lgan maydon
+`ImageDrop` chizadi (jamoa surati).
+
+Teskari yo'nalish — `panel/rows.ts` dagi `readRows`: `<prefix>.<i>.<maydon>`
+kalitlarini o'qiydi, indekslarni **raqam sifatida** saralaydi (matn bo'yicha
+saralansa 10-qator 2-qatordan oldin kelardi) va to'ldirilmagan qatorni
+tashlaydi. `optional` ro'yxatidagi maydon bo'sh bo'lishi mumkin — suratsiz
+jamoa a'zosi saytda bosh harflari bilan chiqadi. `panel/rows.test.ts` shu
+to'rt xatti-harakatni qo'riqlaydi; ular buzilsa mijozning yozgani jimgina
+yo'qoladi. Modul ataylab `form-map.ts` da emas: u `server-only` ni tortadi
+(`slugify` orqali) va sinovdan o'tkazib bo'lmasdi.
 
 **`Stats` — client komponent va qiymatni prop orqali oladi.** `lib/settings.ts`
 dan **qiymat** import qilib bo'lmaydi (u Payload'ni tortadi va build yiqiladi) —

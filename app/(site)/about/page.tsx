@@ -4,7 +4,7 @@ import ContactForm from "@/components/ContactForm";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
-import { team, values } from "@/data/team";
+import { getAbout } from "@/lib/about";
 import { getSettings } from "@/lib/settings";
 import { telHref } from "@/lib/site-format";
 
@@ -15,12 +15,12 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const settings = await getSettings();
+  const [settings, about] = await Promise.all([getSettings(), getAbout()]);
   return (
     <div className="shell pt-[48px]">
       <SectionHeading
         kicker="Agentlik"
-        lead="Mustaqil, kichik va ataylab shunday: har bir loyihada shu sahifadagi odamlar ishlaydi."
+        lead={about.lead}
       >
         Biz haqimizda
       </SectionHeading>
@@ -29,15 +29,8 @@ export default async function AboutPage() {
           bor edi va raqamlar oddiy matn o'lchamida turardi — bosh sahifada
           o'sha raqamlar 84px, bu yerda 17px bo'lishi izchil emas. */}
       <div className="grid gap-[24px] lg:grid-cols-2 md:gap-[48px]">
-        <p className="text-subheading text-bone-white">
-          SADO 2018-yilda uch dizayner tomonidan tashkil etilgan. Bugun biz o'n
-          bir kishilik jamoa bilan brend, veb va raqamli mahsulotlar ustida
-          ishlaymiz.
-        </p>
-        <p className="text-fog-gray lg:pt-[6px]">
-          Missiyamiz — O'zbekiston brendlarini jahon darajasidagi dizayn tili
-          bilan gapirishga o'rgatish. Biz shovqin emas, aniqlik sotamiz.
-        </p>
+        <p className="text-subheading whitespace-pre-line text-bone-white">{about.story}</p>
+        <p className="whitespace-pre-line text-fog-gray lg:pt-[6px]">{about.mission}</p>
       </div>
 
       {/* Raqamlar endi o'zi karta — panelning 32/48px paddingi ustiga qo'shilib
@@ -51,22 +44,18 @@ export default async function AboutPage() {
           ikkinchisi bitta xatboshi uchun butun seksiya sarlavhasi bilan. */}
       <section className="pt-section">
         <SectionHeading kicker="Qadriyatlar">Qanday ishlaymiz</SectionHeading>
+        {/* To'rtinchi karta ilgari shu yerda qo'lda yozilgan edi — uchtasi
+            massivdan, bittasi JSX dan. Endi hammasi paneldan keladi, ya'ni
+            mijoz ko'rayotgan ro'yxat saytdagining o'zi. */}
         <Stagger className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-4">
-          {values.map((v) => (
+          {about.values.map((v) => (
             <StaggerItem key={v.title} className="h-full">
-            <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-card">
-              <p className="text-subheading text-bone-white">{v.title}</p>
-              <p className="text-fog-gray">{v.text}</p>
-            </div>
+              <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-card">
+                <p className="text-subheading text-bone-white">{v.title}</p>
+                <p className="whitespace-pre-line text-fog-gray">{v.text}</p>
+              </div>
             </StaggerItem>
           ))}
-          <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-card">
-            <p className="text-subheading text-bone-white">Ish muhiti</p>
-            <p className="text-fog-gray">
-              Ochiq muhokama va halol fikr. Har juma — ichki dizayn tanqidi kuni.
-              Yiliga ikki marta jamoa bilan tog'larga chiqamiz.
-            </p>
-          </div>
         </Stagger>
       </section>
 
@@ -76,7 +65,7 @@ export default async function AboutPage() {
         {/* Mobilda 2 ustun: 3:4 portret bitta ustunda 500px baland bo'lib,
             o'n bir kishilik jamoa sahifani cho'zib yuborardi. */}
         <Stagger className="grid grid-cols-2 gap-[16px] lg:grid-cols-3">
-          {team.map((m) => (
+          {about.team.map((m) => (
             <StaggerItem key={m.name}>
               <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-[10px] bg-soft-black">
                 {m.photo ? (
@@ -123,9 +112,9 @@ export default async function AboutPage() {
         <div className="grid gap-[32px] lg:grid-cols-2 md:gap-[80px]">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
             <p className="mb-[24px] text-fog-gray">Aloqa</p>
-            <h2 className="display max-w-[560px]">Jamoamiz bilan ishlang.</h2>
-            <p className="mt-[32px] max-w-[46ch] text-fog-gray">
-              Vazifangizni qisqacha yozing — bir ish kuni ichida javob beramiz.
+            <h2 className="display max-w-[560px]">{about.contactHeading}</h2>
+            <p className="mt-[32px] max-w-[46ch] whitespace-pre-line text-fog-gray">
+              {about.contactText}
             </p>
             <div className="mt-[32px] flex flex-col md:mt-[48px] md:gap-[8px]">
               <a

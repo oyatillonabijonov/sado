@@ -1,7 +1,9 @@
 'use client';
 
 import Link from 'next/link';
-import { useId, useState, type ReactNode } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
+import { ImageDrop } from '@/panel/ImageDrop';
+import type { MediaOption } from '@/panel/media';
 
 /**
  * The panel's kit. Same tokens as the site (`globals.css`), same shapes: mist
@@ -446,5 +448,109 @@ export function GhostButton({ children, onClick }: { children: ReactNode; onClic
     >
       {children}
     </button>
+  );
+}
+
+/* ------------------------------------------------------ qo'shiladigan qatorlar -- */
+
+export type RowField = {
+  key: string;
+  label: string;
+  placeholder?: string;
+  /** Ustunning nisbiy kengligi (flex). */
+  grow?: number;
+  kind?: 'text' | 'area' | 'image';
+};
+
+/**
+ * Soni oldindan noma'lum qatorlar: ijtimoiy tarmoqlar, raqamlar, qadriyatlar,
+ * jamoa. Bugun to'rtta, ertaga beshta bo'lishi mumkin — qat'iy slot emas.
+ * Bo'sh qolgan qator saqlashda tushib qoladi (`readRows`, `panel/form-map.ts`).
+ *
+ * **`key` indeks emas, o'sib boradigan raqam.** `Field` boshqarilmaydigan
+ * input ustiga qurilgan: indeks bilan kalitlanganda o'rtadagi qator
+ * o'chirilsa React DOM tugunini qayta ishlatardi, `defaultValue` esa qayta
+ * qo'llanmaydi — ekranda o'chirilgan qatorning matni qolib ketardi.
+ *
+ * Ilgari bu `SettingsForm.tsx` ichida yashardi. Jamoa qatorlari uchun ham
+ * kerak bo'ldi, va yuqoridagi kalit qoidasi jimgina buziladigan turdan —
+ * ikkita nusxa bo'lgandan ko'ra bitta joyda tursin.
+ */
+export function RepeatRows({
+  name,
+  initial,
+  fields,
+  media = [],
+  addLabel = '+ Yana bitta',
+}: {
+  name: string;
+  initial: Record<string, string>[];
+  fields: RowField[];
+  /** `kind: 'image'` maydonlari uchun. */
+  media?: MediaOption[];
+  addLabel?: string;
+}) {
+  const blank = () => Object.fromEntries(fields.map((f) => [f.key, '']));
+  const [rows, setRows] = useState(() =>
+    (initial.length ? initial : [blank()]).map((values, i) => ({ key: i, values })),
+  );
+  const nextKey = useRef(rows.length);
+  const stacked = fields.some((f) => f.kind && f.kind !== 'text');
+
+  return (
+    <>
+      {rows.map((row, i) => (
+        <div
+          key={row.key}
+          className={
+            stacked
+              ? 'flex flex-col gap-4 rounded-card border border-mist p-4'
+              : 'flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4'
+          }
+        >
+          {fields.map((f) => (
+            <div key={f.key} style={stacked ? undefined : { flex: f.grow ?? 1 }}>
+              {f.kind === 'image' ? (
+                <ImageDrop
+                  label={f.label}
+                  name={`${name}.${i}.${f.key}`}
+                  options={media}
+                  defaultValue={Number(row.values[f.key]) || null}
+                />
+              ) : f.kind === 'area' ? (
+                <Area
+                  label={f.label}
+                  name={`${name}.${i}.${f.key}`}
+                  defaultValue={row.values[f.key] ?? ''}
+                  placeholder={f.placeholder}
+                  rows={3}
+                />
+              ) : (
+                <Field
+                  label={f.label}
+                  name={`${name}.${i}.${f.key}`}
+                  defaultValue={row.values[f.key] ?? ''}
+                  placeholder={f.placeholder}
+                />
+              )}
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setRows((prev) => prev.filter((r) => r.key !== row.key))}
+            className={`min-h-14 shrink-0 rounded-pill border border-mist px-5 text-body-sm text-pebble transition-colors hover:border-obsidian hover:text-obsidian ${
+              stacked ? 'self-start' : ''
+            }`}
+          >
+            O‘chirish
+          </button>
+        </div>
+      ))}
+      <GhostButton
+        onClick={() => setRows((prev) => [...prev, { key: nextKey.current++, values: blank() }])}
+      >
+        {addLabel}
+      </GhostButton>
+    </>
   );
 }

@@ -1,73 +1,12 @@
 "use client";
 
-import { useActionState, useRef, useState } from "react";
+import { useActionState } from "react";
 import type { FormState } from "@/panel/form-state";
 import { ImageDrop, ImageStack } from "@/panel/ImageDrop";
 import type { MediaOption } from "@/panel/media";
 import { saveSettings } from "@/panel/settings-actions";
 import type { SettingsFormData } from "@/panel/settings-data";
-import { Area, Card, Field, GhostButton, Grid, SaveBar } from "@/panel/ui";
-
-type FieldSpec = { key: string; label: string; placeholder?: string; grow?: number };
-
-/**
- * Qo'shiladigan qatorlar ro'yxati — ijtimoiy tarmoqlar va raqamlar.
- *
- * Qatorlar soni oldindan ma'lum emas: bugun to'rtta, ertaga beshta bo'lishi
- * mumkin. Shuning uchun qat'iy slot emas — bo'sh qolgan qator saqlashda
- * tushib qoladi (`settings-actions.ts`).
- *
- * `key` indeks emas, o'sib boradigan raqam. `Field` boshqarilmaydigan input
- * ustiga qurilgan: indeks bilan kalitlanganda o'rtadagi qator o'chirilsa
- * React DOM tugunini qayta ishlatardi, `defaultValue` esa qayta qo'llanmaydi —
- * ekranda o'chirilgan qatorning matni qolib ketardi.
- */
-function RepeatRows({
-  name,
-  initial,
-  fields,
-}: {
-  name: string;
-  initial: Record<string, string>[];
-  fields: FieldSpec[];
-}) {
-  const blank = () => Object.fromEntries(fields.map((f) => [f.key, ""]));
-  const [rows, setRows] = useState(() =>
-    (initial.length ? initial : [blank()]).map((values, i) => ({ key: i, values })),
-  );
-  const nextKey = useRef(rows.length);
-
-  return (
-    <>
-      {rows.map((row, i) => (
-        <div key={row.key} className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
-          {fields.map((f) => (
-            <div key={f.key} style={{ flex: f.grow ?? 1 }}>
-              <Field
-                label={f.label}
-                name={`${name}.${i}.${f.key}`}
-                defaultValue={row.values[f.key] ?? ""}
-                placeholder={f.placeholder}
-              />
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() => setRows((prev) => prev.filter((r) => r.key !== row.key))}
-            className="min-h-14 shrink-0 rounded-pill border border-mist px-5 text-body-sm text-pebble transition-colors hover:border-obsidian hover:text-obsidian"
-          >
-            O‘chirish
-          </button>
-        </div>
-      ))}
-      <GhostButton
-        onClick={() => setRows((prev) => [...prev, { key: nextKey.current++, values: blank() }])}
-      >
-        + Yana bitta
-      </GhostButton>
-    </>
-  );
-}
+import { Area, Card, Field, Grid, RepeatRows, SaveBar } from "@/panel/ui";
 
 export function SettingsForm({ data, media }: { data: SettingsFormData; media: MediaOption[] }) {
   const [state, action] = useActionState<FormState, FormData>(saveSettings, {});

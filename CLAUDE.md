@@ -70,6 +70,17 @@ Maqola matni Payload'da Lexical formatida. `panel/lexical.ts` uni markdown bilan
 o'giradi: panelda `BlockEditor`, saytda `toText` → `MDXRemote`. `panel/lexical.test.ts` shu
 o'girmani qo'riqlaydi — **o'chirmang**, undagi drift mijozning yozganini yo'qotadi.
 
+Sintaksis: `## ` `### ` `- ` `1. ` `> ` va fenced kod bloki qator darajasida;
+`**qalin**`, `*kursiv*`, `[matn](url)` esa **inline**, ya'ni sarlavha, iqtibos va
+ro'yxat bandi ichida ham ishlaydi. Uchala inline belgi `BlockEditor` dagi tugmalar
+qatori orqali qo'yiladi — sintaksisning o'zi ilgari ham bor edi, lekin ekranda hech
+qanday ishora yo'q edi va mijoz faqat yalang'och xatboshi yoza olardi.
+
+Ifodalab bo'lmaydigan format (tagi chizilgan, o'chirilgan, inline kod — bitmask
+`~3`) va URL'siz ichki havola `lossy` deb belgilanadi: muharrir ogohlantirish
+chiqaradi va saqlashni to'sadi. Ilgari qalin matn ham jimgina oddiy matnga
+aylanardi — tekshiruv umuman yo'q edi.
+
 **Panel** (`/panel`). Ekranlar qo'lda yozilgan, sxemadan generatsiya qilinmagan: `panel/` —
 toolkit (`ui.tsx`, `ItemList`, `ImageDrop`, `BlockEditor`, `auth.ts`), `app/panel/(app)/` —
 ekranlar. Kolleksiya yoki global qo'shish = 4 ta fayl (`<x>-data.ts`, `<x>-actions.ts`,

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { uploadImage } from '@/panel/ImageDrop';
-import type { Block } from '@/panel/lexical';
+import { SYNTAX_HINT, type Block } from '@/panel/lexical';
 import type { MediaOption } from '@/panel/media';
 
 /**
@@ -99,6 +99,131 @@ export function BlockEditor({
           <Inserter onAdd={(newBlock) => insert(i + 1, newBlock)} />
         </div>
       ))}
+
+      {/* Tugmalar sintaksisni o'zi qo'yadi, lekin xatboshi qoidasi faqat
+          klaviaturada — uni aytib qo'yish kerak. */}
+      <p className="px-2 pt-2 text-body-sm text-driftwood">{SYNTAX_HINT}</p>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------- toolbar -- */
+
+/**
+ * Formatlash tugmalari.
+ *
+ * Sintaksis (`## `, `> `, `**…**`) ilgari ham ishlardi, lekin uni **hech kim
+ * bilmasdi**: ekranda hech qanday ishora yo'q edi va mijoz blogda faqat
+ * yalang'och xatboshi yoza olardi. Tugmalar o'sha belgilarni qo'yadi —
+ * muharrir hamon `<textarea>`, ya'ni imlo tekshiruvi, mobil klaviatura va
+ * "hammasini belgilash" o'z holicha ishlaydi.
+ *
+ * `document.execCommand('insertText')` eskirgan deb belgilangan, lekin
+ * matnni tanlov va kursor holati bilan birga almashtiradigan eng yaqin yo'l
+ * shu; qo'llab-quvvatlanmagan joyda `setRangeText` ga tushamiz.
+ *
+ * **Cmd+Z bu muharrirda umuman ishlamaydi va bu tugmalarning aybi emas.**
+ * `<textarea>` boshqariladigan (`value={value}`): React har renderda DOM
+ * qiymatini qayta yozadi va brauzerning undo tarixi o'chadi — oddiy yozuvda
+ * ham shunday. Tuzatish yo'li: textarea'ni boshqarilmaydigan qilish
+ * (`defaultValue`) **va** bloklarga barqaror id berish, chunki hozir ular
+ * indeks bilan kalitlangan (`key={i}`) va blok ko'chirilganda React DOM
+ * tugunini qayta ishlatib eski matnni qoldirib ketardi — `RepeatRows` dagi
+ * bilan bir xil tuzoq. Ikkalasi birga qilinmasa yozilgan matn yo'qoladi,
+ * shuning uchun bu alohida ish.
+ */
+const BLOCK_MARK = /^(#{2,3}\s+|>\s+|-\s+|\d+\.\s+)/;
+
+type Tool =
+  | { label: string; title: string; kind: 'wrap'; mark: string; bold?: boolean; italic?: boolean }
+  | { label: string; title: string; kind: 'prefix'; mark: string }
+  | { label: string; title: string; kind: 'link' };
+
+const TOOLS: Tool[] = [
+  { label: 'H2', title: 'Sarlavha', kind: 'prefix', mark: '## ' },
+  { label: 'H3', title: 'Kichik sarlavha', kind: 'prefix', mark: '### ' },
+  { label: 'B', title: 'Qalin', kind: 'wrap', mark: '**', bold: true },
+  { label: 'I', title: 'Kursiv', kind: 'wrap', mark: '*', italic: true },
+  { label: '🔗', title: 'Havola', kind: 'link' },
+  { label: '❝', title: 'Iqtibos', kind: 'prefix', mark: '> ' },
+  { label: '•', title: "Ro'yxat", kind: 'prefix', mark: '- ' },
+  { label: '1.', title: "Raqamli ro'yxat", kind: 'prefix', mark: '1. ' },
+];
+
+/** Tanlangan joyni almashtiradi va undo tarixini saqlaydi. */
+function replace(el: HTMLTextAreaElement, start: number, end: number, value: string) {
+  el.focus();
+  el.setSelectionRange(start, end);
+  if (!document.execCommand('insertText', false, value)) {
+    el.setRangeText(value, start, end, 'end');
+    el.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+}
+
+function apply(el: HTMLTextAreaElement, tool: Tool) {
+  const { value, selectionStart: from, selectionEnd: to } = el;
+
+  if (tool.kind === 'prefix') {
+    // Qator boshidagi belgi butun qatorga tegishli — tanlov qayerda
+    // turganidan qat'i nazar qatorning boshi topiladi.
+    const start = value.lastIndexOf('\n', from - 1) + 1;
+    const lineEnd = value.indexOf('\n', from);
+    const line = value.slice(start, lineEnd === -1 ? value.length : lineEnd);
+    const existing = line.match(BLOCK_MARK)?.[0] ?? '';
+    const bare = line.slice(existing.length);
+    // Xuddi shu belgi bo'lsa — o'chiriladi (tugma ikkilamchi holatga ega),
+    // boshqa belgi bo'lsa — almashtiriladi, aks holda `## - matn` chiqardi.
+    const next = existing === tool.mark ? bare : tool.mark + bare;
+    replace(el, start, start + line.length, next);
+    const shift = next.length - line.length;
+    el.setSelectionRange(from + shift, to + shift);
+    return;
+  }
+
+  const selected = value.slice(from, to);
+
+  if (tool.kind === 'link') {
+    const label = selected || 'matn';
+    replace(el, from, to, `[${label}](https://)`);
+    // Kursor URL'ning ichida qoladi — keyingi harakat manzilni yozish.
+    const at = from + label.length + 3;
+    el.setSelectionRange(at + 8, at + 8);
+    return;
+  }
+
+  const m = tool.mark;
+  // Allaqachon o'ralgan bo'lsa — yechiladi.
+  if (selected.length > m.length * 2 && selected.startsWith(m) && selected.endsWith(m)) {
+    const bare = selected.slice(m.length, -m.length);
+    replace(el, from, to, bare);
+    el.setSelectionRange(from, from + bare.length);
+    return;
+  }
+  const label = selected || (tool.bold ? 'qalin matn' : 'kursiv matn');
+  replace(el, from, to, `${m}${label}${m}`);
+  el.setSelectionRange(from + m.length, from + m.length + label.length);
+}
+
+function Toolbar({ target }: { target: React.RefObject<HTMLTextAreaElement | null> }) {
+  return (
+    <div className="flex flex-wrap items-center gap-1 px-2 pb-1">
+      {TOOLS.map((tool) => (
+        <button
+          key={tool.label}
+          type="button"
+          title={tool.title}
+          aria-label={tool.title}
+          // Tugmani bosish textarea'dan fokusni olib ketardi va tanlov
+          // yo'qolardi — `mousedown` da to'xtatamiz.
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => target.current && apply(target.current, tool)}
+          className={`flex size-9 items-center justify-center rounded-card text-body-sm text-pebble transition-colors hover:bg-mist/40 hover:text-obsidian ${
+            'bold' in tool && tool.bold ? 'font-semibold' : ''
+          } ${'italic' in tool && tool.italic ? 'italic' : ''}`}
+        >
+          {tool.label}
+        </button>
+      ))}
     </div>
   );
 }
@@ -124,6 +249,9 @@ function TextBlock({
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
   const [dropping, setDropping] = useState(false);
+  // Panel faqat ishlanayotgan blokda: har bir blok ustida sakkizta tugma
+  // tursa sahifa asboblar taxtasiga aylanardi, yozuvga esa joy qolmasdi.
+  const [active, setActive] = useState(false);
 
   // Yozayotganda rasmni shu yerning o'ziga tashlash yoki Cmd+V bilan qo'yish —
   // "Rasmlar" ekraniga borib kelish shart emas.
@@ -148,32 +276,42 @@ function TextBlock({
   }, [value]);
 
   return (
-    <textarea
-      ref={ref}
-      value={value}
-      placeholder={placeholder}
-      onChange={(e) => onChange(e.target.value)}
-      onPaste={(e) => {
-        if (e.clipboardData.files.length) {
-          e.preventDefault();
-          void take(e.clipboardData.files);
-        }
+    <div
+      onFocus={() => setActive(true)}
+      // Fokus panelning o'ziga o'tsa yopilmasin — `relatedTarget` shu
+      // konteyner ichida bo'lsa blok hamon ishlanmoqda.
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setActive(false);
       }}
-      onDragOver={(e) => e.preventDefault()}
-      onDrop={(e) => {
-        if (e.dataTransfer.files.length) {
-          e.preventDefault();
-          void take(e.dataTransfer.files);
-        }
-      }}
-      rows={2}
-      // Borderless on purpose: a page of boxed fields reads as a form, and this
-      // is meant to read as a page being written. The mist line only appears
-      // when the block is being worked on.
-      className={`w-full resize-none rounded-card border bg-transparent px-4 py-3 text-body-lg leading-relaxed outline-none transition-colors placeholder:text-driftwood hover:border-mist focus:border-mist ${
-        dropping ? 'border-obsidian' : 'border-transparent'
-      }`}
-    />
+    >
+      {active && <Toolbar target={ref} />}
+      <textarea
+        ref={ref}
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        onPaste={(e) => {
+          if (e.clipboardData.files.length) {
+            e.preventDefault();
+            void take(e.clipboardData.files);
+          }
+        }}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={(e) => {
+          if (e.dataTransfer.files.length) {
+            e.preventDefault();
+            void take(e.dataTransfer.files);
+          }
+        }}
+        rows={2}
+        // Borderless on purpose: a page of boxed fields reads as a form, and this
+        // is meant to read as a page being written. The mist line only appears
+        // when the block is being worked on.
+        className={`w-full resize-none rounded-card border bg-transparent px-4 py-3 text-body-lg leading-relaxed outline-none transition-colors placeholder:text-driftwood hover:border-mist focus:border-mist ${
+          dropping ? 'border-obsidian' : 'border-transparent'
+        }`}
+      />
+    </div>
   );
 }
 

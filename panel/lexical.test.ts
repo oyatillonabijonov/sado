@@ -108,7 +108,12 @@ test('a node the syntax cannot express is reported, not swallowed', () => {
   expect(blocks).toEqual([{ kind: 'text', text: 'qoldi' }]);
 });
 
-test('a link keeps its words and is reported, because its address cannot survive', () => {
+/**
+ * Havola ilgari `lossy` deb belgilanardi — sintaksisda uni ifodalash yo'li
+ * yo'q edi va manzili keyingi saqlashda yo'qolardi. Endi `[matn](url)` bor,
+ * ya'ni havolali hujjat yana tahrirlanadigan bo'ldi.
+ */
+test('havola manzili bilan birga matnga o‘giriladi', () => {
   const doc = {
     root: {
       type: 'root',
@@ -119,7 +124,7 @@ test('a link keeps its words and is reported, because its address cannot survive
             { type: 'text', text: 'bizning ' },
             {
               type: 'link',
-              fields: { url: 'https://example.uz' },
+              fields: { linkType: 'custom', url: 'https://example.uz' },
               children: [{ type: 'text', text: 'sayt' }],
             },
           ],
@@ -128,12 +133,117 @@ test('a link keeps its words and is reported, because its address cannot survive
     },
   };
   const { blocks, lossy } = toBlocks(doc);
+  expect(lossy).toBe(false);
+  expect(blocks).toEqual([{ kind: 'text', text: 'bizning [sayt](https://example.uz)' }]);
+});
+
+/** Ichki havolaning URL'i yo'q — u hujjatga ishora qiladi va sig'maydi. */
+test('URL‘siz ichki havola hamon yo‘qotish deb belgilanadi', () => {
+  const doc = {
+    root: {
+      type: 'root',
+      children: [
+        {
+          type: 'paragraph',
+          children: [
+            {
+              type: 'link',
+              fields: { linkType: 'internal', doc: { relationTo: 'posts', value: 1 } },
+              children: [{ type: 'text', text: 'maqola' }],
+            },
+          ],
+        },
+      ],
+    },
+  };
+  const { blocks, lossy } = toBlocks(doc);
   expect(lossy).toBe(true);
-  expect(blocks).toEqual([{ kind: 'text', text: 'bizning sayt' }]);
+  expect(blocks).toEqual([{ kind: 'text', text: 'maqola' }]);
 });
 
 test('an empty document is still a valid Lexical root', () => {
   const doc = fromText('') as { root: { children: unknown[] } };
   expect(doc.root.children.length).toBe(1);
   expect(toText(doc).text).toBe('');
+});
+
+/* --------------------------------------------------- inline belgilar -- */
+
+/**
+ * Qalin, kursiv va havola — ikki tomonga.
+ *
+ * Ular **inline**, ya'ni sarlavha, iqtibos va ro'yxat bandi ichida ham
+ * ishlaydi. Ikki tomonlama sinov shu uchala joyni ham qamraydi: bitta
+ * yo'nalishda ishlab, ikkinchisida buzilsa mijoz yozganini qayta ochganda
+ * yo'qotardi.
+ */
+const INLINE_SAMPLE = `## **Qalin** sarlavha
+
+Oddiy, **qalin**, *kursiv* va [havola](https://sado.agency) bitta qatorda.
+
+- **qalin** band
+- [havolali](https://example.uz) band
+
+> *kursiv* iqtibos`;
+
+test('inline belgilar matn → Lexical → matn aylanishida saqlanadi', () => {
+  const doc = fromText(INLINE_SAMPLE, () => 'id');
+  const { text, lossy } = toText(doc);
+  expect(lossy).toBe(false);
+  expect(text).toBe(INLINE_SAMPLE);
+});
+
+test('qalin va kursiv to‘g‘ri bitmask bilan yoziladi', () => {
+  const doc = fromText('**q** va *k*', () => 'id') as {
+    root: { children: { children: { text: string; format: number; type: string }[] }[] };
+  };
+  const nodes = doc.root.children[0].children;
+  expect(nodes.map((n) => [n.text, n.format])).toEqual([
+    ['q', 1],
+    [' va ', 0],
+    ['k', 2],
+  ]);
+});
+
+test('havola Payload kutgan shaklda yoziladi', () => {
+  const doc = fromText('[sayt](https://sado.agency)', () => 'havola-1') as {
+    root: { children: { children: Record<string, unknown>[] }[] };
+  };
+  const node = doc.root.children[0].children[0];
+  expect(node.type).toBe('link');
+  expect(node.version).toBe(3);
+  expect(node.id).toBe('havola-1');
+  expect(node.fields).toEqual({ linkType: 'custom', url: 'https://sado.agency', newTab: false });
+  expect(node.children).toEqual([
+    { type: 'text', text: 'sayt', format: 0, style: '', mode: 'normal', detail: 0, version: 1 },
+  ]);
+});
+
+/**
+ * Tagi chizilgan matn (bitmask 8) — bu sintaksisda belgisi yo'q. Ilgari u
+ * jimgina oddiy matnga aylanardi; endi ogohlantirish chiqadi va saqlash
+ * to'siladi, ya'ni mijoz formatini bilmasdan yo'qotmaydi.
+ */
+test('ifodalab bo‘lmaydigan format yo‘qotish deb belgilanadi', () => {
+  const doc = {
+    root: {
+      type: 'root',
+      children: [{ type: 'paragraph', children: [{ type: 'text', text: 'tagi chizilgan', format: 8 }] }],
+    },
+  };
+  const { blocks, lossy } = toBlocks(doc);
+  expect(lossy).toBe(true);
+  expect(blocks).toEqual([{ kind: 'text', text: 'tagi chizilgan' }]);
+});
+
+test('kod bloki ichidagi yulduzcha belgi emas', () => {
+  const source = '```ts\nconst a = b ** 2;\n```';
+  const doc = fromText(source, () => 'id');
+  expect(toText(doc).text).toBe(source);
+});
+
+test('yolg‘iz yulduzcha matnda shundoq qoladi', () => {
+  // Ekranlash yo'q: naqsh juftlik talab qiladi, ya'ni juftsiz belgi tegilmaydi.
+  const doc = fromText('2 * 3 = 6', () => 'id');
+  expect(toText(doc).text).toBe('2 * 3 = 6');
 });

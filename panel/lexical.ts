@@ -1,9 +1,9 @@
 /**
  * Plain text ⇄ Lexical, and the block list the editor actually works on.
  *
- * The studio writes in textareas. Nobody is asked to learn a toolbar or the
- * phrase "rich text" — the only syntax is five marks people already use in
- * chat:
+ * The studio writes in textareas. Nobody is asked to learn the phrase "rich
+ * text" — the syntax is marks people already use in chat, and the toolbar in
+ * `BlockEditor` inserts them so nobody has to remember any of it:
  *
  *     ## Sarlavha          → H2
  *     ### Kichik sarlavha  → H3
@@ -11,8 +11,15 @@
  *     1. qator             → numbered list
  *     > iqtibos            → quote
  *     ```                  → code block, fenced
+ *     **qalin**            → bold
+ *     *kursiv*             → italic
+ *     [matn](https://…)    → link
  *
  * Anything else is a paragraph. A blank line separates blocks.
+ *
+ * The last three are **inline** and therefore work inside a heading, a quote
+ * or a list item too — they are applied to the text of every block, not to
+ * whole lines.
  *
  * **Images are not syntax.** A document is a list of blocks — a run of text, a
  * picture, another run of text — and the editor renders that list directly.
@@ -21,18 +28,29 @@
  * has a block layer at all on top of the text one.
  *
  * **Round-trip honesty.** `toBlocks` reports `lossy: true` when the stored
- * document holds something this syntax cannot express — a table, or a link
- * inside a paragraph, whose URL would survive as bare text and then be lost on
- * the next save. The editor shows a warning and hides the save button rather
- * than flattening it. Those documents stay editable in Payload's own editor at
- * `/admin`.
+ * document holds something this syntax cannot express — a table, or a text run
+ * that is underlined, struck through or inline-code, whose formatting would
+ * survive as bare words and then be lost on the next save. The editor shows a
+ * warning and hides the save button rather than flattening it. Those documents
+ * stay editable in Payload's own editor.
  */
 
 /** Block-level node types the text syntax can represent. */
 const KNOWN = new Set(['paragraph', 'heading', 'list', 'listitem', 'quote', 'code']);
 
-/** Inline node types that survive as plain text without losing anything. */
-const INLINE_SAFE = new Set(['text', 'linebreak', 'tab']);
+/** Inline node types that survive without losing anything. */
+const INLINE_SAFE = new Set(['text', 'linebreak', 'tab', 'link', 'autolink']);
+
+/**
+ * Lexical's text format bitmask. Only the first two have a mark in this
+ * syntax; the rest are reported as loss rather than silently flattened.
+ *
+ * Ilgari bu yerda tekshiruv umuman yo'q edi: qalin matn oddiy matn bo'lib
+ * o'qilardi va keyingi saqlashda qalinligini yo'qotardi — jimgina, ogohlantirishsiz.
+ */
+const BOLD = 1;
+const ITALIC = 2;
+const REPRESENTABLE = BOLD | ITALIC;
 
 type Node = { type: string; [k: string]: unknown };
 
@@ -42,14 +60,39 @@ export type Block =
 
 /* ----------------------------------------------------------- to plain -- */
 
+/** `**` va `*` — qalinni oldin, aks holda `**x**` `*` bo'lib bo'linardi. */
+function marked(value: string, format: number): string {
+  if (!value) return value;
+  let out = value;
+  if (format & ITALIC) out = `*${out}*`;
+  if (format & BOLD) out = `**${out}**`;
+  return out;
+}
+
 function textOf(node: Node, onLoss: () => void): string {
   const children = (node.children as Node[] | undefined) ?? [];
   return children
     .map((child) => {
-      if (child.type === 'text') return String(child.text ?? '');
+      if (child.type === 'text') {
+        const format = Number(child.format ?? 0);
+        // Tagi chizilgan, o'chirilgan yoki inline kod — bu sintaksisda belgisi
+        // yo'q. Matni qoladi, formati esa keyingi saqlashda yo'qolardi.
+        if (format & ~REPRESENTABLE) onLoss();
+        return marked(String(child.text ?? ''), format);
+      }
       if (child.type === 'linebreak') return '\n';
-      // A link keeps its words and loses its href. Silently dropping the URL on
-      // the next save is exactly the kind of quiet damage this flag exists for.
+      if (child.type === 'link' || child.type === 'autolink') {
+        const fields = (child.fields ?? {}) as { url?: string; linkType?: string };
+        const url = String(fields.url ?? '');
+        const label = textOf(child, onLoss);
+        // Ichki havola (`linkType: 'internal'`) hujjatga ishora qiladi, URL'i
+        // yo'q — uni `[matn](…)` ga sig'dirib bo'lmaydi.
+        if (!url) {
+          onLoss();
+          return label;
+        }
+        return `[${label}](${url})`;
+      }
       if (!INLINE_SAFE.has(child.type)) onLoss();
       return textOf(child, onLoss);
     })
@@ -137,38 +180,84 @@ export function toBlocks(doc: unknown): { blocks: Block[]; lossy: boolean } {
 
 const base = { format: '' as const, indent: 0, version: 1, direction: 'ltr' as const };
 
-const text = (value: string) => ({
+const text = (value: string, format = 0) => ({
   type: 'text',
   text: value,
-  format: 0,
+  format,
   style: '',
   mode: 'normal',
   detail: 0,
   version: 1,
 });
 
-const paragraph = (value: string) => ({ ...base, type: 'paragraph', textFormat: 0, textStyle: '', children: [text(value)] });
-const heading = (value: string, tag: 'h2' | 'h3') => ({ ...base, type: 'heading', tag, children: [text(value)] });
-const quote = (value: string) => ({ ...base, type: 'quote', children: [text(value)] });
+const link = (url: string, children: object[], id: string) => ({
+  ...base,
+  type: 'link',
+  version: 3,
+  id,
+  // `linkType: 'custom'` — URL to'g'ridan-to'g'ri yoziladi. `'internal'` bo'lsa
+  // Payload `doc` kutadi va bu sintaksisda hujjatga ishora qilishning yo'li yo'q.
+  fields: { linkType: 'custom', url, newTab: false },
+  children,
+});
+
+/**
+ * Bitta qatorni inline tugunlarga bo'ladi: `**qalin**`, `*kursiv*`,
+ * `[matn](url)`.
+ *
+ * Bitta regex uchalasini birdan skanerlaydi — ketma-ket uchta o'tish
+ * qilinsa ichma-ich joylashgan belgilar (havola matni ichidagi qalin)
+ * ikki marta o'ralib ketardi. Qalin muqarrar ravishda kursivdan oldin
+ * keladi, aks holda `**x**` `*` bo'lib bo'linardi.
+ *
+ * Ekranlash (`\*`) ataylab yo'q: matnda yolg'iz turgan yulduzcha shundoq
+ * qoladi, chunki naqsh juftlik talab qiladi. Bu `##` ning qator boshida
+ * ishlashi bilan bir xil kelishuv — sintaksis mavjud yozuvni buzmaydi.
+ */
+const INLINE = /\*\*([^*]+)\*\*|\*([^*\n]+)\*|\[([^\]\n]+)\]\(([^)\s]+)\)/g;
+
+function inlineNodes(value: string, newId: () => string): object[] {
+  const out: object[] = [];
+  let last = 0;
+
+  for (const m of value.matchAll(INLINE)) {
+    const at = m.index;
+    if (at > last) out.push(text(value.slice(last, at)));
+    if (m[1] !== undefined) out.push(text(m[1], BOLD));
+    else if (m[2] !== undefined) out.push(text(m[2], ITALIC));
+    else out.push(link(m[4], [text(m[3])], newId()));
+    last = at + m[0].length;
+  }
+
+  if (last < value.length) out.push(text(value.slice(last)));
+  // Lexical bo'sh `children` ni ham qabul qiladi, lekin bo'sh xatboshi
+  // bitta bo'sh matn tuguni bilan yoziladi — uning o'z muharriri shunday qiladi.
+  return out.length ? out : [text('')];
+}
+
+const paragraph = (children: object[]) => ({ ...base, type: 'paragraph', textFormat: 0, textStyle: '', children });
+const heading = (children: object[], tag: 'h2' | 'h3') => ({ ...base, type: 'heading', tag, children });
+const quote = (children: object[]) => ({ ...base, type: 'quote', children });
 const code = (value: string, language: string) => ({
   ...base,
   type: 'code',
   language: language || 'ts',
+  // Kod bloki ichida `**` va `[…]` belgi emas, kodning o'zi.
   children: [text(value)],
 });
 
-const list = (kind: 'number' | 'bullet', items: string[]) => ({
+const list = (kind: 'number' | 'bullet', items: object[][]) => ({
   ...base,
   type: 'list',
   listType: kind,
   tag: kind === 'number' ? 'ol' : 'ul',
   start: 1,
-  children: items.map((item, i) => ({
+  children: items.map((children, i) => ({
     ...base,
     type: 'listitem',
     value: i + 1,
     checked: undefined,
-    children: [text(item)],
+    children,
   })),
 });
 
@@ -189,8 +278,9 @@ const upload = (media: number, id: string) => ({
   fields: {},
 });
 
-function nodesFromText(input: string): object[] {
+function nodesFromText(input: string, newId: () => string): object[] {
   const children: object[] = [];
+  const inline = (value: string) => inlineNodes(value, newId);
   const chunks = input.replace(/\r\n/g, '\n').split(/\n{2,}/);
 
   for (const chunk of chunks) {
@@ -208,19 +298,19 @@ function nodesFromText(input: string): object[] {
     // A chunk is a list when its *first* line opens one; mixed chunks are rare
     // enough that guessing per line would only produce surprising output.
     if (lines[0].startsWith('- ')) {
-      children.push(list('bullet', lines.map((l) => l.replace(/^-\s+/, ''))));
+      children.push(list('bullet', lines.map((l) => inline(l.replace(/^-\s+/, '')))));
       continue;
     }
     if (/^\d+\.\s/.test(lines[0])) {
-      children.push(list('number', lines.map((l) => l.replace(/^\d+\.\s+/, ''))));
+      children.push(list('number', lines.map((l) => inline(l.replace(/^\d+\.\s+/, '')))));
       continue;
     }
 
     for (const line of lines) {
-      if (line.startsWith('### ')) children.push(heading(line.slice(4), 'h3'));
-      else if (line.startsWith('## ')) children.push(heading(line.slice(3), 'h2'));
-      else if (line.startsWith('> ')) children.push(quote(line.slice(2)));
-      else children.push(paragraph(line));
+      if (line.startsWith('### ')) children.push(heading(inline(line.slice(4)), 'h3'));
+      else if (line.startsWith('## ')) children.push(heading(inline(line.slice(3)), 'h2'));
+      else if (line.startsWith('> ')) children.push(quote(inline(line.slice(2))));
+      else children.push(paragraph(inline(line)));
     }
   }
 
@@ -230,12 +320,12 @@ function nodesFromText(input: string): object[] {
 function wrap(children: object[]) {
   // Lexical rejects an empty root; a document with one empty paragraph is the
   // shape its own editor produces for "nothing here yet".
-  if (!children.length) children.push(paragraph(''));
+  if (!children.length) children.push(paragraph([text('')]));
   return { root: { ...base, type: 'root', children } };
 }
 
-export function fromText(input: string) {
-  return wrap(nodesFromText(input));
+export function fromText(input: string, newId: () => string = () => crypto.randomUUID()) {
+  return wrap(nodesFromText(input, newId));
 }
 
 /**
@@ -281,10 +371,10 @@ export function fromBlocks(blocks: Block[], newId: () => string = () => crypto.r
       if (block.media) children.push(upload(block.media, newId()));
       continue;
     }
-    children.push(...nodesFromText(block.text));
+    children.push(...nodesFromText(block.text, newId));
   }
   return wrap(children);
 }
 
 export const SYNTAX_HINT =
-  'Bo‘sh qator — yangi xatboshi. ## — sarlavha, ### — kichik sarlavha, - — ro‘yxat, > — iqtibos.';
+  'Bo‘sh qator — yangi xatboshi. Formatlash uchun matnni belgilab, tepadagi tugmalardan foydalaning.';

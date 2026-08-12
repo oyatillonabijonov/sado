@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useRef, useState } from 'react';
+import { isVideo } from '@/lib/site-format';
 import type { MediaOption } from '@/panel/media';
 
 /**
@@ -29,30 +30,74 @@ export async function uploadImage(file: File): Promise<Uploaded> {
   return { id: data.id, url: data.url, label: data.label ?? '' };
 }
 
+/**
+ * Nima qabul qilinadi. Galereya videoni ham oladi (sayt uni gif kabi,
+ * boshqaruvsiz va aylanma qilib chizadi), muqova va portret esa faqat rasm:
+ * ular `next/image` orqali ketadi va OG rasmi bo'lib ham ishlatiladi.
+ */
+const ACCEPT = {
+  image: { attr: 'image/*', ok: (t: string) => t.startsWith('image/') },
+  media: {
+    attr: 'image/*,video/mp4,video/webm',
+    ok: (t: string) => t.startsWith('image/') || t === 'video/mp4' || t === 'video/webm',
+  },
+} as const;
+
+type AcceptKind = keyof typeof ACCEPT;
+
 /** Bir nechta faylni ketma-ket yuklaydi va holatni qaytaradi. */
-function useUploader() {
+function useUploader(kind: AcceptKind) {
   const [busy, setBusy] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const run = useCallback(async (files: File[]): Promise<Uploaded[]> => {
-    const images = files.filter((f) => f.type.startsWith('image/'));
-    if (!images.length) return [];
-    setError(null);
-    setBusy((n) => n + images.length);
-    const done: Uploaded[] = [];
-    for (const file of images) {
-      try {
-        done.push(await uploadImage(file));
-      } catch (e) {
-        setError(e instanceof Error ? e.message : String(e));
-      } finally {
-        setBusy((n) => n - 1);
+  const run = useCallback(
+    async (files: File[]): Promise<Uploaded[]> => {
+      const taken = files.filter((f) => ACCEPT[kind].ok(f.type));
+      // Sudrab tashlangan fayl mos kelmasa jim qolmaslik kerak — ilgari
+      // hech narsa bo'lmagandek ko'rinardi.
+      if (!taken.length) {
+        if (files.length) {
+          setError(
+            kind === 'image'
+              ? 'Bu maydonga faqat rasm qo‘yiladi.'
+              : 'Rasm (JPG, PNG, WebP) yoki video (MP4, WebM) qo‘ying.',
+          );
+        }
+        return [];
       }
-    }
-    return done;
-  }, []);
+      setError(null);
+      setBusy((n) => n + taken.length);
+      const done: Uploaded[] = [];
+      for (const file of taken) {
+        try {
+          done.push(await uploadImage(file));
+        } catch (e) {
+          setError(e instanceof Error ? e.message : String(e));
+        } finally {
+          setBusy((n) => n - 1);
+        }
+      }
+      return done;
+    },
+    [kind],
+  );
 
   return { run, busy, error };
+}
+
+/**
+ * Oldindan ko'rsatish. Video `<img>` da singan rasm bo'lib chiqardi —
+ * mijoz yuklagan narsasini panelda ko'ra olmasdi.
+ *
+ * `muted` + `playsInline` + `loop`: panelda ham saytdagi kabi jimgina
+ * aylanadi, ya'ni tanlanayotgan kadr aynan chiqadigan kadr.
+ */
+function Thumb({ url, className }: { url: string; className: string }) {
+  if (isVideo(url)) {
+    return <video src={url} className={className} muted loop autoPlay playsInline />;
+  }
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={url} alt="" className={className} />;
 }
 
 /* ------------------------------------------------------------- drop zone -- */
@@ -63,12 +108,14 @@ function Zone({
   multiple,
   children,
   label,
+  kind = 'image',
 }: {
   onFiles: (files: File[]) => void;
   busy: number;
   multiple?: boolean;
   children?: React.ReactNode;
   label: string;
+  kind?: AcceptKind;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [over, setOver] = useState(false);
@@ -100,7 +147,7 @@ function Zone({
       <input
         ref={input}
         type="file"
-        accept="image/*"
+        accept={ACCEPT[kind].attr}
         multiple={multiple}
         // Bu input formaning bir qismi emas — `name` yo'q, shuning uchun
         // FormData'ga tushmaydi va faylni server action'ga olib ketmaydi.
@@ -145,7 +192,9 @@ export function ImageDrop({
   const known = options.find((o) => o.id === defaultValue) ?? null;
   const [picked, setPicked] = useState<Uploaded | null>(known);
   const [choosing, setChoosing] = useState(false);
-  const { run, busy, error } = useUploader();
+  // Bitta rasm maydoni videoni qabul qilmaydi: muqova `next/image` orqali
+  // ketadi va OG rasmi ham o'shandan olinadi.
+  const { run, busy, error } = useUploader('image');
 
   const onFiles = async (files: File[]) => {
     const [first] = await run(files.slice(0, 1));
@@ -166,8 +215,7 @@ export function ImageDrop({
 
       {picked ? (
         <div className="flex flex-col gap-3 rounded-card border border-mist p-4">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={picked.url} alt="" className="max-h-64 w-full rounded-card object-cover" />
+          <Thumb url={picked.url} className="max-h-64 w-full rounded-card object-cover" />
           <AltField media={picked} onChange={(alt) => setPicked({ ...picked, label: alt })} />
           <div className="flex gap-4">
             <button
@@ -195,7 +243,9 @@ export function ImageDrop({
           )}
           {choosing && (
             <div className="grid max-h-64 grid-cols-4 gap-2 overflow-y-auto rounded-card border border-mist p-2">
-              {options.map((o) => (
+              {/* Kutubxonadagi videolar bu yerda ko'rinmaydi — bu maydon
+                  `next/image` ga boradi va videoni hazm qilmaydi. */}
+              {options.filter((o) => !isVideo(o.url)).map((o) => (
                 <button
                   key={o.id}
                   type="button"
@@ -206,8 +256,7 @@ export function ImageDrop({
                   }}
                   className="overflow-hidden rounded-card border border-mist transition-colors hover:border-obsidian"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={o.url} alt="" className="aspect-square w-full object-cover" />
+                  <Thumb url={o.url} className="aspect-square w-full object-cover" />
                 </button>
               ))}
             </div>
@@ -228,6 +277,8 @@ export function ImageStack({
   name,
   defaultValue,
   options,
+  /** Galereyaga video ham qo'yiladi — sayt uni gif kabi aylantiradi. */
+  video = false,
 }: {
   label: string;
   hint?: string;
@@ -235,13 +286,15 @@ export function ImageStack({
   name: string;
   defaultValue: number[];
   options: MediaOption[];
+  video?: boolean;
 }) {
   const initial = defaultValue
     .map((id) => options.find((o) => o.id === id))
     .filter((o): o is MediaOption => Boolean(o));
 
+  const kind: AcceptKind = video ? 'media' : 'image';
   const [items, setItems] = useState<Uploaded[]>(initial);
-  const { run, busy, error } = useUploader();
+  const { run, busy, error } = useUploader(kind);
 
   const onFiles = async (files: File[]) => {
     const added = await run(files);
@@ -274,8 +327,7 @@ export function ImageStack({
           {items.map((item, i) => (
             <li key={`${item.id}-${i}`} className="flex flex-col gap-2">
               <div className="relative overflow-hidden rounded-card border border-mist">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.url} alt="" className="aspect-[4/3] w-full object-cover" />
+                <Thumb url={item.url} className="aspect-[4/3] w-full object-cover" />
                 <span className="absolute top-2 left-2 rounded-pill bg-white/90 px-2 py-0.5 text-body-sm">
                   {i + 1}
                 </span>
@@ -299,7 +351,13 @@ export function ImageStack({
         </ul>
       )}
 
-      <Zone onFiles={onFiles} busy={busy} multiple label="Rasmlar tanlash" />
+      <Zone
+        onFiles={onFiles}
+        busy={busy}
+        multiple
+        kind={kind}
+        label={video ? 'Rasm yoki video tanlash' : 'Rasmlar tanlash'}
+      />
 
       {options.length > 0 && (
         <details className="rounded-card border border-mist">
@@ -307,18 +365,22 @@ export function ImageStack({
             Yoki ilgari yuklanganlardan qo‘shish
           </summary>
           <div className="grid max-h-64 grid-cols-5 gap-2 overflow-y-auto p-3 pt-0">
-            {options.map((o) => (
-              <button
-                key={o.id}
-                type="button"
-                title={o.label}
-                onClick={() => setItems((prev) => [...prev, o])}
-                className="overflow-hidden rounded-card border border-mist transition-colors hover:border-obsidian"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={o.url} alt="" className="aspect-square w-full object-cover" />
-              </button>
-            ))}
+            {/* Faqat rasm qabul qiladigan to'plamda kutubxonadagi videolar
+                ko'rinmaydi — aks holda ularni tanlab bo'lardi-yu, saqlashda
+                sayt tomonida `next/image` yiqilardi. */}
+            {options
+              .filter((o) => video || !isVideo(o.url))
+              .map((o) => (
+                <button
+                  key={o.id}
+                  type="button"
+                  title={o.label}
+                  onClick={() => setItems((prev) => [...prev, o])}
+                  className="overflow-hidden rounded-card border border-mist transition-colors hover:border-obsidian"
+                >
+                  <Thumb url={o.url} className="aspect-square w-full object-cover" />
+                </button>
+              ))}
           </div>
         </details>
       )}

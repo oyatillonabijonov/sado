@@ -85,6 +85,24 @@ Alt matni yuklashda so'ralmaydi (oqimni to'xtatadi) — fayl nomidan qo'yiladi v
 ostida tahrirlanadi (`PATCH /api/panel/upload`). Fayllar `media/` da,
 `/api/media/file/<nom>` orqali uzatiladi (`app/(payload)/api/[...slug]`).
 
+**Video faqat loyiha galereyasida.** `ImageStack` `video` prop'i bilan MP4/WebM ni ham
+qabul qiladi (20 MB gacha; rasm chegarasi 8 MB), `ImageDrop` esa faqat rasm — muqova
+`next/image` orqali ketadi va OG rasmi ham o'shandan olinadi, ya'ni videoni u yerga
+qo'ysa bo'lmaydi. Shu sabab **kutubxonadan tanlash to'rida ham** `ImageDrop` videolarni
+ko'rsatmaydi. Payload sharp'ni faqat rasm MIME'lariga qo'llaydi, ya'ni `imageSizes` va
+`resizeOptions` videoga tegmaydi — `Media` konfiguratsiyasiga ham, sxemaga ham o'zgarish
+kerak emas.
+
+Video-mi yoki rasm-mi degan savolga `lib/site-format.ts` dagi `isVideo(url)` javob
+beradi — **kengaytma bo'yicha**, MIME bo'yicha emas. `Project.gallery` URL massivi
+bo'lib qoladi: MIME'ni olib yurish uchun uni obyektlar massiviga aylantirish
+`data/projects.ts` ni, `lib/content.ts` ni, panel yuklovchisini va sayt sahifasini bir
+vaqtda o'zgartirish degani bo'lardi. Payload media URL'i har doim asl fayl nomi bilan
+tugaydi, ya'ni kengaytma bor.
+
+Saytda video gif kabi chiqadi: `muted loop autoPlay playsInline`, boshqaruvsiz.
+`muted` shart — usiz mobil brauzerlar avtoijroni butunlay bloklaydi.
+
 **Qoralama va avtosaqlash.** `posts` va `projects` da `versions: { drafts: true }`. Forma
 o'zgargach 2s jimlikdan keyin `POST /api/panel/autosave` qoralama yozadi (`draft: true`) —
 qoralamada majburiy maydonlar tekshirilmaydi, shuning uchun yarim yozilgan matn ham
@@ -99,10 +117,12 @@ Avtosaqlash faqat **mavjud** yozuv uchun: yangi maqolada har bir tugmacha yangi 
 yaratib ketardi, shuning uchun birinchi "Saqlash" dan keyin yoqiladi.
 
 **Sozlamalar globali.** `globals/Settings.ts` — mijoz o'zgartiradigan sayt matni: bosh
-sahifaning birinchi ekrani (matn + `heroImages`), aloqa ma'lumotlari, ishonch bandidagi
+sahifaning birinchi ekrani (matn + `heroImages`), xizmatlar sahifasining muqovasi
+(`servicesCover`), aloqa ma'lumotlari, ishonch bandidagi
 `stats` raqamlari, ijtimoiy tarmoqlar, meta tavsif. Sayt uni `lib/getSettings()` orqali
 o'qiydi va har bir maydon uchun zaxira bor — `data/site.ts`, raqamlar uchun `data/team.ts`
-dagi `stats`, hero rasmlari uchun `public/sd1–sd5`. Sayt nomi, manzili
+dagi `stats`, hero rasmlari uchun `public/sd1–sd5`, xizmatlar muqovasi uchun
+`public/sd2.webp`. Sayt nomi, manzili
 va navigatsiya tuzilishi kodda qoladi — ular kontent emas. Hero'ni `HeroSlideshow` (client,
 JS crossfade) render qiladi — rasm soni paneldan kelgani uchun har qanday songa moslashadi.
 
@@ -135,6 +155,15 @@ ikkala kadrni ham tortardi. Shu sabab `getImageProps` — u `srcSet` beradi va u
 `<source>` ga qo'yish mumkin. `sizes` esa `115vw`, `100vw` emas: `object-cover` rasmni
 oynadan kattaroq qilib cho'zadi va `100vw` da mobilda 375px variant 894px ga cho'zilib
 bulanardi.
+
+Tik kadrlar **aylanib takrorlanadi** (`imagesMobile[i % imagesMobile.length]`), massiv
+bo'sh bo'lgandagina desktop kadriga qaytiladi. Ilgari `imagesMobile[i]` edi va mijoz
+desktopdan kam tik kadr yuklasa qolganlari `undefined` bo'lib desktop rasmiga tushardi:
+telefonda slayd-shou yotiq va tik kadrlarni aralashtirib ko'rsatardi.
+
+**Blog muqovasi hamma joyda 16:9.** `BlogCard` ham, maqola sahifasi ham. Ilgari karta
+4:3, maqola esa mobilda 4:3 va desktopda 21:9 edi — bitta rasm uch xil qirqilardi.
+16:9 tanlangani `Media` dagi `wide` hosilasi (1600×900) bilan bir xil bo'lgani uchun.
 
 **Client komponentga `lib/settings.ts` dan qiymat import qilmang.** U Payload'ni tortadi,
 Payload esa sharp va nodemailer'ni — build `child_process` topilmadi deb yiqiladi. Tip va
@@ -228,6 +257,14 @@ ustma-ust tushirardi — o'rniga konteynerdagi `gap` kichraytiriladi.
 suzib ketayotgan otzivni to'xtatib o'qib bo'lmasdi; u yerda `overflow-x-auto snap-x`
 qoladi, karta `w-[85vw]` (keyingisining cheti ko'rinib turadi — surish ishorasi), va
 takror `<li>` lar `max-md:hidden` — aks holda swipe uzunligi ikki baravar bo'lardi.
+
+**Logotiplar qatorining maskasi ham mobilda o'chirilgan** — boshqa sababdan.
+`mask-image` cheksiz `transform` animatsiyasi ustiga qo'yilganda mobil brauzer lentani
+har kadrda dasturiy rasterlaydi va skroll paytida qatlamni tashlab yuboradi: logotiplar
+sahifa surilganda yo'qolib qolardi. Shu bilan birga `--logo-filter` ning sukut qiymati
+`invert(0)` emas, **`none`** — `invert(0)` piksellarni o'zgartirmasa ham har bir logoga
+alohida kompozitsiya qatlami yasaydi, ya'ni yigirmata rasmga yigirmata qatlam. Yangi
+filtr qo'shsangiz ham shu qoida: ishlatilmayotganda `none` bo'lsin, `…(0)` emas.
 
 **Motion.** `components/motion/Reveal.tsx` — `Reveal` (skrollda ochiladi), `Stagger` +
 `StaggerItem` (to'r bolalari ketma-ket), `Rise` (sahifa ochilishida, hero uchun). Hammasi

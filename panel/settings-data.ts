@@ -1,6 +1,6 @@
 import "server-only";
 import { payloadClient } from "@/panel/auth";
-import { relIds } from "@/panel/doc";
+import { relId, relIds } from "@/panel/doc";
 
 export type SocialRow = { label: string; href: string };
 export type StatRow = { value: string; label: string };
@@ -10,6 +10,7 @@ export type SettingsFormData = {
   heroHeading: string;
   heroImages: number[];
   heroImagesMobile: number[];
+  servicesCover: number | null;
   email: string;
   phone: string;
   address: string;
@@ -31,6 +32,7 @@ export async function loadSettings(): Promise<SettingsFormData> {
     heroHeading: String(hero.heading ?? ""),
     heroImages: relIds(doc.heroImages),
     heroImagesMobile: relIds(doc.heroImagesMobile),
+    servicesCover: relId(doc.servicesCover),
     email: String(contact.email ?? ""),
     phone: String(contact.phone ?? ""),
     address: String(contact.address ?? ""),

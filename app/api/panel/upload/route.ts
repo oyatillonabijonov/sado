@@ -16,8 +16,27 @@ import { currentUser, payloadClient } from "@/panel/auth";
  */
 
 /** 8 MB. Bundan kattasi avval rasm tahrirlagichga tushishi kerak. */
-const MAX_BYTES = 8 * 1024 * 1024;
-const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"];
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const IMAGE = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"];
+
+/**
+ * Video — loyiha galereyasi uchun, gif o'rnida: sayt uni boshqaruvsiz,
+ * ovozsiz va aylanma qilib chizadi.
+ *
+ * Payload sharp'ni faqat rasm MIME'lariga qo'llaydi, ya'ni `imageSizes` va
+ * `resizeOptions` videoga tegmaydi — sxemaga ham, `Media` konfiguratsiyasiga
+ * ham o'zgarish kerak emas (sinab ko'rilgan: mp4 to'g'ri saqlanadi, `sizes`
+ * bo'sh qoladi).
+ *
+ * 20 MB — avtoijro etiladigan kadr uchun allaqachon katta. Chegara bor,
+ * chunki fayl `/app/media` volume'ida yotadi va har bir tashrifchiga to'liq
+ * uzatiladi: 100 MB'lik tanitim roligi mobil trafikni yeb qo'yardi.
+ */
+const MAX_VIDEO_BYTES = 20 * 1024 * 1024;
+const VIDEO = ["video/mp4", "video/webm"];
+
+const limitFor = (type: string) =>
+  VIDEO.includes(type) ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
 
 const bad = (error: string, status = 400) => NextResponse.json({ error }, { status });
 
@@ -29,11 +48,15 @@ export async function POST(request: Request) {
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File) || file.size === 0) return bad("Fayl kelmadi.");
-  if (!ALLOWED.includes(file.type)) {
-    return bad("Faqat rasm yuklash mumkin: JPG, PNG, WebP, AVIF yoki SVG.");
+  if (!IMAGE.includes(file.type) && !VIDEO.includes(file.type)) {
+    return bad("Rasm (JPG, PNG, WebP, AVIF, SVG) yoki video (MP4, WebM) yuklang.");
   }
-  if (file.size > MAX_BYTES) {
-    return bad(`Fayl juda katta (${Math.round(file.size / 1024 / 1024)} MB). 8 MB gacha bo'lsin.`);
+  const limit = limitFor(file.type);
+  if (file.size > limit) {
+    return bad(
+      `Fayl juda katta (${Math.round(file.size / 1024 / 1024)} MB). ` +
+        `${Math.round(limit / 1024 / 1024)} MB gacha bo'lsin.`,
+    );
   }
 
   // Alt majburiy maydon, lekin uni yuklash paytida so'rash oqimni to'xtatadi.

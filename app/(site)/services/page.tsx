@@ -5,6 +5,7 @@ import EmptyState from "@/components/EmptyState";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
 import SectionHeading from "@/components/SectionHeading";
 import { getServices } from "@/lib/content";
+import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = {
   title: "Xizmatlar",
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
-  const services = await getServices();
+  const [services, settings] = await Promise.all([getServices(), getSettings()]);
 
   return (
     <div className="shell pt-[48px]">
@@ -27,16 +28,16 @@ export default async function ServicesPage() {
       {/* Muqova — xizmatlar ro'yxatidan oldin qilingan ishning o'zi turadi.
           3:1 nisbat ataylab: 21:9 bo'lsa birinchi qator kartalar ekrandan
           tushib ketardi va butun taklifni bir ko'rinishda ko'rish yo'qolardi.
-          Rasm shu nisbatga qarab tanlangan — diagonal kompozitsiya va tepadagi
-          osmon kesilganda ham butun qoladi. Vertikal sub'ektli kadr (masalan
-          sd5 dagi shishalar) bu yerda tepasidan qirqiladi.
-          Almashtirish = shu `src` ni o'zgartirish (public/). */}
+          Vertikal sub'ektli kadr bu yerda tepasidan qirqiladi — paneldagi
+          maydon izohida shu aytilgan.
+          Almashtirish = /panel/sozlamalar; bo'sh qolsa `data/site.ts`
+          yonidagi standart kadr chiqadi. */}
       {/* Mobilda 16:5 atigi 105px baland chiziqqa aylanadi va rasmdan hech
           narsa o'qilmaydi — tor ekranda balandroq nisbat. */}
       <Reveal className="relative mb-[48px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black sm:aspect-[16/5]">
         <Image
-          src="/sd2.webp"
-          alt="Atlas naqshli samolyot liveriyasi — SADO ishi"
+          src={settings.servicesCover}
+          alt=""
           fill
           priority
           sizes="(max-width: 768px) 100vw, 1440px"

@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useTransition } from 'react';
 import { useFormStatus } from 'react-dom';
+import { isVideo } from '@/lib/site-format';
 import { deleteMedia, uploadMedia } from '@/panel/media-actions';
 import type { FormState } from '@/panel/form-state';
 import { Card, Empty, Field } from '@/panel/ui';
@@ -20,7 +21,7 @@ export function MediaScreen({ rows }: { rows: MediaRow[] }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <Card title="Yangi rasm" hint="JPG, PNG, WebP, AVIF yoki SVG. 8 MB gacha.">
+      <Card title="Yangi fayl" hint="Rasm: JPG, PNG, WebP, AVIF, SVG — 8 MB gacha. Video: MP4, WebM — 20 MB gacha.">
         {/* `key` on the form: React keeps the file input's value across a
             successful submit otherwise, so the same picture uploads twice on a
             second click. Remounting clears it. */}
@@ -28,12 +29,12 @@ export function MediaScreen({ rows }: { rows: MediaRow[] }) {
           <input
             type="file"
             name="file"
-            accept="image/*"
+            accept="image/*,video/mp4,video/webm"
             required
             className="w-full rounded-card border border-mist bg-white p-4 text-body file:mr-4 file:rounded-pill file:border-0 file:bg-obsidian file:px-5 file:py-2 file:text-body-sm file:text-white"
           />
           <Field
-            label="Rasmda nima ko‘rinadi"
+            label="Faylda nima ko‘rinadi"
             hint="Bir jumla. Ko‘rmaydigan odamlarga va qidiruv tizimlariga shu matn o‘qib beriladi."
             name="alt"
             required
@@ -80,8 +81,13 @@ function MediaCard({ row }: { row: MediaRow }) {
   return (
     <li className="flex flex-col gap-3 rounded-card border border-mist p-4">
       <div className="aspect-[4/3] overflow-hidden rounded-card border border-mist bg-white">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={row.url} alt={row.alt} className="size-full object-cover" />
+        {/* Video kutubxonada singan rasm bo'lib chiqardi. */}
+        {isVideo(row.url) ? (
+          <video src={row.url} className="size-full object-cover" muted loop autoPlay playsInline />
+        ) : (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={row.url} alt={row.alt} className="size-full object-cover" />
+        )}
       </div>
       <span className="text-body-sm">{row.alt}</span>
       <span className="truncate text-body-sm text-driftwood">

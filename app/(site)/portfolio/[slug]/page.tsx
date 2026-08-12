@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { adjacentProjects, getProject, getProjects } from "@/lib/content";
+import { isVideo } from "@/lib/site-format";
 
 export async function generateStaticParams() {
   return (await getProjects()).map((p) => ({ slug: p.slug }));
@@ -106,13 +107,18 @@ export default async function ProjectPage({
               i === 0 ? "md:col-span-2 md:aspect-[16/9]" : ""
             }`}
           >
-            {src.endsWith(".mp4") ? (
+            {/* Video gif kabi: boshqaruvsiz, ovozsiz, aylanma. `muted` shart —
+                usiz mobil brauzerlar avtoijroni butunlay bloklaydi.
+                `.mp4` tekshiruvi o'rniga `isVideo`: paneldan WebM ham
+                yuklanadi va u bu yerda jimgina rasm bo'lib qolardi. */}
+            {isVideo(src) ? (
               <video
                 src={src}
                 muted
                 loop
                 autoPlay
                 playsInline
+                aria-label={`${project.title} — galereya ${i + 1}`}
                 className="absolute inset-0 size-full object-cover"
               />
             ) : (

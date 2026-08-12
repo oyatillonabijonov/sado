@@ -21,6 +21,10 @@ export type { SiteSettings };
    ham, har bir sovuq optimizatsiya ham o'shancha qimmatga tushardi. */
 const DEFAULT_HERO_IMAGES = ["/sd1.webp", "/sd2.webp", "/sd3.webp", "/sd4.webp", "/sd5.webp"];
 
+/* Xizmatlar sahifasining muqovasi. Nisbatga qarab tanlangan: diagonal
+   kompozitsiya va tepadagi osmon 16:5 ga kesilganda ham butun qoladi. */
+const DEFAULT_SERVICES_COVER = "/sd2.webp";
+
 const FALLBACK: SiteSettings = {
   heroKicker: `${site.tagline} — Toshkent, ${site.founded}-yildan`,
   heroHeading: "Brendlarning vizual ko'rinishini\nshakllantiramiz.",
@@ -28,6 +32,7 @@ const FALLBACK: SiteSettings = {
   // Standart to'plamda tik kadr yo'q — bo'sh, ya'ni sayt desktop rasmlariga
   // qaytadi. Mijoz paneldan yuklaguncha telefonda hozirgidek qirqiladi.
   heroImagesMobile: [],
+  servicesCover: DEFAULT_SERVICES_COVER,
   email: site.email,
   phone: site.phone,
   address: site.address,
@@ -70,12 +75,16 @@ export async function getSettings(): Promise<SiteSettings> {
       : [];
 
   const heroImages = urls(doc.heroImages);
+  // Bitta upload: `depth` bilan populatsiya qilingan hujjat yoki id.
+  const one = (value: unknown) =>
+    value && typeof value === "object" && "url" in value ? String((value as { url: string }).url) : "";
 
   return {
     heroKicker: text(hero.kicker, FALLBACK.heroKicker),
     heroHeading: text(hero.heading, FALLBACK.heroHeading),
     heroImages: heroImages.length ? heroImages : FALLBACK.heroImages,
     heroImagesMobile: urls(doc.heroImagesMobile),
+    servicesCover: one(doc.servicesCover) || FALLBACK.servicesCover,
     email: text(contact.email, FALLBACK.email),
     phone: text(contact.phone, FALLBACK.phone),
     address: text(contact.address, FALLBACK.address),

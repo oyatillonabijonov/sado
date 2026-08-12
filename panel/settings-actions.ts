@@ -45,6 +45,9 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
   const heroImages = stack("heroImages");
   const heroImagesMobile = stack("heroImagesMobile");
 
+  // Bitta upload: bo'sh bo'lsa `null` — sayt o'shanda standart kadrga qaytadi.
+  const servicesCover = Number(str(fd, "servicesCover")) || null;
+
   try {
     const payload = await payloadClient();
     await payload.updateGlobal({
@@ -53,6 +56,7 @@ export async function saveSettings(_prev: FormState, fd: FormData): Promise<Form
         hero: { kicker: str(fd, "heroKicker"), heading: str(fd, "heroHeading") },
         heroImages,
         heroImagesMobile,
+        servicesCover,
         contact: { email: str(fd, "email"), phone: str(fd, "phone"), address: str(fd, "address") },
         stats,
         socials,

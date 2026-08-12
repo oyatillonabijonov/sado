@@ -54,6 +54,23 @@ export const Settings: GlobalConfig = {
       },
     },
     {
+      /* Xizmatlar sahifasining boshidagi keng kadr. Ilgari `/sd2.webp` deb
+         kodda yozilgan edi va mijoz uni almashtira olmasdi.
+
+         `required` emas — qoralamasiz global bo'lsa ham, majburiy maydon
+         `NOT NULL` ustun chiqaradi va `ALTER TABLE ADD COLUMN` uni sukut
+         qiymatisiz qabul qilmaydi (`scripts/db-ensure.ts` ga qarang).
+         Bo'sh qolsa sayt kodagi standart rasmga qaytadi. */
+      name: "servicesCover",
+      type: "upload",
+      relationTo: "media",
+      label: "Xizmatlar sahifasi — muqova rasmi",
+      admin: {
+        description:
+          "Sahifa boshidagi keng kadr. Desktopda 16:5, telefonda 16:9 qilib kesiladi — kompozitsiyasi markazda bo'lgan rasm tanlang. Bo'sh qoldirilsa saytdagi standart rasm chiqadi.",
+      },
+    },
+    {
       type: "group",
       name: "contact",
       label: "Aloqa",

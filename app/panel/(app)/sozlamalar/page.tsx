@@ -11,7 +11,7 @@ export default async function SettingsPage() {
     <div className="flex flex-col gap-8">
       <PageHeader
         title="Sozlamalar"
-        lead="Aloqa ma'lumotlari, ijtimoiy tarmoqlar, bosh sahifa matni va hero rasmlari."
+        lead="Aloqa ma'lumotlari, ijtimoiy tarmoqlar, bosh sahifa matni, hero va xizmatlar sahifasi rasmlari."
       />
       <SettingsForm data={data} media={media} />
     </div>

@@ -652,6 +652,10 @@ export interface Setting {
    * Tik (vertikal) kadrlar — telefonda shular chiqadi. Bo'sh qoldirilsa yuqoridagi rasmlar ishlatiladi, lekin telefon ekrani tor bo'lgani uchun ularning chetlari qirqiladi. Tartibi yuqoridagi bilan bir xil bo'lsin.
    */
   heroImagesMobile?: (number | Media)[] | null;
+  /**
+   * Sahifa boshidagi keng kadr. Desktopda 16:5, telefonda 16:9 qilib kesiladi — kompozitsiyasi markazda bo'lgan rasm tanlang. Bo'sh qoldirilsa saytdagi standart rasm chiqadi.
+   */
+  servicesCover?: (number | null) | Media;
   contact?: {
     email?: string | null;
     phone?: string | null;
@@ -697,6 +701,7 @@ export interface SettingsSelect<T extends boolean = true> {
       };
   heroImages?: T;
   heroImagesMobile?: T;
+  servicesCover?: T;
   contact?:
     | T
     | {

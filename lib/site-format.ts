@@ -14,6 +14,8 @@ export type SiteSettings = {
   heroImages: string[];
   /** Telefon uchun tik kadrlar. Bo'sh bo'lsa `heroImages` ishlatiladi. */
   heroImagesMobile: string[];
+  /** Xizmatlar sahifasining boshidagi keng kadr. */
+  servicesCover: string;
   email: string;
   phone: string;
   address: string;
@@ -26,3 +28,16 @@ export type SiteSettings = {
 /** `+998 90 123 45 67` → `tel:+998901234567` */
 export const telHref = (phone: string) =>
   `tel:${phone.replace(/[^\d+]/g, "").replace(/^(?!\+)/, "+")}`;
+
+/**
+ * Galereya elementi video-mi?
+ *
+ * MIME turi emas, kengaytma bo'yicha — ataylab. Payload media URL'i har doim
+ * asl fayl nomi bilan tugaydi (`/api/media/file/tanitim.mp4`), ya'ni kengaytma
+ * bor. MIME'ni olib yurish uchun `Project.gallery` ni `string[]` dan
+ * obyektlar massiviga aylantirish kerak bo'lardi — bu `data/projects.ts` dagi
+ * sakkizta yozuvni, `lib/content.ts` ni, panel yuklovchisini va sayt
+ * sahifasini bir vaqtda o'zgartirish degani, bitta regex bilan hal
+ * bo'ladigan narsa uchun.
+ */
+export const isVideo = (url: string) => /\.(mp4|webm|mov)(\?|$)/i.test(url);

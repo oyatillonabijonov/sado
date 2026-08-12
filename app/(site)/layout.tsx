@@ -72,11 +72,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [settings, locale, path] = await Promise.all([
-    getSettings(),
-    currentLocale(),
-    currentPath(),
-  ]);
+  const [settings, locale] = await Promise.all([getSettings(), currentLocale()]);
   const m = messages(locale);
 
   return (
@@ -99,7 +95,7 @@ export default async function RootLayout({
         {/* Til context'i: `LocaleLink` har bir havolaga prefiksni shundan
             oladi, ya'ni ruscha sahifadagi havola ruschaligicha qoladi. */}
         <LocaleProvider locale={locale}>
-          <Header settings={settings} m={m} locale={locale} path={stripLocale(path)} />
+          <Header settings={settings} m={m} locale={locale} />
           <main className="pt-[72px]">{children}</main>
           <Footer settings={settings} m={m} />
         </LocaleProvider>

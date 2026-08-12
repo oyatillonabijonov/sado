@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import LocaleLink from "@/components/LocaleLink";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/data/site";
-import { localePath, SITE_LOCALES, type Messages, type SiteLocale } from "@/lib/i18n";
+import { localePath, SITE_LOCALES, stripLocale, type Messages, type SiteLocale } from "@/lib/i18n";
 import { telHref, type SiteSettings } from "@/lib/site-format";
 
 function ThemeToggle({ label }: { label: string }) {
@@ -80,18 +80,28 @@ function ThemeToggle({ label }: { label: string }) {
  */
 function LanguageSwitcher({
   locale,
-  path,
   label,
   onNavigate,
 }: {
   locale: SiteLocale;
-  /** Til prefiksisiz manzil — ikkala havola shundan quriladi. */
-  path: string;
   label: string;
   onNavigate?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  /*
+   * Manzil server layout'idan prop bo'lib kelardi va **muzlab qolardi**:
+   * Next client navigatsiyada umumiy layout'ni qayta render qilmaydi, ya'ni
+   * birinchi yuklangan sahifaning manzili oxirigacha saqlanib qolardi.
+   * Amalda: odam /about ni bir marta ochsa, keyin qaysi sahifada bo'lmasin
+   * til tugmasi uni /about ga qaytarib yuborardi.
+   *
+   * `usePathname` client tomonda va har doim joriy. `stripLocale` ikkala
+   * holatga ham chidaydi: rewrite ostida u `/blog` ham, `/ru/blog` ham
+   * qaytarishi mumkin — natija bir xil.
+   */
+  const path = stripLocale(usePathname());
 
   useEffect(() => {
     if (!open) return;
@@ -149,9 +159,15 @@ function LanguageSwitcher({
         >
           {SITE_LOCALES.map((l) => (
             <li key={l.code}>
-              {/* `next/link` ning o'zi, `LocaleLink` emas: bu havolalar
-                  prefiksni O'ZI belgilaydi. */}
-              <Link
+              {/*
+                `<a>`, `next/link` emas — til almashtirish TO'LIQ YUKLASH
+                bo'lishi kerak. Client navigatsiyada Next umumiy layout'ni
+                qayta ishlatadi, ya'ni navigatsiya yorliqlari, futer va til
+                context'i eski tilda qolib ketardi: sahifa yarim tarjima
+                bo'lib ko'rinardi. Til bir kunda bir marta almashtiriladi —
+                to'liq yuklashning narxi bu yerda ahamiyatsiz.
+              */}
+              <a
                 href={localePath(l.code, path)}
                 hrefLang={l.code}
                 lang={l.code}
@@ -167,7 +183,7 @@ function LanguageSwitcher({
               >
                 <span className="w-[24px] shrink-0 text-[15px] tracking-[0.04em]">{l.short}</span>
                 <span className="text-[15px]">{l.label}</span>
-              </Link>
+              </a>
             </li>
           ))}
         </ul>
@@ -180,13 +196,10 @@ export default function Header({
   settings,
   m,
   locale,
-  path,
 }: {
   settings: SiteSettings;
   m: Messages;
   locale: SiteLocale;
-  /** Til prefiksisiz manzil — tanlagich ikkala havolani shundan quradi. */
-  path: string;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -217,7 +230,7 @@ export default function Header({
           <Image src="/images/logo.svg" alt={site.name} width={354} height={135} className="h-[38px] w-auto" priority />
         </LocaleLink>
         <div className="hidden md:block">
-          <LanguageSwitcher locale={locale} path={path} label={m["nav.language"]} />
+          <LanguageSwitcher locale={locale} label={m["nav.language"]} />
         </div>
         <div className="hidden items-center gap-[24px] md:flex">
           <nav className="flex items-center gap-[24px]">
@@ -298,7 +311,6 @@ export default function Header({
                   bitta ko'rinmas qirra uchun ortiqcha. */}
               <LanguageSwitcher
                 locale={locale}
-                path={path}
                 label={m["nav.language"]}
                 onNavigate={() => setOpen(false)}
               />

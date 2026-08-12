@@ -2,7 +2,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import type { Project, ProjectCategory } from "@/data/projects";
 import type { Service } from "@/data/services";
-import { testimonials as FALLBACK_TESTIMONIALS, type Testimonial } from "@/data/testimonials";
+import type { Testimonial } from "@/data/testimonials";
 import { currentLocale } from "@/lib/locale";
 
 /**
@@ -77,14 +77,13 @@ export async function adjacentProjects(slug: string) {
 }
 
 /**
- * Otzivlar. Bo'sh bo'lsa `data/testimonials.ts` dagilar chiqadi.
+ * Otzivlar. Bo'sh bo'lsa **bo'sh massiv** — sahifa bandni yashiradi.
  *
- * Loyihalar va maqolalardan farqli ravishda bu yerda zaxira bor: `db-ensure`
- * yangi jadvalni **bo'sh** yaratadi, ya'ni bu kolleksiya qo'shilgan deploy'dan
- * keyin prod bazasida bitta ham otziv bo'lmaydi. Zaxirasiz ishonch bandi
- * mijozning haqiqiy otzivlarini yo'qotgan holda chiqardi. Yon ta'siri: oxirgi
- * otzivni o'chirish kodagi uchtasini qaytaradi — mijoz hammasini o'chirmoqchi
- * bo'lsa, qatorni ko'rsatmaslikni bu yerda emas, sahifada hal qilish kerak.
+ * Ilgari bu yerda `data/testimonials.ts` dagi otzivlar zaxira bo'lib
+ * turardi va mijoz haq edi: o'ylab topilgan odamning o'ylab topilgan
+ * maqtovi saytda haqiqiy otziv bo'lib turardi, va uni paneldan
+ * o'chirishning yo'li yo'q edi — bo'shatsang kodagilar qaytib kelardi.
+ * `data/testimonials.ts` o'chirilmadi: u `scripts/seed.ts` uchun kerak.
  */
 export async function getTestimonials(): Promise<Testimonial[]> {
   const payload = await client();
@@ -95,7 +94,6 @@ export async function getTestimonials(): Promise<Testimonial[]> {
     sort: "order",
     locale: await currentLocale(),
   });
-  if (docs.length === 0) return FALLBACK_TESTIMONIALS;
   return docs.map((d) => ({
     quote: String(d.quote ?? ""),
     name: String(d.name ?? ""),

@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import type { FormState } from "@/panel/form-state";
-import { ImageDrop, ImageStack } from "@/panel/ImageDrop";
+import { ImageStack } from "@/panel/ImageDrop";
 import type { MediaOption } from "@/panel/media";
 import { saveSettings } from "@/panel/settings-actions";
 import type { SettingsFormData } from "@/panel/settings-data";
@@ -60,18 +60,6 @@ export function SettingsForm({
           </>
         )}
       </Card>
-
-      {primary && (
-      <Card title="Xizmatlar sahifasi">
-        <ImageDrop
-          label="Muqova rasmi"
-          hint="Sahifa boshidagi keng kadr. Desktopda 16:5, telefonda 16:9 qilib kesiladi — asosiy narsa markazda bo'lgan yotiq rasm tanlang. Bo'sh qoldirilsa standart rasm chiqadi."
-          name="servicesCover"
-          options={media}
-          defaultValue={data.servicesCover}
-        />
-      </Card>
-      )}
 
       {/* Aloqa ham lokalizatsiya qilinmagan: email, telefon va manzil ikkala
           tilda bir xil. */}

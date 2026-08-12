@@ -7,10 +7,12 @@ import SectionHeading from "@/components/SectionHeading";
 import { projectCategories } from "@/data/projects";
 import { getProjects } from "@/lib/content";
 
-export const metadata: Metadata = {
-  title: "Portfolio",
-  description: "SADO agentligining tanlangan loyihalari — brending, veb, UI/UX va print.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  // Statik `metadata` bir tilda qotib qolardi — ruscha sahifada ham
+  // o'zbekcha tavsif chiqardi.
+  const m = messages(await currentLocale());
+  return { title: m["portfolio.title"], description: m["meta.portfolio"] };
+}
 
 export default async function PortfolioPage() {
   const m = messages(await currentLocale());

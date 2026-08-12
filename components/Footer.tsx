@@ -130,7 +130,7 @@ export default function Footer({ settings, m }: { settings: SiteSettings; m: Mes
         <div className="col-span-2 md:col-span-1">
           <p className="mb-[12px] text-fog-gray md:mb-[24px]">{m["footer.newsletter"]}</p>
           <p className="mb-[16px] text-bone-white">
-            Yangi loyihalar va fikrlar haqida obuna bo'ling
+            {m["footer.newsletter.lead"]}
           </p>
           <Newsletter m={m} />
         </div>

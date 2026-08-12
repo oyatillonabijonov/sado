@@ -10,11 +10,12 @@ import { getAbout } from "@/lib/about";
 import { getSettings } from "@/lib/settings";
 import { telHref } from "@/lib/site-format";
 
-export const metadata: Metadata = {
-  title: "Biz haqimizda",
-  description:
-    "SADO — 2018-yildan beri Toshkentda ishlaydigan mustaqil dizayn agentligi.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  // Statik `metadata` bir tilda qotib qolardi — ruscha sahifada ham
+  // o'zbekcha tavsif chiqardi.
+  const m = messages(await currentLocale());
+  return { title: m["about.title"], description: m["meta.about"] };
+}
 
 export default async function AboutPage() {
   const m = messages(await currentLocale());
@@ -31,10 +32,18 @@ export default async function AboutPage() {
       {/* Hikoya va raqamlar bitta blokda. Ilgari ular orasida 240px bo'sh joy
           bor edi va raqamlar oddiy matn o'lchamida turardi — bosh sahifada
           o'sha raqamlar 84px, bu yerda 17px bo'lishi izchil emas. */}
-      <div className="grid gap-[24px] lg:grid-cols-2 md:gap-[48px]">
-        <p className="text-subheading whitespace-pre-line text-bone-white">{about.story}</p>
-        <p className="whitespace-pre-line text-fog-gray lg:pt-[6px]">{about.mission}</p>
-      </div>
+      {/* To'ldirilmagan matn chizilmaydi: bo'sh <p> ekranda sababsiz
+          bo'shliq qoldirardi va "yuklanmadi" bo'lib ko'rinardi. */}
+      {(about.story || about.mission) && (
+        <div className="grid gap-[24px] lg:grid-cols-2 md:gap-[48px]">
+          {about.story && (
+            <p className="text-subheading whitespace-pre-line text-bone-white">{about.story}</p>
+          )}
+          {about.mission && (
+            <p className="whitespace-pre-line text-fog-gray lg:pt-[6px]">{about.mission}</p>
+          )}
+        </div>
+      )}
 
       {/* Raqamlar endi o'zi karta — panelning 32/48px paddingi ustiga qo'shilib
           ikki qavat ramka berardi. Panel yupqa zamin bo'lib qoladi. */}
@@ -45,6 +54,7 @@ export default async function AboutPage() {
       {/* Qadriyatlar va madaniyat — ilgari ikkita alohida seksiya edi, ikkalasi
           ham "biz qanday ishlaymiz" haqida. Bittasi uchta yalang'och xatboshi,
           ikkinchisi bitta xatboshi uchun butun seksiya sarlavhasi bilan. */}
+      {about.values.length > 0 && (
       <section className="pt-section">
         <SectionHeading kicker={m["about.values.kicker"]}>{m["about.values.title"]}</SectionHeading>
         {/* To'rtinchi karta ilgari shu yerda qo'lda yozilgan edi — uchtasi
@@ -61,8 +71,10 @@ export default async function AboutPage() {
           ))}
         </Stagger>
       </section>
+      )}
 
       {/* Jamoa — bu yerda zamin allaqachon bor: suratning o'zi. */}
+      {about.team.length > 0 && (
       <section className="pt-section">
         <SectionHeading kicker={m["about.team.kicker"]}>{m["about.team.title"]}</SectionHeading>
         {/* Mobilda 2 ustun: 3:4 portret bitta ustunda 500px baland bo'lib,
@@ -103,6 +115,7 @@ export default async function AboutPage() {
           ))}
         </Stagger>
       </section>
+      )}
 
       {/* Aloqa — ilgari alohida /contact sahifasi edi. Bitta forma va uchta
           qator uchun alohida sahifa navigatsiyada joy egallardi, mazmunan esa
@@ -115,10 +128,14 @@ export default async function AboutPage() {
         <div className="grid gap-[32px] lg:grid-cols-2 md:gap-[80px]">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
             <p className="mb-[24px] text-fog-gray">{m["about.contact.kicker"]}</p>
-            <h2 className="display max-w-[560px]">{about.contactHeading}</h2>
-            <p className="mt-[32px] max-w-[46ch] whitespace-pre-line text-fog-gray">
-              {about.contactText}
-            </p>
+            {about.contactHeading && (
+              <h2 className="display max-w-[560px]">{about.contactHeading}</h2>
+            )}
+            {about.contactText && (
+              <p className="mt-[32px] max-w-[46ch] whitespace-pre-line text-fog-gray">
+                {about.contactText}
+              </p>
+            )}
             <div className="mt-[32px] flex flex-col md:mt-[48px] md:gap-[8px]">
               <a
                 href={`mailto:${settings.email}`}

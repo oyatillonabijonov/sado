@@ -75,7 +75,7 @@ export default async function HomePage() {
           lead={m["home.services.lead"]}
           action={<RedDotLink href="/portfolio">{m["home.works.all"]}</RedDotLink>}
         >
-          So'nggi loyihalar.
+          {m["home.works.heading"]}
         </SectionHeading>
         <Stagger className="grid gap-x-[16px] gap-y-stack md:grid-cols-2">
           {featured.map((p) => (
@@ -94,7 +94,7 @@ export default async function HomePage() {
           kicker={m["home.blog.kicker"]}
           action={<RedDotLink href="/blog">{m["home.blog.all"]}</RedDotLink>}
         >
-          Fikrlar va kuzatuvlar.
+          {m["home.blog.heading"]}
         </SectionHeading>
         <Stagger className="grid gap-x-[16px] gap-y-[48px] md:grid-cols-3">
           {posts.map((p) => (
@@ -120,7 +120,7 @@ export default async function HomePage() {
           kicker={m["home.trust.kicker"]}
           lead={m["home.testimonials.lead"]}
         >
-          Bizga ishonganlar.
+          {m["home.trust.heading"]}
         </SectionHeading>
 
         {/* Mobilda raqamlar otzivlardan oldin: 2×2 to'r bir qarashda o'qiladi,
@@ -131,6 +131,9 @@ export default async function HomePage() {
               animatsiya o'chadi (`globals.css`) va o'rniga qo'l bilan
               suriladigan snap-rail qoladi. Karta 85vw: keyingisining cheti
               ko'rinib turadi, ya'ni surish mumkinligi o'z-o'zidan aytiladi. */}
+          {/* Otziv yo'q bo'lsa lenta umuman chizilmaydi: bo'sh qator
+              "yuklanmadi" bo'lib ko'rinardi. Raqamlar esa qoladi. */}
+          {testimonials.length > 0 && (
           <div className="no-scrollbar sado-rail-mask bleed order-2 snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-pl-[var(--gutter)] md:order-none md:overflow-hidden">
             <ul className="sado-rail shell flex w-max gap-[16px]">
               {[...testimonials, ...testimonials].map((t, i) => {
@@ -171,6 +174,7 @@ export default async function HomePage() {
               })}
             </ul>
           </div>
+          )}
 
           <Reveal className="order-1 md:order-none">
             <Stats stats={settings.stats} />
@@ -185,11 +189,10 @@ export default async function HomePage() {
           <div className="lg:sticky lg:top-[120px] lg:self-start">
             <p className="mb-[24px] text-fog-gray">{m["about.contact.kicker"]}</p>
             <h2 className="display max-w-[560px]">
-              Loyihangizni muhokama qilamizmi?
+              {m["home.cta.heading"]}
             </h2>
             <p className="mt-[32px] max-w-[46ch] text-fog-gray">
-              Qisqacha yozib qoldiring — bir ish kuni ichida javob beramiz va
-              birinchi suhbatni belgilaymiz.
+              {m["home.cta.text"]}
             </p>
             <div className="mt-[32px] flex flex-col md:mt-[48px] md:gap-[8px]">
               <a

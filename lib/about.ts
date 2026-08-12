@@ -1,18 +1,24 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
-import { about as FALLBACK } from "@/data/about";
-import { team as FALLBACK_TEAM, values as FALLBACK_VALUES } from "@/data/team";
 import { currentLocale } from "@/lib/locale";
 
 /**
- * «Biz haqimizda» sahifasining kontenti.
+ * «Biz haqimizda» sahifasining kontenti — **zaxirasiz**.
  *
- * Har bir maydonda zaxira bor va u **maydon darajasida** ishlaydi, hujjat
- * darajasida emas: mijoz faqat hikoyani yozib, jamoani keyinga qoldirsa,
- * jamoa kodagi ro'yxatdan chiqib turaveradi. Global umuman bo'sh bo'lsa
- * sahifa hozirgidek ko'rinadi — `db-ensure` yangi jadvalni bo'sh yaratadi,
- * ya'ni bu kod qo'shilgan deploy'dan keyingi birinchi daqiqada aynan shunday
- * bo'ladi.
+ * Ilgari bu yerda `data/about.ts` va `data/team.ts` dagi qiymatlar zaxira
+ * bo'lib turardi: global bo'sh bo'lsa sahifa o'sha matn bilan chiqardi.
+ * Mijoz buni to'g'ri deb topmadi va haq edi — "Aziz Rahimov, kreativ
+ * direktor" degan o'ylab topilgan odam saytda haqiqiy jamoa a'zosi bo'lib
+ * turardi, va uni o'chirishning yo'li yo'q edi: paneldan jamoani bo'shatsang
+ * kodagi olti kishi qaytib kelardi.
+ *
+ * Endi to'ldirilmagan joy **ko'rinmaydi**: bo'sh matn chizilmaydi, bo'sh
+ * ro'yxat butun seksiyani yashiradi. Sahifa to'ldirilgunicha qisqa bo'lib
+ * turadi — bu soxta ma'lumotdan yaxshiroq.
+ *
+ * `data/about.ts` va `data/team.ts` o'chirilmadi: ular `scripts/seed.ts`
+ * uchun kerak, ya'ni bo'sh bazani boshlang'ich kontent bilan to'ldirish
+ * yo'li ochiq qoladi.
  */
 
 export type Value = { title: string; text: string };
@@ -28,10 +34,7 @@ export type AboutContent = {
   contactText: string;
 };
 
-const text = (value: unknown, fallback: string) => {
-  const v = String(value ?? "").trim();
-  return v || fallback;
-};
+const text = (value: unknown) => String(value ?? "").trim();
 
 /** Upload maydoni `depth` ga qarab id yoki hujjat qaytaradi. */
 const url = (value: unknown): string | undefined =>
@@ -48,29 +51,21 @@ export async function getAbout(): Promise<AboutContent> {
   const intro = (doc?.intro ?? {}) as Record<string, unknown>;
   const contact = (doc?.contact ?? {}) as Record<string, unknown>;
 
-  const values = Array.isArray(doc?.values)
-    ? (doc.values as { title?: string; text?: string }[])
-        .map((v) => ({ title: String(v.title ?? ""), text: String(v.text ?? "") }))
-        .filter((v) => v.title && v.text)
-    : [];
-
-  const team = Array.isArray(doc?.team)
-    ? (doc.team as { name?: string; role?: string; photo?: unknown }[])
-        .map((m) => ({
-          name: String(m.name ?? ""),
-          role: String(m.role ?? ""),
-          photo: url(m.photo),
-        }))
-        .filter((m) => m.name && m.role)
-    : [];
-
   return {
-    lead: text(intro.lead, FALLBACK.lead),
-    story: text(intro.story, FALLBACK.story),
-    mission: text(intro.mission, FALLBACK.mission),
-    values: values.length ? values : FALLBACK_VALUES,
-    team: team.length ? team : FALLBACK_TEAM,
-    contactHeading: text(contact.heading, FALLBACK.contactHeading),
-    contactText: text(contact.text, FALLBACK.contactText),
+    lead: text(intro.lead),
+    story: text(intro.story),
+    mission: text(intro.mission),
+    contactHeading: text(contact.heading),
+    contactText: text(contact.text),
+    values: Array.isArray(doc?.values)
+      ? (doc.values as { title?: string; text?: string }[])
+          .map((v) => ({ title: text(v.title), text: text(v.text) }))
+          .filter((v) => v.title || v.text)
+      : [],
+    team: Array.isArray(doc?.team)
+      ? (doc.team as { name?: string; role?: string; photo?: unknown }[])
+          .map((m) => ({ name: text(m.name), role: text(m.role), photo: url(m.photo) }))
+          .filter((m) => m.name)
+      : [],
   };
 }

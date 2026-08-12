@@ -6,10 +6,12 @@ import BlogFilterGrid from "@/components/BlogFilterGrid";
 import EmptyState from "@/components/EmptyState";
 import { getAllPosts, getBlogCategories } from "@/lib/blog";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Dizayn, brending va raqamli mahsulotlar haqida fikrlarimiz.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  // Statik `metadata` bir tilda qotib qolardi — ruscha sahifada ham
+  // o'zbekcha tavsif chiqardi.
+  const m = messages(await currentLocale());
+  return { title: m["blog.title"], description: m["meta.blog"] };
+}
 
 export default async function BlogPage() {
   const m = messages(await currentLocale());

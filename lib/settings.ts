@@ -2,6 +2,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { site } from "@/data/site";
 import { stats } from "@/data/team";
+import { t } from "@/lib/i18n";
 import { currentLocale } from "@/lib/locale";
 import type { SiteSettings } from "@/lib/site-format";
 
@@ -26,9 +27,11 @@ const DEFAULT_HERO_IMAGES = ["/sd1.webp", "/sd2.webp", "/sd3.webp", "/sd4.webp",
    kompozitsiya va tepadagi osmon 16:5 ga kesilganda ham butun qoladi. */
 const DEFAULT_SERVICES_COVER = "/sd2.webp";
 
-const FALLBACK: SiteSettings = {
-  heroKicker: `${site.tagline} — Toshkent, ${site.founded}-yildan`,
-  heroHeading: "Brendlarning vizual ko'rinishini\nshakllantiramiz.",
+/* Zaxira endi tilga bog'liq: panel bo'sh bo'lsa ham ruscha sahifa ruscha
+   sarlavha bilan chiqadi. */
+const fallback = (locale: Parameters<typeof t>[0]): SiteSettings => ({
+  heroKicker: t(locale, "hero.kicker"),
+  heroHeading: t(locale, "hero.heading"),
   heroImages: DEFAULT_HERO_IMAGES,
   // Standart to'plamda tik kadr yo'q — bo'sh, ya'ni sayt desktop rasmlariga
   // qaytadi. Mijoz paneldan yuklaguncha telefonda hozirgidek qirqiladi.
@@ -37,10 +40,10 @@ const FALLBACK: SiteSettings = {
   email: site.email,
   phone: site.phone,
   address: site.address,
-  description: site.description,
+  description: t(locale, "site.description"),
   stats: stats.map((s) => ({ value: s.value, label: s.label })),
   socials: [...site.socials],
-};
+});
 
 const text = (value: unknown, fallback: string) => {
   const v = String(value ?? "").trim();
@@ -48,9 +51,11 @@ const text = (value: unknown, fallback: string) => {
 };
 
 export async function getSettings(): Promise<SiteSettings> {
+  const locale = await currentLocale();
+  const FALLBACK = fallback(locale);
   const payload = await getPayload({ config });
   const doc = (await payload
-    .findGlobal({ slug: "settings", locale: await currentLocale() })
+    .findGlobal({ slug: "settings", locale })
     .catch(() => null)) as unknown as Record<string, unknown> | null;
   if (!doc) return FALLBACK;
 

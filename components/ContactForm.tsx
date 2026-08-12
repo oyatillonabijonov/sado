@@ -65,7 +65,7 @@ export default function ContactForm({ m }: { m: Messages }) {
       <div className={card} role="status" aria-live="polite" ref={focusSuccess}>
         <p className="text-subheading text-bone-white">{m["contact.sent"]}</p>
         <p className="mt-[16px] text-fog-gray">
-          Bir ish kuni ichida siz bilan bog'lanamiz.
+          {m["contact.replyTime"]}
         </p>
       </div>
     );
@@ -117,7 +117,7 @@ export default function ContactForm({ m }: { m: Messages }) {
         </button>
         {status === "error" && (
           <p className="mt-[16px] text-scarlet-signal">
-            Xatolik yuz berdi. Qayta urinib ko'ring yoki bizga to'g'ridan-to'g'ri yozing.
+            {m["contact.errorLong"]}
           </p>
         )}
       </div>

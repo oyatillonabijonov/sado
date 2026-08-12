@@ -138,6 +138,32 @@ const uz = {
   "contact.company": "Kompaniya (ixtiyoriy)",
 
   // umumiy
+  "home.works.heading": "So'nggi loyihalar.",
+  "home.blog.heading": "Fikrlar va kuzatuvlar.",
+  "home.trust.heading": "Bizga ishonganlar.",
+  "home.cta.heading": "Loyihangizni muhokama qilamizmi?",
+  "home.cta.text":
+    "Qisqacha yozib qoldiring — bir ish kuni ichida javob beramiz va birinchi suhbatni belgilaymiz.",
+  "services.cta.text":
+    "Vazifangizni qisqacha yozing — mos xizmatni o'zimiz aytamiz va taxminiy muddat bilan javob beramiz.",
+  "about.contact.text": "Vazifangizni qisqacha yozing — bir ish kuni ichida javob beramiz.",
+  "notFound.title": "Bunday sahifa topilmadi.",
+  "notFound.back": "Bosh sahifaga qaytish",
+  "footer.newsletter.lead": "Yangi loyihalar va fikrlar haqida obuna bo'ling",
+  "contact.replyTime": "Bir ish kuni ichida siz bilan bog'lanamiz.",
+  "contact.errorLong":
+    "Xatolik yuz berdi. Qayta urinib ko'ring yoki bizga to'g'ridan-to'g'ri yozing.",
+
+  "meta.portfolio": "SADO agentligining tanlangan loyihalari — brending, veb, UI/UX va print.",
+  "meta.services": "Brend strategiyasi, brend dizayn, veb-dizayn, UI/UX, motion va print — SADO xizmatlari.",
+  "meta.about": "SADO — 2018-yildan beri Toshkentda ishlaydigan mustaqil dizayn agentligi.",
+  "meta.blog": "Dizayn, brending va raqamli mahsulotlar haqida fikrlarimiz.",
+  // Panel bo'sh bo'lgandagi standart hero matni — u ham tarjima qilinadi,
+  // aks holda ruscha bosh sahifa o'zbekcha sarlavha bilan chiqardi.
+  "hero.kicker": "Dizayn agentligi — Toshkent, 2018-yildan",
+  "hero.heading": "Brendlarning vizual ko'rinishini\nshakllantiramiz.",
+  "site.description":
+    "SADO — brend strategiyasi, veb-dizayn va raqamli tajribalar yaratuvchi dizayn agentligi. Toshkent.",
   "site.tagline": "Dizayn agentligi",
   "common.contact": "Bog'lanish",
   "common.readMore": "Batafsil",
@@ -239,6 +265,30 @@ const ru: Partial<Record<MessageKey, string>> = {
   "contact.phone": "Телефон",
   "contact.company": "Компания (необязательно)",
 
+  "home.works.heading": "Последние проекты.",
+  "home.blog.heading": "Мысли и наблюдения.",
+  "home.trust.heading": "Нам доверяют.",
+  "home.cta.heading": "Обсудим ваш проект?",
+  "home.cta.text":
+    "Напишите пару строк — ответим в течение рабочего дня и назначим первую встречу.",
+  "services.cta.text":
+    "Опишите задачу в двух словах — подскажем подходящую услугу и назовём примерные сроки.",
+  "about.contact.text": "Опишите задачу в двух словах — ответим в течение рабочего дня.",
+  "notFound.title": "Такая страница не найдена.",
+  "notFound.back": "Вернуться на главную",
+  "footer.newsletter.lead": "Подпишитесь на новости о проектах и наших мыслях",
+  "contact.replyTime": "Свяжемся с вами в течение рабочего дня.",
+  "contact.errorLong":
+    "Что-то пошло не так. Попробуйте ещё раз или напишите нам напрямую.",
+
+  "meta.portfolio": "Избранные проекты агентства SADO — брендинг, веб, UI/UX и печать.",
+  "meta.services": "Брендинг, ребрендинг, нейминг, веб-дизайн, UI/UX и печать — услуги SADO.",
+  "meta.about": "SADO — независимое дизайн-агентство, работающее в Ташкенте с 2018 года.",
+  "meta.blog": "Наши мысли о дизайне, брендинге и цифровых продуктах.",
+  "hero.kicker": "Дизайн-агентство — Ташкент, с 2018 года",
+  "hero.heading": "Формируем визуальный облик\nбрендов.",
+  "site.description":
+    "SADO — дизайн-агентство: стратегия бренда, веб-дизайн и цифровой опыт. Ташкент.",
   "site.tagline": "Дизайн-агентство",
   "common.contact": "Связаться",
   "common.readMore": "Подробнее",

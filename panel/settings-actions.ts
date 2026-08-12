@@ -42,9 +42,6 @@ export async function saveSettings(
   const heroImages = stack("heroImages");
   const heroImagesMobile = stack("heroImagesMobile");
 
-  // Bitta upload: bo'sh bo'lsa `null` — sayt o'shanda standart kadrga qaytadi.
-  const servicesCover = Number(str(fd, "servicesCover")) || null;
-
   try {
     const payload = await payloadClient();
     await payload.updateGlobal({
@@ -55,7 +52,9 @@ export async function saveSettings(
         // Rasmlar va havolalar lokalizatsiya qilinmagan — ular hujjatga
         // tegishli, tilga emas. Faqat asosiy tildan yoziladi, aks holda
         // ruscha ekran ularni ikkinchi marta yozib chiqardi.
-        ...(primary ? { heroImages, heroImagesMobile, servicesCover } : {}),
+        // `servicesCover` bu yerda yo'q — u `/panel/xizmatlar` ekranida,
+        // `saveServicesCover` bilan saqlanadi.
+        ...(primary ? { heroImages, heroImagesMobile } : {}),
         contact: { email: str(fd, "email"), phone: str(fd, "phone"), address: str(fd, "address") },
         stats,
         socials,
@@ -68,6 +67,31 @@ export async function saveSettings(
 
   revalidatePath("/panel/sozlamalar");
   // Sozlamalar butun saytda ishlatiladi — futer, bosh sahifa, meta.
+  revalidatePath("/", "layout");
+  return { ok: true };
+}
+
+/**
+ * Faqat xizmatlar sahifasining muqovasi — `/panel/xizmatlar` ekranidan.
+ *
+ * Alohida action: `saveSettings` butun globalni yozadi va bu yerdan
+ * chaqirilsa formada yo'q maydonlarni (hero matni, raqamlar, aloqa)
+ * bo'shatib yuborardi.
+ */
+export async function saveServicesCover(_prev: FormState, fd: FormData): Promise<FormState> {
+  await requireUser();
+
+  try {
+    const payload = await payloadClient();
+    await payload.updateGlobal({
+      slug: "settings",
+      data: { servicesCover: Number(str(fd, "servicesCover")) || null } as never,
+    });
+  } catch (error) {
+    return { error: explain(error) };
+  }
+
+  revalidatePath("/panel/xizmatlar");
   revalidatePath("/", "layout");
   return { ok: true };
 }

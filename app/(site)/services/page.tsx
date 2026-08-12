@@ -9,11 +9,12 @@ import SectionHeading from "@/components/SectionHeading";
 import { getServices } from "@/lib/content";
 import { getSettings } from "@/lib/settings";
 
-export const metadata: Metadata = {
-  title: "Xizmatlar",
-  description:
-    "Brend strategiyasi, brend dizayn, veb-dizayn, UI/UX, motion va print — SADO xizmatlari.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  // Statik `metadata` bir tilda qotib qolardi — ruscha sahifada ham
+  // o'zbekcha tavsif chiqardi.
+  const m = messages(await currentLocale());
+  return { title: m["services.kicker"], description: m["meta.services"] };
+}
 
 export default async function ServicesPage() {
   const m = messages(await currentLocale());
@@ -103,8 +104,7 @@ export default async function ServicesPage() {
             <p className="mb-[24px] text-fog-gray">{m["about.contact.kicker"]}</p>
             <h2 className="display max-w-[560px]">{m["services.unsure"]}</h2>
             <p className="mt-[32px] max-w-[46ch] text-fog-gray">
-              Vazifangizni qisqacha yozing — mos xizmatni o'zimiz aytamiz va
-              taxminiy muddat bilan javob beramiz.
+              {m["services.cta.text"]}
             </p>
           </div>
           <div className="max-w-[640px]">

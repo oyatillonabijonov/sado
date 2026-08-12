@@ -37,7 +37,14 @@ export function PostForm({ data, media }: { data: PostFormData; media: MediaOpti
         </Grid>
         <Grid>
           <Field label="Sana" name="date" type="date" defaultValue={data.date} required />
-          <ImageDrop label="Muqova rasmi" name="cover" options={media} defaultValue={data.cover} required />
+          <ImageDrop
+            label="Muqova rasmi"
+            hint="16:9 yotiq kadr (masalan 1600×900). Sayt uni ro'yxatda ham, maqola ichida ham aynan shu nisbatda ko'rsatadi."
+            name="cover"
+            options={media}
+            defaultValue={data.cover}
+            required
+          />
         </Grid>
         <Field label="Sahifa manzili" name="slug" defaultValue={data.slug} placeholder="qorongi-interfeyslar" />
       </Collapse>

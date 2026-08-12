@@ -98,10 +98,18 @@ export default function HeroSlideshow({
           priority: i === 0,
         });
 
-        /* Tik kadrlar tartibi desktop bilan bir xil deb olinadi. Mijoz
-           to'rttadan uchtasini yuklasa qolgani desktop kadrida qoladi —
-           yarim to'ldirilgan holat ham buzilmasin. */
-        const mobileSrc = imagesMobile[i];
+        /*
+         * Tik kadrlar tartibi desktop bilan bir xil deb olinadi.
+         *
+         * Mijoz beshta desktop va uchta tik kadr yuklasa, oxirgi ikkitasi
+         * `imagesMobile[3]`, `imagesMobile[4]` — ya'ni `undefined` — bo'lib
+         * qolardi va telefon o'sha ikki kadrda desktop rasmini ko'rsatardi:
+         * slayd-shou tik va yotiq kadrlarni aralashtirib chiqardi. Endi tik
+         * kadrlar aylanib takrorlanadi, ya'ni telefonda **hech qachon**
+         * desktop kadri chiqmaydi. Massiv butunlay bo'sh bo'lgandagina
+         * desktop kadriga qaytiladi (paneldagi maydon ixtiyoriy).
+         */
+        const mobileSrc = imagesMobile.length ? imagesMobile[i % imagesMobile.length] : undefined;
         const mobile = mobileSrc
           ? getImageProps({ src: mobileSrc, alt: "", fill: true, sizes: SIZES, priority: i === 0 })
           : null;

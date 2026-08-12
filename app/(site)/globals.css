@@ -128,7 +128,7 @@ html {
        16 ta node). #666 shu fonda 4.83:1. Dark mode qiymatiga tegilmagan. */
     --color-fog-gray: #666666;
     --color-graphite: #dcdcd8;
-    --logo-invert: 1;
+    --logo-filter: invert(1);
   }
 }
 :root[data-theme="light"] {
@@ -139,13 +139,29 @@ html {
      bilan tanlangan light mode kontrast tekshiruvidan o'tmay qoladi. */
   --color-fog-gray: #666666;
   --color-graphite: #dcdcd8;
-  --logo-invert: 1;
+  --logo-filter: invert(1);
 }
 
-/* Oq (monoxrom) logolar light rejimda qoraga ag'dariladi */
+/*
+ * Oq (monoxrom) logolar light rejimda qoraga ag'dariladi.
+ *
+ * Sukut qiymati `invert(0)` emas, `none`. `invert(0)` piksellarni
+ * o'zgartirmaydi, lekin baribir kompozitsiya qatlami yasaydi — logo
+ * qatorida yigirma to'rtta rasm bor va ularning har biri dark rejimda ham
+ * alohida qatlam bo'lib turardi. `none` da brauzer filtrni umuman
+ * o'rnatmaydi. Mobil skroll muammosining yarmi shu yerda edi (ikkinchi
+ * yarmi — `.sado-marquee-mask`, pastga qarang).
+ */
+:root {
+  --logo-filter: none;
+}
+:root[data-theme="dark"] {
+  --logo-filter: none;
+}
+
 img[src$="logo.svg"],
 .sado-marquee img {
-  filter: invert(var(--logo-invert, 0));
+  filter: var(--logo-filter);
 }
 
 body {
@@ -395,15 +411,28 @@ body {
 .sado-marquee {
   animation: sado-marquee 28s linear infinite;
 }
-.sado-marquee-mask {
-  -webkit-mask-image: linear-gradient(
-    90deg,
-    transparent,
-    #000 8%,
-    #000 92%,
-    transparent
-  );
-  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+/*
+ * Yeyilgan chetlar — FAQAT desktopda, otzivlar qatoridagi bilan bir xil
+ * sababdan boshqa sabab bilan.
+ *
+ * `mask-image` cheksiz `transform` animatsiyasi ustiga qo'yilganda mobil
+ * brauzer butun lentani har kadrda dasturiy rasterlashga majbur bo'ladi.
+ * iOS Safari va Android Chrome skroll paytida bu qatlamni tashlab yuboradi:
+ * logotiplar sahifa surilganda yo'qolib qoladi va skroll to'xtagach qaytadi.
+ * 375px ekranda mask baribir lentaning yarmini yeb qo'yardi, ya'ni yo'qotgan
+ * narsamiz yo'q.
+ */
+@media (min-width: 768px) {
+  .sado-marquee-mask {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .sado-marquee {

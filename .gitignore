@@ -31,3 +31,6 @@ yarn-error.log*
 # payload
 /media
 db.sqlite
+# db-ensure va migrate-locales qoldiradigan zaxiralar (db.sqlite.bak,
+# db.sqlite.pre-i18n, …). `schema.sqlite` esa ataylab commit qilinadi.
+db.sqlite.*

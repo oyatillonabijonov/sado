@@ -34,50 +34,75 @@ export function BlockEditor({
   media: MediaOption[];
   placeholder?: string;
 }) {
+  /**
+   * Bloklar **barqaror kalit** bilan yuritiladi, indeks bilan emas.
+   *
+   * `TextBlock` ichidagi `<textarea>` boshqarilmaydigan (`defaultValue`) —
+   * Cmd+Z shu sababdan ishlaydi. Buning narxi shu: indeks bilan
+   * kalitlanganda o'rtadagi blok o'chirilsa yoki bloklar joyi
+   * almashtirilsa React DOM tugunini qayta ishlatardi, `defaultValue` esa
+   * qayta qo'llanmaydi — ekranda ko'chirilgan blokning eski matni qolib
+   * ketardi. Ikkalasi birga bo'lishi shart. `panel/ui.tsx` dagi
+   * `RepeatRows` xuddi shu tuzoqni xuddi shunday hal qiladi.
+   *
+   * Kalit faqat React uchun: yashirin input'ga `rows` emas, `blocks`
+   * yoziladi, ya'ni saqlanadigan JSON o'zgarmaydi (`parseBlocks` tegilmadi).
+   */
+  const nextKey = useRef(0);
   // An empty document still needs somewhere to type.
-  const [blocks, setBlocks] = useState<Block[]>(
-    initial.length ? initial : [{ kind: 'text', text: '' }],
+  const [rows, setRows] = useState<{ key: number; block: Block }[]>(() =>
+    (initial.length ? initial : [{ kind: 'text', text: '' } as Block]).map((block) => ({
+      key: nextKey.current++,
+      block,
+    })),
   );
 
-  const update = (i: number, block: Block) =>
-    setBlocks((b) => b.map((old, j) => (j === i ? block : old)));
+  const update = (key: number, block: Block) =>
+    setRows((rs) => rs.map((r) => (r.key === key ? { key, block } : r)));
 
-  const insert = (i: number, block: Block) =>
-    setBlocks((b) => [...b.slice(0, i), block, ...b.slice(i)]);
+  const insert = (at: number, block: Block) =>
+    setRows((rs) => [...rs.slice(0, at), { key: nextKey.current++, block }, ...rs.slice(at)]);
 
-  const remove = (i: number) =>
-    setBlocks((b) => (b.length === 1 ? [{ kind: 'text', text: '' }] : b.filter((_, j) => j !== i)));
+  const remove = (key: number) =>
+    setRows((rs) =>
+      // Oxirgi blok o'chirilsa yozadigan joy qolmaydi — o'rniga bo'sh blok,
+      // lekin YANGI kalit bilan: eski kalit qolsa textarea qayta o'rnatilmay
+      // o'chirilgan matnni ko'rsatib turardi.
+      rs.length === 1
+        ? [{ key: nextKey.current++, block: { kind: 'text', text: '' } }]
+        : rs.filter((r) => r.key !== key),
+    );
 
-  const move = (i: number, delta: number) =>
-    setBlocks((b) => {
-      const to = i + delta;
-      if (to < 0 || to >= b.length) return b;
-      const next = [...b];
-      [next[i], next[to]] = [next[to], next[i]];
+  const move = (at: number, delta: number) =>
+    setRows((rs) => {
+      const to = at + delta;
+      if (to < 0 || to >= rs.length) return rs;
+      const next = [...rs];
+      [next[at], next[to]] = [next[to], next[at]];
       return next;
     });
 
   return (
     <div className="flex flex-col">
-      <input type="hidden" name={name} value={JSON.stringify(blocks)} />
+      <input type="hidden" name={name} value={JSON.stringify(rows.map((r) => r.block))} />
 
       <Inserter onAdd={(block) => insert(0, block)} />
 
-      {blocks.map((block, i) => (
-        <div key={i} className="flex flex-col">
+      {rows.map(({ key, block }, i) => (
+        <div key={key} className="flex flex-col">
           <div className="group relative">
             {block.kind === 'text' ? (
               <TextBlock
                 value={block.text}
                 placeholder={i === 0 ? placeholder : 'Davomi…'}
-                onChange={(text) => update(i, { kind: 'text', text })}
+                onChange={(text) => update(key, { kind: 'text', text })}
                 onImage={(id) => insert(i + 1, { kind: 'image', media: id })}
               />
             ) : (
               <ImageBlock
                 value={block.media}
                 media={media}
-                onChange={(id) => update(i, { kind: 'image', media: id })}
+                onChange={(id) => update(key, { kind: 'image', media: id })}
               />
             )}
 
@@ -87,10 +112,10 @@ export function BlockEditor({
               <Tiny label="Yuqoriga" onClick={() => move(i, -1)} disabled={i === 0}>
                 ↑
               </Tiny>
-              <Tiny label="Pastga" onClick={() => move(i, 1)} disabled={i === blocks.length - 1}>
+              <Tiny label="Pastga" onClick={() => move(i, 1)} disabled={i === rows.length - 1}>
                 ↓
               </Tiny>
-              <Tiny label="O‘chirish" onClick={() => remove(i)}>
+              <Tiny label="O‘chirish" onClick={() => remove(key)}>
                 ✕
               </Tiny>
             </div>
@@ -287,7 +312,13 @@ function TextBlock({
       {active && <Toolbar target={ref} />}
       <textarea
         ref={ref}
-        value={value}
+        // `defaultValue`, `value` emas — boshqariladigan textarea'da React
+        // har renderda DOM qiymatini qayta yozadi va brauzerning undo
+        // tarixi o'chadi: Cmd+Z oddiy yozuvda ham ishlamasdi. Holat
+        // `onChange` orqali baribir yuqoriga chiqadi, DOM esa foydalanuvchi
+        // nima yozgan bo'lsa o'shani ushlab turadi. Bu faqat bloklar
+        // barqaror kalitli bo'lgani uchun xavfsiz (yuqoriga qarang).
+        defaultValue={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         onPaste={(e) => {

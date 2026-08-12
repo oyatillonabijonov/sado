@@ -1,0 +1,264 @@
+/**
+ * Sayt interfeysining matnlari.
+ *
+ * Direktivasiz va Payload'ga tegmaydi — ataylab: `Header`, `ContactForm`,
+ * `Select` va `Stats` client komponent, ular bu yerdan **qiymat** import
+ * qiladi (`lib/settings.ts` dan qilib bo'lmaydi, u sharp va nodemailer'ni
+ * tortadi).
+ *
+ * Kontent (loyiha, xizmat, maqola matni) bu yerda emas — u Payload'da va
+ * paneldan tarjima qilinadi. Bu yerda faqat saytning o'z chizig'i: tugmalar,
+ * seksiya sarlavhalari, forma yorliqlari, bo'sh holatlar.
+ *
+ * Kalit yo'q bo'lsa o'zbekchasi qaytadi (`t` dagi `?? uz[key]`) — tarjima
+ * unutilgan joy bo'sh emas, o'zbekcha bo'lib chiqadi.
+ */
+
+export const SITE_LOCALES = [
+  { code: "uz", label: "O‘zbekcha", short: "UZ" },
+  { code: "ru", label: "Русский", short: "RU" },
+] as const;
+
+export type SiteLocale = (typeof SITE_LOCALES)[number]["code"];
+
+export const DEFAULT_LOCALE: SiteLocale = "uz";
+
+export const isSiteLocale = (v: unknown): v is SiteLocale =>
+  SITE_LOCALES.some((l) => l.code === v);
+
+/**
+ * Manzilga til prefiksi. Asosiy tilda prefiks yo'q — saytdagi URL'lar
+ * indekslangan va ular o'zgarmasligi kerak.
+ */
+export function localePath(locale: SiteLocale, href: string): string {
+  if (locale === DEFAULT_LOCALE) return href;
+  if (!href.startsWith("/")) return href; // tashqi havola yoki mailto:
+  return href === "/" ? "/ru" : `/ru${href}`;
+}
+
+/** Prefiksni olib tashlaydi — `hreflang` juftligini qurish uchun. */
+export const stripLocale = (path: string): string =>
+  path === "/ru" ? "/" : path.startsWith("/ru/") ? path.slice(3) : path;
+
+const uz = {
+  // navigatsiya va chrome
+  "nav.portfolio": "Portfolio",
+  "nav.services": "Xizmatlar",
+  "nav.about": "Biz haqimizda",
+  "nav.blog": "Blog",
+  "nav.menu": "Menyu",
+  "nav.close": "Menyuni yopish",
+  "nav.theme": "Yorug'/qorong'i rejimni almashtirish",
+  "nav.language": "Sayt tili",
+
+  // bosh sahifa
+  "home.works.kicker": "Ishlar",
+  "home.works.title": "Ishlarimiz",
+  "home.works.all": "Barcha ishlar",
+  "home.services.kicker": "Xizmatlar",
+  "home.services.lead":
+    "Har bir loyiha strategiyadan boshlanadi va yaxlit vizual tizim bilan tugaydi.",
+  "home.trust.kicker": "Ishonch",
+  "home.clients": "Bizga 50+ kompaniyalar ishonch bildirgan",
+  "home.testimonials.lead":
+    "Uch yildan beri birga ishlayotgan mijozlarimiz bor — quyidagilar ularning o'z so'zlari.",
+  "home.blog.kicker": "Fikrlar",
+  "home.blog.all": "Barcha maqolalar",
+
+  // portfolio
+  "portfolio.kicker": "Ishlar",
+  "portfolio.empty": "Ishlar tez orada shu yerda bo'ladi.",
+  "portfolio.empty.hint":
+    "Birinchi loyihalarimizni joylayapmiz. Shu orada bevosita bog'lanishingiz mumkin.",
+  "project.brief": "Muammo",
+  "project.solution": "Yechim",
+  "project.next": "Keyingi loyiha",
+
+  // xizmatlar
+  "services.kicker": "Xizmatlar",
+  "services.empty": "Xizmatlar ro'yxati yangilanmoqda.",
+  "services.unsure": "Qaysi biri kerakligini bilmaysizmi?",
+  "services.empty.hint": "Nima kerakligini yozib qoldiring — to'g'ridan-to'g'ri javob beramiz.",
+
+  // biz haqimizda
+  "about.kicker": "Agentlik",
+  "about.values.kicker": "Qadriyatlar",
+  "about.values.title": "Qanday ishlaymiz",
+  "about.team.kicker": "Jamoa",
+  "about.team.title": "Kim ishlaydi",
+  "about.contact.kicker": "Aloqa",
+
+  // blog
+  "blog.kicker": "Fikrlar",
+  "blog.lead": "Dizayn va brending haqidagi kuzatuvlarimizni shu yerda chop etamiz.",
+  "blog.empty": "Birinchi maqola yozilmoqda.",
+  "blog.all": "Barchasi",
+  "blog.filter": "Kategoriya filtri",
+  "blog.related": "Aloqador maqolalar",
+  "blog.back": "← Blog",
+  "post.category": "Kategoriya",
+  "post.author": "Muallif",
+  "post.date": "Sana",
+  "post.readingTime": "O'qish vaqti",
+
+  // aloqa formasi
+  "contact.name": "Ismingiz",
+  "contact.email": "Email manzilingiz",
+  "contact.service": "Xizmat turi",
+  "contact.message": "Vazifangiz haqida",
+  "contact.submit": "Yuborish",
+  "contact.sending": "Yuborilmoqda…",
+  "contact.sent": "Xabaringiz yuborildi.",
+  "contact.select": "Tanlang",
+  "contact.error": "Yuborib bo'lmadi. Birozdan keyin urinib ko'ring.",
+
+  // futer
+  "footer.contact": "Aloqa",
+  "footer.socials": "Ijtimoiy tarmoqlar",
+  "footer.rights": "Barcha huquqlar himoyalangan",
+  "footer.menu": "Menyu",
+  "footer.newsletter": "Newsletter",
+  "footer.subscribe": "Obuna bo'lish",
+  "footer.subscribed": "Rahmat, obuna bo'ldingiz!",
+
+  // sahifa sarlavhalari
+  "portfolio.title": "Portfolio",
+  "portfolio.lead":
+    "Brending, veb, UI/UX va print. Har bir keys strategiyadan yechimgacha bo'lgan yo'lni ko'rsatadi.",
+  "services.title": "Nima qilamiz",
+  "services.lead":
+    "Ko'pincha bularning bir nechtasi bitta loyihada birga ketadi — qaysi biri kerakligini o'zimiz aytamiz.",
+  "blog.title": "Blog",
+  "about.title": "Biz haqimizda",
+  "project.client": "Mijoz",
+  "project.year": "Yil",
+  "project.categoryLabel": "Kategoriya",
+  "project.services": "Xizmatlar",
+  "contact.phone": "Telefon",
+  "contact.company": "Kompaniya (ixtiyoriy)",
+
+  // umumiy
+  "site.tagline": "Dizayn agentligi",
+  "common.contact": "Bog'lanish",
+  "common.readMore": "Batafsil",
+} as const;
+
+export type MessageKey = keyof typeof uz;
+
+/**
+ * Ruscha. Bu yerda **faqat interfeys** — mijozning kontenti Payload'da.
+ *
+ * Tarjima to'liq bo'lmasa ham sayt buzilmaydi: yetishmagan kalit
+ * o'zbekchasiga qaytadi.
+ */
+const ru: Partial<Record<MessageKey, string>> = {
+  "nav.portfolio": "Портфолио",
+  "nav.services": "Услуги",
+  "nav.about": "О нас",
+  "nav.blog": "Блог",
+  "nav.menu": "Меню",
+  "nav.close": "Закрыть меню",
+  "nav.theme": "Переключить светлую/тёмную тему",
+  "nav.language": "Язык сайта",
+
+  "home.works.kicker": "Работы",
+  "home.works.title": "Наши работы",
+  "home.works.all": "Все работы",
+  "home.services.kicker": "Услуги",
+  "home.services.lead":
+    "Каждый проект начинается со стратегии и заканчивается целостной визуальной системой.",
+  "home.trust.kicker": "Доверие",
+  "home.clients": "Нам доверяют более 50 компаний",
+  "home.testimonials.lead":
+    "С некоторыми клиентами мы работаем уже три года — ниже их собственные слова.",
+  "home.blog.kicker": "Мысли",
+  "home.blog.all": "Все статьи",
+
+  "portfolio.kicker": "Работы",
+  "portfolio.empty": "Работы появятся здесь совсем скоро.",
+  "portfolio.empty.hint":
+    "Мы готовим первые проекты к публикации. А пока свяжитесь с нами напрямую.",
+  "project.brief": "Задача",
+  "project.solution": "Решение",
+  "project.next": "Следующий проект",
+
+  "services.kicker": "Услуги",
+  "services.empty": "Список услуг обновляется.",
+  "services.unsure": "Не знаете, что именно нужно?",
+  "services.empty.hint": "Напишите, что вам нужно — ответим напрямую.",
+
+  "about.kicker": "Агентство",
+  "about.values.kicker": "Ценности",
+  "about.values.title": "Как мы работаем",
+  "about.team.kicker": "Команда",
+  "about.team.title": "Кто работает",
+  "about.contact.kicker": "Контакты",
+
+  "blog.kicker": "Мысли",
+  "blog.lead": "Здесь мы публикуем наблюдения о дизайне и брендинге.",
+  "blog.empty": "Первая статья пишется.",
+  "blog.all": "Все",
+  "blog.filter": "Фильтр по категориям",
+  "blog.related": "Похожие статьи",
+  "blog.back": "← Блог",
+  "post.category": "Категория",
+  "post.author": "Автор",
+  "post.date": "Дата",
+  "post.readingTime": "Время чтения",
+
+  "contact.name": "Ваше имя",
+  "contact.email": "Ваш email",
+  "contact.service": "Тип услуги",
+  "contact.message": "О вашей задаче",
+  "contact.submit": "Отправить",
+  "contact.sending": "Отправляем…",
+  "contact.sent": "Сообщение отправлено.",
+  "contact.select": "Выберите",
+  "contact.error": "Не удалось отправить. Попробуйте чуть позже.",
+
+  "footer.contact": "Контакты",
+  "footer.socials": "Соцсети",
+  "footer.rights": "Все права защищены",
+  "footer.menu": "Меню",
+  "footer.newsletter": "Рассылка",
+  "footer.subscribe": "Подписаться",
+  "footer.subscribed": "Спасибо за подписку!",
+
+  "portfolio.title": "Портфолио",
+  "portfolio.lead":
+    "Брендинг, веб, UI/UX и печать. Каждый кейс показывает путь от стратегии до решения.",
+  "services.title": "Что мы делаем",
+  "services.lead":
+    "Чаще всего несколько из них идут в одном проекте — мы сами подскажем, что нужно.",
+  "blog.title": "Блог",
+  "about.title": "О нас",
+  "project.client": "Клиент",
+  "project.year": "Год",
+  "project.categoryLabel": "Категория",
+  "project.services": "Услуги",
+  "contact.phone": "Телефон",
+  "contact.company": "Компания (необязательно)",
+
+  "site.tagline": "Дизайн-агентство",
+  "common.contact": "Связаться",
+  "common.readMore": "Подробнее",
+};
+
+const TABLE: Record<SiteLocale, Partial<Record<MessageKey, string>>> = { uz, ru };
+
+export function t(locale: SiteLocale, key: MessageKey): string {
+  return TABLE[locale]?.[key] ?? uz[key];
+}
+
+/**
+ * Bitta til uchun tayyor lug'at — client komponentlarga prop bo'lib ketadi.
+ * Ular `t()` ni chaqira olmaydi: `locale` ularga baribir uzatilishi kerak
+ * bo'lardi va har bir chaqiruv joyi buni unutishi mumkin.
+ */
+export type Messages = Record<MessageKey, string>;
+
+export function messages(locale: SiteLocale): Messages {
+  return Object.fromEntries(
+    (Object.keys(uz) as MessageKey[]).map((k) => [k, t(locale, k)]),
+  ) as Messages;
+}

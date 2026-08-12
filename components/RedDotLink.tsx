@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 
 /** Red dot + white text — the system's only button. */
 export default function RedDotLink({

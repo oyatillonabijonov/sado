@@ -3,6 +3,9 @@ import { Inter_Tight } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { site } from "@/data/site";
+import { LocaleProvider } from "@/components/LocaleLink";
+import { localePath, messages, stripLocale, t } from "@/lib/i18n";
+import { currentLocale, currentPath } from "@/lib/locale";
 import { getSettings } from "@/lib/settings";
 import "./globals.css";
 
@@ -27,19 +30,40 @@ const interTight = Inter_Tight({
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await getSettings();
+  const [settings, locale, path] = await Promise.all([
+    getSettings(),
+    currentLocale(),
+    currentPath(),
+  ]);
+  const bare = stripLocale(path);
+
   return {
-  metadataBase: new URL(site.url),
-  title: {
-    default: `${site.name} — ${site.tagline}`,
-    template: `%s — ${site.name}`,
-  },
-  description: settings.description,
-  openGraph: {
-    siteName: site.name,
-    type: "website",
-    images: ["/images/og.svg"],
-  },
+    metadataBase: new URL(site.url),
+    title: {
+      // Tagline lug'atdan: u brauzer yorlig'ida har sahifada ko'rinadi.
+      // Sayt NOMI esa `data/site.ts` da qoladi — u tarjima qilinmaydi.
+      default: `${site.name} — ${t(locale, "site.tagline")}`,
+      template: `%s — ${site.name}`,
+    },
+    description: settings.description,
+    /**
+     * `hreflang` juftligi — qidiruv tizimi ikkala versiyani bir sahifaning
+     * tarjimasi deb tanishi uchun. Ularsiz `/portfolio` va `/ru/portfolio`
+     * nusxa kontent bo'lib hisoblanardi.
+     */
+    alternates: {
+      canonical: localePath(locale, bare),
+      languages: {
+        uz: bare,
+        ru: localePath("ru", bare),
+      },
+    },
+    openGraph: {
+      siteName: site.name,
+      type: "website",
+      locale: locale === "ru" ? "ru_RU" : "uz_UZ",
+      images: ["/images/og.svg"],
+    },
   };
 }
 
@@ -48,9 +72,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const settings = await getSettings();
+  const [settings, locale, path] = await Promise.all([
+    getSettings(),
+    currentLocale(),
+    currentPath(),
+  ]);
+  const m = messages(locale);
+
   return (
-    <html lang="uz" className={interTight.variable} suppressHydrationWarning>
+    <html lang={locale} className={interTight.variable} suppressHydrationWarning>
       {/* FOUC oldini olish: saqlangan rejimni birinchi bo'yashdan oldin qo'llaymiz.
           <head> ichida — Next 16 da <body> dagi inline skript hydration'ni buzadi. */}
       <head>
@@ -66,9 +96,13 @@ export default async function RootLayout({
         </noscript>
       </head>
       <body>
-        <Header settings={settings} />
-        <main className="pt-[72px]">{children}</main>
-        <Footer settings={settings} />
+        {/* Til context'i: `LocaleLink` har bir havolaga prefiksni shundan
+            oladi, ya'ni ruscha sahifadagi havola ruschaligicha qoladi. */}
+        <LocaleProvider locale={locale}>
+          <Header settings={settings} m={m} locale={locale} path={stripLocale(path)} />
+          <main className="pt-[72px]">{children}</main>
+          <Footer settings={settings} m={m} />
+        </LocaleProvider>
       </body>
     </html>
   );

@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
+import { messages } from "@/lib/i18n";
+import { currentLocale } from "@/lib/locale";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import { notFound } from "next/navigation";
 import { adjacentProjects, getProject, getProjects } from "@/lib/content";
 import { isVideo } from "@/lib/site-format";
-
-export async function generateStaticParams() {
-  return (await getProjects()).map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -29,6 +27,7 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const m = messages(await currentLocale());
   const { slug } = await params;
   const project = await getProject(slug);
   if (!project) notFound();
@@ -44,10 +43,10 @@ export default async function ProjectPage({
           yugurtirishda "kim, qachon, nima" ga javob berish. */}
       <div className="mt-section-sm grid grid-cols-2 gap-x-[16px] gap-y-[24px] sm:gap-[48px] lg:grid-cols-4">
         {[
-          ["Mijoz", project.client],
-          ["Yil", project.year],
-          ["Kategoriya", project.category],
-          ["Xizmatlar", project.services.join(", ")],
+          [m["project.client"], project.client],
+          [m["project.year"], project.year],
+          [m["project.categoryLabel"], project.category],
+          [m["project.services"], project.services.join(", ")],
         ].map(([label, value]) => (
           <div key={label}>
             <p className="text-fog-gray">{label}</p>
@@ -71,13 +70,13 @@ export default async function ProjectPage({
       {/* Brief / Solution */}
       <div className="mt-section-sm grid gap-[32px] lg:grid-cols-2 md:gap-[48px]">
         <div>
-          <p className="text-fog-gray">Muammo</p>
+          <p className="text-fog-gray">{m["project.brief"]}</p>
           <p className="mt-[16px] max-w-[560px] text-subheading text-bone-white">
             {project.brief}
           </p>
         </div>
         <div>
-          <p className="text-fog-gray">Yechim</p>
+          <p className="text-fog-gray">{m["project.solution"]}</p>
           <p className="mt-[16px] max-w-[560px] text-subheading text-bone-white">
             {project.solution}
           </p>
@@ -149,7 +148,7 @@ export default async function ProjectPage({
         {/* ponytail: media overlay — rasm ustida har doim qorayadi, temadan mustaqil */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-[12px] bg-black/0 transition-colors duration-300 group-hover:bg-black/55">
           <p className="uppercase tracking-wide text-white/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            Keyingi loyiha
+            {m["project.next"]}
           </p>
           <p className="display text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             {next.client}

@@ -1,6 +1,7 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
 import { toText } from "@/panel/lexical";
+import { currentLocale } from "@/lib/locale";
 
 /**
  * Blog — MDX fayllari o'rniga Payload.
@@ -50,6 +51,7 @@ export async function getAllPosts(): Promise<PostMeta[]> {
     depth: 1,
     limit: 200,
     sort: "-date",
+    locale: await currentLocale(),
   });
   return (docs as unknown as Record<string, unknown>[]).map(toMeta);
 }
@@ -61,6 +63,7 @@ export async function getPost(slug: string) {
     depth: 1,
     limit: 1,
     where: { slug: { equals: slug } },
+    locale: await currentLocale(),
   });
   const doc = docs[0] as unknown as Record<string, unknown> | undefined;
   if (!doc) return null;

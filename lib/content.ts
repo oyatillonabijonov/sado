@@ -3,6 +3,7 @@ import config from "@payload-config";
 import type { Project, ProjectCategory } from "@/data/projects";
 import type { Service } from "@/data/services";
 import { testimonials as FALLBACK_TESTIMONIALS, type Testimonial } from "@/data/testimonials";
+import { currentLocale } from "@/lib/locale";
 
 /**
  * Saytning kontent o'quvchisi. Ilgari `data/*.ts` massivlari edi — endi Payload.
@@ -48,6 +49,7 @@ export async function getProjects(): Promise<Project[]> {
     depth: 1,
     limit: 200,
     sort: "order",
+    locale: await currentLocale(),
   });
   return docs.map((d) => toProject(d as unknown as Record<string, unknown>));
 }
@@ -59,6 +61,7 @@ export async function getProject(slug: string): Promise<Project | undefined> {
     depth: 1,
     limit: 1,
     where: { slug: { equals: slug } },
+    locale: await currentLocale(),
   });
   return docs[0] ? toProject(docs[0] as unknown as Record<string, unknown>) : undefined;
 }
@@ -90,6 +93,7 @@ export async function getTestimonials(): Promise<Testimonial[]> {
     depth: 0,
     limit: 100,
     sort: "order",
+    locale: await currentLocale(),
   });
   if (docs.length === 0) return FALLBACK_TESTIMONIALS;
   return docs.map((d) => ({
@@ -107,6 +111,7 @@ export async function getServices(): Promise<Service[]> {
     depth: 0,
     limit: 100,
     sort: "order",
+    locale: await currentLocale(),
   });
   return docs.map((d) => ({
     slug: String(d.slug ?? ""),

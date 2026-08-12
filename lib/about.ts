@@ -2,6 +2,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { about as FALLBACK } from "@/data/about";
 import { team as FALLBACK_TEAM, values as FALLBACK_VALUES } from "@/data/team";
+import { currentLocale } from "@/lib/locale";
 
 /**
  * «Biz haqimizda» sahifasining kontenti.
@@ -41,7 +42,7 @@ const url = (value: unknown): string | undefined =>
 export async function getAbout(): Promise<AboutContent> {
   const payload = await getPayload({ config });
   const doc = (await payload
-    .findGlobal({ slug: "about", depth: 1 })
+    .findGlobal({ slug: "about", depth: 1, locale: await currentLocale() })
     .catch(() => null)) as unknown as Record<string, unknown> | null;
 
   const intro = (doc?.intro ?? {}) as Record<string, unknown>;

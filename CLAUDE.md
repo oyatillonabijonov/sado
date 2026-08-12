@@ -273,9 +273,40 @@ Formadagi HTML `required` o'z o'rnida qoladi. Hamon aniqlanmaydigani — ustun *
 chunki ikkalasi ham ma'lumot yo'qotadi. Skript hech qachon `DROP` bajarmaydi.
 
 **Ikki til: UZ (asosiy) va RU.** `payload.config.ts` da `localization`,
-`fallback: true` — tarjimasi bo'sh maydon o'zbekchasini ko'rsatadi. **Sayt hozircha
-faqat o'zbekcha chiqadi**: `/ru` marshrutlari va UI lug'ati hali yozilmagan
-(keyingi bosqich). Panel esa ikkala tilni ham yozadi.
+`fallback: true` — tarjimasi bo'sh maydon o'zbekchasini ko'rsatadi, ya'ni yarim
+tarjima ham xavfsiz.
+
+**URL:** o'zbekcha prefiksisiz (`/portfolio/kiias`), ruscha `/ru` bilan
+(`/ru/portfolio/kiias`). `proxy.ts` (Next 16 da `middleware.ts` shunday
+ataladi) `/ru/...` ni `/...` ga rewrite qiladi va `x-locale` sarlavhasini
+qo'yadi. Nega `app/(site)/[lang]/` emas: mavjud URL'lar indekslangan va
+`[lang]` ularni `/uz/...` ga ko'chirardi. Til cookie'da emas, URL'da —
+cookie bilan bitta manzil ikki xil sahifa qaytarardi va uni na qidiruv
+tizimi, na kesh to'g'ri tushunardi.
+
+Kontent o'quvchilari (`lib/content.ts`, `lib/blog.ts`, `lib/settings.ts`,
+`lib/about.ts`) tilni **o'zlari** `lib/locale.ts` dan oladi, sahifalardan prop
+sifatida emas: o'nga yaqin chaqiruv joyining biriga uzatish unutilsa o'sha
+blok jimgina o'zbekcha bo'lib qolardi.
+
+**Havolalar `components/LocaleLink.tsx` orqali.** Oddiy `next/link`
+`/ru/portfolio` sahifasida prefiksni yo'qotib odamni o'zbekchaga qaytarardi.
+Til context'dan keladi (`LocaleProvider`, sayt layout'ida). Istisno — til
+tanlagichning o'zi: u prefiksni ataylab o'zi belgilaydi.
+
+**Interfeys matnlari `lib/i18n.ts` da** (~70 kalit), kontent esa Payload'da.
+Yetishmagan ruscha kalit o'zbekchasiga qaytadi, ya'ni tarjima unutilgan joy
+bo'sh emas. Client komponentlarga (`Header`, `ContactForm`, `BlogFilterGrid`,
+`ClientsMarquee`, `Footer`) lug'at `m` prop'i bilan boradi — ular
+`lib/settings.ts` dan qiymat import qila olmaydi.
+
+`app/sitemap.ts` va layout'dagi `alternates` ikkala tilni `hreflang` juftligi
+bilan beradi; usiz `/portfolio` va `/ru/portfolio` nusxa kontent bo'lib
+hisoblanardi.
+
+**`generateStaticParams` olib tashlandi** (`/portfolio/[slug]`, `/blog/[slug]`):
+sayt `force-dynamic` bo'lgani uchun u hech qachon ishlatilmasdi, endi esa
+`headers()` bilan to'qnashadi — build paytida so'rov yo'q.
 
 `slug` lokalizatsiya qilinmaydi — indekslangan URL'lar buzilmasin. Rasm, aloqa,
 ijtimoiy tarmoqlar, yil, tartib ham: ular hujjatga tegishli, tilga emas.

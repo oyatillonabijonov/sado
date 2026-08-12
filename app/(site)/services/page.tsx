@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { messages } from "@/lib/i18n";
+import { currentLocale } from "@/lib/locale";
 import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
 import EmptyState from "@/components/EmptyState";
@@ -14,15 +16,16 @@ export const metadata: Metadata = {
 };
 
 export default async function ServicesPage() {
+  const m = messages(await currentLocale());
   const [services, settings] = await Promise.all([getServices(), getSettings()]);
 
   return (
     <div className="shell pt-[48px]">
       <SectionHeading
-        kicker="Xizmatlar"
-        lead="Ko'pincha bularning bir nechtasi bitta loyihada birga ketadi — qaysi biri kerakligini o'zimiz aytamiz."
+        kicker={m["services.kicker"]}
+        lead={m["services.lead"]}
       >
-        Nima qilamiz
+        {m["services.title"]}
       </SectionHeading>
 
       {/* Muqova — xizmatlar ro'yxatidan oldin qilingan ishning o'zi turadi.
@@ -47,9 +50,9 @@ export default async function ServicesPage() {
 
       {services.length === 0 ? (
         <EmptyState
-          title="Xizmatlar ro'yxati yangilanmoqda."
-          hint="Nima kerakligini yozib qoldiring — to'g'ridan-to'g'ri javob beramiz."
-          action={{ href: "/about#aloqa", label: "Bog'lanish" }}
+          title={m["services.empty"]}
+          hint={m["services.empty.hint"]}
+          action={{ href: "/about#aloqa", label: m["common.contact"] }}
         />
       ) : (
         /* Har biri alohida karta va hammasi bitta ko'rinishda.
@@ -97,15 +100,15 @@ export default async function ServicesPage() {
       <section className="mt-section border-t border-graphite pt-section-sm pb-[48px]">
         <div className="grid gap-[32px] lg:grid-cols-2 md:gap-[80px]">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
-            <p className="mb-[24px] text-fog-gray">Aloqa</p>
-            <h2 className="display max-w-[560px]">Qaysi biri kerakligini bilmaysizmi?</h2>
+            <p className="mb-[24px] text-fog-gray">{m["about.contact.kicker"]}</p>
+            <h2 className="display max-w-[560px]">{m["services.unsure"]}</h2>
             <p className="mt-[32px] max-w-[46ch] text-fog-gray">
               Vazifangizni qisqacha yozing — mos xizmatni o'zimiz aytamiz va
               taxminiy muddat bilan javob beramiz.
             </p>
           </div>
           <div className="max-w-[640px]">
-            <ContactForm />
+            <ContactForm m={m} />
           </div>
         </div>
       </section>

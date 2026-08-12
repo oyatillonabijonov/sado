@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { messages } from "@/lib/i18n";
+import { currentLocale } from "@/lib/locale";
 import Image from "next/image";
 import ContactForm from "@/components/ContactForm";
 import { Reveal, Stagger, StaggerItem } from "@/components/motion/Reveal";
@@ -15,14 +17,15 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
+  const m = messages(await currentLocale());
   const [settings, about] = await Promise.all([getSettings(), getAbout()]);
   return (
     <div className="shell pt-[48px]">
       <SectionHeading
-        kicker="Agentlik"
+        kicker={m["about.kicker"]}
         lead={about.lead}
       >
-        Biz haqimizda
+        {m["about.title"]}
       </SectionHeading>
 
       {/* Hikoya va raqamlar bitta blokda. Ilgari ular orasida 240px bo'sh joy
@@ -43,7 +46,7 @@ export default async function AboutPage() {
           ham "biz qanday ishlaymiz" haqida. Bittasi uchta yalang'och xatboshi,
           ikkinchisi bitta xatboshi uchun butun seksiya sarlavhasi bilan. */}
       <section className="pt-section">
-        <SectionHeading kicker="Qadriyatlar">Qanday ishlaymiz</SectionHeading>
+        <SectionHeading kicker={m["about.values.kicker"]}>{m["about.values.title"]}</SectionHeading>
         {/* To'rtinchi karta ilgari shu yerda qo'lda yozilgan edi — uchtasi
             massivdan, bittasi JSX dan. Endi hammasi paneldan keladi, ya'ni
             mijoz ko'rayotgan ro'yxat saytdagining o'zi. */}
@@ -61,7 +64,7 @@ export default async function AboutPage() {
 
       {/* Jamoa — bu yerda zamin allaqachon bor: suratning o'zi. */}
       <section className="pt-section">
-        <SectionHeading kicker="Jamoa">Kim ishlaydi</SectionHeading>
+        <SectionHeading kicker={m["about.team.kicker"]}>{m["about.team.title"]}</SectionHeading>
         {/* Mobilda 2 ustun: 3:4 portret bitta ustunda 500px baland bo'lib,
             o'n bir kishilik jamoa sahifani cho'zib yuborardi. */}
         <Stagger className="grid grid-cols-2 gap-[16px] lg:grid-cols-3">
@@ -111,7 +114,7 @@ export default async function AboutPage() {
       >
         <div className="grid gap-[32px] lg:grid-cols-2 md:gap-[80px]">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
-            <p className="mb-[24px] text-fog-gray">Aloqa</p>
+            <p className="mb-[24px] text-fog-gray">{m["about.contact.kicker"]}</p>
             <h2 className="display max-w-[560px]">{about.contactHeading}</h2>
             <p className="mt-[32px] max-w-[46ch] whitespace-pre-line text-fog-gray">
               {about.contactText}
@@ -146,7 +149,7 @@ export default async function AboutPage() {
             </div>
           </div>
           <div className="max-w-[640px]">
-            <ContactForm />
+            <ContactForm m={m} />
           </div>
         </div>
       </section>

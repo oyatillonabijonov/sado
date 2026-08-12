@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import type { Project } from "@/data/projects";
 
 /** Edge-to-edge photograph tile — the image IS the card. Uniform 4:3 across the grid. */

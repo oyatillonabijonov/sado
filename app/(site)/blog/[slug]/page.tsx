@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
+import { messages } from "@/lib/i18n";
+import { currentLocale } from "@/lib/locale";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import BlogCard from "@/components/BlogCard";
 import { getAllPosts, getPost, getRelatedPosts } from "@/lib/blog";
-
-export async function generateStaticParams() {
-  return (await getAllPosts()).map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -30,6 +28,7 @@ export default async function BlogPostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const m = messages(await currentLocale());
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) notFound();
@@ -42,7 +41,7 @@ export default async function BlogPostPage({
         {/* `w-max`: `tap` padding'i bilan inline-block shrink-to-fit kengligi
             "← Blog" ni ikki qatorga bo'lib tashlardi. */}
         <Link href="/blog" className="tap inline-block w-max text-fog-gray hover:text-bone-white">
-          ← Blog
+          {m["blog.back"]}
         </Link>
         <h1 className="display mt-[24px] max-w-[1000px] md:mt-[48px]">{post.meta.title}</h1>
       </header>
@@ -51,10 +50,10 @@ export default async function BlogPostPage({
       <div className="mt-[40px] grid grid-cols-2 gap-[16px] border-t border-graphite pt-[16px] md:mt-[64px] lg:grid-cols-4">
         {(
           [
-            ["Kategoriya", post.meta.category],
-            ["Muallif", post.meta.author],
-            ["Sana", post.meta.date],
-            ["O'qish vaqti", post.meta.readingTime],
+            [m["post.category"], post.meta.category],
+            [m["post.author"], post.meta.author],
+            [m["post.date"], post.meta.date],
+            [m["post.readingTime"], post.meta.readingTime],
           ] as const
         ).map(([label, value]) => (
           <div key={label}>
@@ -93,7 +92,7 @@ export default async function BlogPostPage({
 
       {related.length > 0 && (
         <section className="mt-section border-t border-graphite pt-[20px]">
-          <p className="mb-[48px] text-fog-gray">Aloqador maqolalar</p>
+          <p className="mb-[48px] text-fog-gray">{m["blog.related"]}</p>
           <div className="grid gap-x-[16px] gap-y-[48px] md:grid-cols-2 lg:grid-cols-3">
             {related.map((p) => (
               <BlogCard key={p.slug} post={p} />

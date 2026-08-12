@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { messages } from "@/lib/i18n";
+import { currentLocale } from "@/lib/locale";
 import ClientsMarquee from "@/components/ClientsMarquee";
 import HeroSlideshow from "@/components/HeroSlideshow";
 import { Reveal, Rise, Stagger, StaggerItem } from "@/components/motion/Reveal";
@@ -21,6 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
+  const m = messages(await currentLocale());
   const [allProjects, allPosts, settings, testimonials] = await Promise.all([
     getProjects(),
     getAllPosts(),
@@ -60,7 +63,7 @@ export default async function HomePage() {
       </section>
 
       {/* Clients */}
-      <ClientsMarquee />
+      <ClientsMarquee m={m} />
 
       {/* Featured portfolio. Kontent bo'lmasa seksiya butunlay chiqmaydi:
           "So'nggi loyihalar" sarlavhasi ostidagi bo'sh grid va'daning
@@ -68,9 +71,9 @@ export default async function HomePage() {
       {featured.length > 0 && (
       <section className="shell pt-section-sm">
         <SectionHeading
-          kicker="Ishlar"
-          lead="Har bir loyiha strategiyadan boshlanadi va yaxlit vizual tizim bilan tugaydi."
-          action={<RedDotLink href="/portfolio">Barcha ishlar</RedDotLink>}
+          kicker={m["home.works.kicker"]}
+          lead={m["home.services.lead"]}
+          action={<RedDotLink href="/portfolio">{m["home.works.all"]}</RedDotLink>}
         >
           So'nggi loyihalar.
         </SectionHeading>
@@ -88,8 +91,8 @@ export default async function HomePage() {
       {posts.length > 0 && (
       <section className="shell pt-section">
         <SectionHeading
-          kicker="Blog"
-          action={<RedDotLink href="/blog">Barcha maqolalar</RedDotLink>}
+          kicker={m["home.blog.kicker"]}
+          action={<RedDotLink href="/blog">{m["home.blog.all"]}</RedDotLink>}
         >
           Fikrlar va kuzatuvlar.
         </SectionHeading>
@@ -114,8 +117,8 @@ export default async function HomePage() {
       <section className="mt-section bg-soft-black py-section-sm">
         <div className="shell">
         <SectionHeading
-          kicker="Ishonch"
-          lead="Uch yildan beri birga ishlayotgan mijozlarimiz bor — quyidagilar ularning o'z so'zlari."
+          kicker={m["home.trust.kicker"]}
+          lead={m["home.testimonials.lead"]}
         >
           Bizga ishonganlar.
         </SectionHeading>
@@ -180,7 +183,7 @@ export default async function HomePage() {
       <section className="shell mt-section border-t border-graphite pt-section-sm pb-[48px]">
         <div className="grid gap-[32px] lg:grid-cols-2 md:gap-[80px]">
           <div className="lg:sticky lg:top-[120px] lg:self-start">
-            <p className="mb-[24px] text-fog-gray">Aloqa</p>
+            <p className="mb-[24px] text-fog-gray">{m["about.contact.kicker"]}</p>
             <h2 className="display max-w-[560px]">
               Loyihangizni muhokama qilamizmi?
             </h2>
@@ -204,7 +207,7 @@ export default async function HomePage() {
             </div>
           </div>
           <div className="max-w-[640px]">
-            <ContactForm />
+            <ContactForm m={m} />
           </div>
         </div>
       </section>

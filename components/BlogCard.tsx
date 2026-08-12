@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/LocaleLink";
 import type { PostMeta } from "@/lib/blog";
 
 export default function BlogCard({ post }: { post: PostMeta }) {

@@ -2,6 +2,7 @@ import { getPayload } from "payload";
 import config from "@payload-config";
 import { site } from "@/data/site";
 import { stats } from "@/data/team";
+import { currentLocale } from "@/lib/locale";
 import type { SiteSettings } from "@/lib/site-format";
 
 export type { SiteSettings };
@@ -49,7 +50,7 @@ const text = (value: unknown, fallback: string) => {
 export async function getSettings(): Promise<SiteSettings> {
   const payload = await getPayload({ config });
   const doc = (await payload
-    .findGlobal({ slug: "settings" })
+    .findGlobal({ slug: "settings", locale: await currentLocale() })
     .catch(() => null)) as unknown as Record<string, unknown> | null;
   if (!doc) return FALLBACK;
 

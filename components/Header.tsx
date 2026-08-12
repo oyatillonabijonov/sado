@@ -2,11 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import LocaleLink from "@/components/LocaleLink";
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/data/site";
+import { localePath, SITE_LOCALES, type Messages, type SiteLocale } from "@/lib/i18n";
 import { telHref, type SiteSettings } from "@/lib/site-format";
 
-function ThemeToggle() {
+function ThemeToggle({ label }: { label: string }) {
   const [theme, setTheme] = useState<"light" | "dark" | null>(null);
   useEffect(() => {
     const t = document.documentElement.dataset.theme;
@@ -31,7 +33,7 @@ function ThemeToggle() {
   return (
     <button
       onClick={toggle}
-      aria-label="Yorug'/qorong'i rejimni almashtirish"
+      aria-label={label}
       /* Mobilda 44×44: 18px glif + 8px padding 34px berardi va barmoq uchun
          kichik edi. Desktopda o'lcham o'zgarmaydi. */
       className="flex size-[44px] cursor-pointer items-center justify-center text-fog-gray transition-colors hover:text-bone-white md:size-auto md:p-[8px]"
@@ -69,27 +71,27 @@ function ThemeToggle() {
   );
 }
 
-const LANGS = [
-  { code: "uz", label: "O'zbekcha", short: "UZ" },
-  { code: "ru", label: "Русский", short: "RU" },
-  { code: "en", label: "English", short: "EN" },
-] as const;
-type Lang = (typeof LANGS)[number]["code"];
-
-// ponytail: UI-only switcher — tanlovni saqlaydi va <html lang> ni qo'yadi.
-// Kontent tarjimasi hali ulanmagan; sayt placeholder bosqichidan chiqqanda
-// i18n (next-intl) qo'shiladi.
-function LanguageSwitcher() {
-  const [lang, setLang] = useState<Lang | null>(null);
+/**
+ * Til tanlagich — endi haqiqiy havola.
+ *
+ * Ilgari u `localStorage` ga yozib `<html lang>` ni almashtirardi, xolos:
+ * kontent baribir bir tilda qolardi. Endi `/portfolio` ↔ `/ru/portfolio`,
+ * ya'ni til URL'da va uni ulashsa ham, yangilasa ham saqlanadi.
+ */
+function LanguageSwitcher({
+  locale,
+  path,
+  label,
+  onNavigate,
+}: {
+  locale: SiteLocale;
+  /** Til prefiksisiz manzil — ikkala havola shundan quriladi. */
+  path: string;
+  label: string;
+  onNavigate?: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("lang");
-    const initial = LANGS.some((l) => l.code === stored) ? (stored as Lang) : "uz";
-    setLang(initial);
-    document.documentElement.lang = initial;
-  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -107,16 +109,7 @@ function LanguageSwitcher() {
     };
   }, [open]);
 
-  function choose(code: Lang) {
-    document.documentElement.lang = code;
-    try {
-      localStorage.setItem("lang", code);
-    } catch {}
-    setLang(code);
-    setOpen(false);
-  }
-
-  const current = LANGS.find((l) => l.code === lang) ?? LANGS[0];
+  const current = SITE_LOCALES.find((l) => l.code === locale) ?? SITE_LOCALES[0];
 
   return (
     <div ref={ref} className="relative">
@@ -126,15 +119,13 @@ function LanguageSwitcher() {
         type="button"
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-label={`Sayt tili: ${current.label}`}
+        aria-label={`${label}: ${current.label}`}
         onClick={() => setOpen((v) => !v)}
         className={`flex cursor-pointer items-center gap-[6px] px-[8px] py-[6px] text-[15px] tracking-[0.04em] transition-colors hover:text-bone-white ${
           open ? "text-bone-white" : "text-fog-gray"
         }`}
       >
-        <span suppressHydrationWarning>{current.short}</span>
-        {/* Glif emas, SVG: "▾" shriftda mayda nuqtaga o'xshab chiqadi va
-            o'lchami platformaga qarab o'zgaradi. */}
+        <span>{current.short}</span>
         <svg
           aria-hidden
           viewBox="0 0 12 12"
@@ -156,23 +147,27 @@ function LanguageSwitcher() {
              tepaga ochiladi. */
           className="absolute left-0 bottom-full z-20 mb-[8px] min-w-[132px] overflow-hidden rounded-[10px] bg-soft-black py-[4px] md:bottom-auto md:top-full md:mb-0 md:mt-[8px]"
         >
-          {LANGS.map((l) => (
+          {SITE_LOCALES.map((l) => (
             <li key={l.code}>
-              <button
-                type="button"
-                role="option"
+              {/* `next/link` ning o'zi, `LocaleLink` emas: bu havolalar
+                  prefiksni O'ZI belgilaydi. */}
+              <Link
+                href={localePath(l.code, path)}
+                hrefLang={l.code}
                 lang={l.code}
-                aria-selected={l.code === lang}
-                onClick={() => choose(l.code)}
+                role="option"
+                aria-selected={l.code === locale}
+                onClick={() => {
+                  setOpen(false);
+                  onNavigate?.();
+                }}
                 className={`flex w-full cursor-pointer items-baseline gap-[10px] px-[16px] py-[12px] text-left transition-colors hover:text-bone-white md:py-[10px] ${
-                  l.code === lang ? "text-bone-white" : "text-fog-gray"
+                  l.code === locale ? "text-bone-white" : "text-fog-gray"
                 }`}
               >
-                <span className="w-[24px] shrink-0 text-[15px] tracking-[0.04em]">
-                  {l.short}
-                </span>
+                <span className="w-[24px] shrink-0 text-[15px] tracking-[0.04em]">{l.short}</span>
                 <span className="text-[15px]">{l.label}</span>
-              </button>
+              </Link>
             </li>
           ))}
         </ul>
@@ -181,8 +176,28 @@ function LanguageSwitcher() {
   );
 }
 
-export default function Header({ settings }: { settings: SiteSettings }) {
+export default function Header({
+  settings,
+  m,
+  locale,
+  path,
+}: {
+  settings: SiteSettings;
+  m: Messages;
+  locale: SiteLocale;
+  /** Til prefiksisiz manzil — tanlagich ikkala havolani shundan quradi. */
+  path: string;
+}) {
   const [open, setOpen] = useState(false);
+
+  // Navigatsiya tuzilishi kodda (`data/site.ts`), yorliqlari esa lug'atda:
+  // manzil arxitektura, matn — interfeys.
+  const nav = [
+    { href: "/portfolio", label: m["nav.portfolio"] },
+    { href: "/services", label: m["nav.services"] },
+    { href: "/about", label: m["nav.about"] },
+    { href: "/blog", label: m["nav.blog"] },
+  ];
 
   /* Menyu ochilganda ortidagi sahifa surilib ketardi: barmoq overlay ustida
      yursa ham skroll body'ga o'tib, yopilgach odam boshqa joyda qolardi. */
@@ -198,33 +213,33 @@ export default function Header({ settings }: { settings: SiteSettings }) {
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-pure-black">
       <div className="shell flex h-[72px] items-center justify-between">
-        <Link href="/" onClick={() => setOpen(false)} className="flex h-[44px] items-center">
+        <LocaleLink href="/" onClick={() => setOpen(false)} className="flex h-[44px] items-center">
           <Image src="/images/logo.svg" alt={site.name} width={354} height={135} className="h-[38px] w-auto" priority />
-        </Link>
+        </LocaleLink>
         <div className="hidden md:block">
-          <LanguageSwitcher />
+          <LanguageSwitcher locale={locale} path={path} label={m["nav.language"]} />
         </div>
         <div className="hidden items-center gap-[24px] md:flex">
           <nav className="flex items-center gap-[24px]">
-            {site.nav.map((item) => (
-              <Link key={item.href} href={item.href} className="nav-flip text-[17px] text-bone-white">
+            {nav.map((item) => (
+              <LocaleLink key={item.href} href={item.href} className="nav-flip text-[17px] text-bone-white">
                 <span className="nav-flip__inner">
                   <span className="nav-flip__face nav-flip__face--front">{item.label}</span>
                   <span aria-hidden className="nav-flip__face nav-flip__face--back">
                     {item.label}
                   </span>
                 </span>
-              </Link>
+              </LocaleLink>
             ))}
           </nav>
-          <ThemeToggle />
+          <ThemeToggle label={m["nav.theme"]} />
         </div>
         {/* -mr: 44px maydon logotip qatorini o'ngga surib yubormasin — glif
             o'z joyida qoladi, bosish maydoni esa chetga chiqadi. */}
         <div className="-mr-[10px] flex items-center md:hidden">
-          <ThemeToggle />
+          <ThemeToggle label={m["nav.theme"]} />
           <button
-            aria-label={open ? "Menyuni yopish" : "Menyu"}
+            aria-label={open ? m["nav.close"] : m["nav.menu"]}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
             className="flex size-[44px] cursor-pointer items-center justify-center text-bone-white"
@@ -262,15 +277,15 @@ export default function Header({ settings }: { settings: SiteSettings }) {
       {open && (
         <div className="fixed inset-x-0 top-[72px] bottom-0 flex flex-col overflow-y-auto overscroll-contain border-t border-graphite bg-pure-black md:hidden">
           <nav className="shell flex flex-col pt-[24px]">
-            {site.nav.map((item) => (
-              <Link
+            {nav.map((item) => (
+              <LocaleLink
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
                 className="py-[14px] text-heading-sm font-medium text-bone-white"
               >
                 {item.label}
-              </Link>
+              </LocaleLink>
             ))}
           </nav>
 
@@ -281,7 +296,12 @@ export default function Header({ settings }: { settings: SiteSettings }) {
                   localStorage'dan o'qiydi, lekin bir vaqtda faqat bittasi
                   ko'rinadi — holatni bo'lishish uchun context qo'shish shu
                   bitta ko'rinmas qirra uchun ortiqcha. */}
-              <LanguageSwitcher />
+              <LanguageSwitcher
+                locale={locale}
+                path={path}
+                label={m["nav.language"]}
+                onNavigate={() => setOpen(false)}
+              />
             </div>
             <div className="flex flex-col">
               <a

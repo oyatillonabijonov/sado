@@ -1,7 +1,7 @@
 export const site = {
   name: "SADO",
   tagline: "Dizayn agentligi",
-  url: "https://sado.uz",
+  url: "https://sado.agency",
   description:
     "SADO — brend strategiyasi, veb-dizayn va raqamli tajribalar yaratuvchi dizayn agentligi. Toshkent.",
   email: "salom@sado.uz",

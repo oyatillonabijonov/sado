@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import type { Messages } from "@/lib/i18n";
 import Select from "@/components/Select";
 import { contactSchema, serviceOptions } from "@/lib/contact";
 
@@ -16,7 +17,7 @@ const field =
    CTA va /contact) bir xil bo'lishi uchun sahifada emas, shu yerda. */
 const card = "rounded-[10px] bg-soft-black p-[24px] sm:p-[40px]";
 
-export default function ContactForm() {
+export default function ContactForm({ m }: { m: Messages }) {
   const [status, setStatus] = useState<Status>("idle");
   const [errors, setErrors] = useState<Errors>({});
 
@@ -62,7 +63,7 @@ export default function ContactForm() {
          yuqoriga siljiydi va tasdiq ekrandan chiqib ketardi (o'lchandi:
          top -34px). Odam "Yuborish" bosib bo'sh joyga qarab qolardi. */
       <div className={card} role="status" aria-live="polite" ref={focusSuccess}>
-        <p className="text-subheading text-bone-white">Xabaringiz yuborildi.</p>
+        <p className="text-subheading text-bone-white">{m["contact.sent"]}</p>
         <p className="mt-[16px] text-fog-gray">
           Bir ish kuni ichida siz bilan bog'lanamiz.
         </p>
@@ -74,9 +75,9 @@ export default function ContactForm() {
     <form onSubmit={onSubmit} noValidate className={`${card} flex flex-col gap-[16px]`}>
       {(
         [
-          ["name", "Ismingiz", "text"],
-          ["phone", "Telefon", "tel"],
-          ["company", "Kompaniya (ixtiyoriy)", "text"],
+          ["name", m["contact.name"], "text"],
+          ["phone", m["contact.phone"], "tel"],
+          ["company", m["contact.company"], "text"],
         ] as const
       ).map(([name, label, type]) => (
         <div key={name} className="flex flex-col gap-[8px]">
@@ -96,10 +97,10 @@ export default function ContactForm() {
         </div>
       ))}
       <div className="flex flex-col gap-[8px]">
-        <span className="text-fog-gray">Xizmat turi</span>
+        <span className="text-fog-gray">{m["contact.service"]}</span>
         <Select
           name="service"
-          placeholder="Tanlang"
+          placeholder={m["contact.select"]}
           options={serviceOptions}
           invalid={!!errors.service}
         />
@@ -112,7 +113,7 @@ export default function ContactForm() {
           className="btn-fill inline-flex w-full cursor-pointer items-center justify-center gap-[8px] rounded-[10px] border border-graphite px-[16px] py-[16px] text-subheading disabled:opacity-50 sm:w-auto sm:px-[32px]"
         >
           <span className="block size-[6px] shrink-0 rounded-full bg-scarlet-signal" />
-          <span>{status === "sending" ? "Yuborilmoqda…" : "Yuborish"}</span>
+          <span>{status === "sending" ? m["contact.sending"] : m["contact.submit"]}</span>
         </button>
         {status === "error" && (
           <p className="mt-[16px] text-scarlet-signal">

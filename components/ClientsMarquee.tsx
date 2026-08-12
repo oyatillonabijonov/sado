@@ -1,13 +1,14 @@
+import type { Messages } from "@/lib/i18n";
 import { clients } from "@/data/testimonials";
 
 /** Mijozlar logolari — cheksiz auto-scroll (CSS marquee). Monoxrom oq. */
-export default function ClientsMarquee() {
+export default function ClientsMarquee({ m }: { m: Messages }) {
   const row = [...clients, ...clients];
   return (
-    <section aria-label="Mijozlar" className="pt-[48px] md:pt-[80px]">
+    <section aria-label={m["home.clients"]} className="pt-[48px] md:pt-[80px]">
       <div className="shell">
         <div className="border-t border-graphite pt-[20px]">
-          <p className="text-fog-gray">Bizga 50+ kompaniyalar ishonch bildirgan</p>
+          <p className="text-fog-gray">{m["home.clients"]}</p>
         </div>
       </div>
       {/* 96px oraliq 1440px lentada nafas, 375px da esa bir vaqtning o'zida

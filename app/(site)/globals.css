@@ -408,21 +408,25 @@ body {
     transform: translateX(-50%);
   }
 }
-.sado-marquee {
-  animation: sado-marquee 28s linear infinite;
-}
 /*
- * Yeyilgan chetlar — FAQAT desktopda, otzivlar qatoridagi bilan bir xil
- * sababdan boshqa sabab bilan.
+ * Animatsiya ham, mask ham — FAQAT desktopda.
  *
- * `mask-image` cheksiz `transform` animatsiyasi ustiga qo'yilganda mobil
- * brauzer butun lentani har kadrda dasturiy rasterlashga majbur bo'ladi.
- * iOS Safari va Android Chrome skroll paytida bu qatlamni tashlab yuboradi:
- * logotiplar sahifa surilganda yo'qolib qoladi va skroll to'xtagach qaytadi.
- * 375px ekranda mask baribir lentaning yarmini yeb qo'yardi, ya'ni yo'qotgan
- * narsamiz yo'q.
+ * Ilgari mask desktopga chegaralangan, animatsiya esa hamma joyda qolgan edi,
+ * va telefonda logotiplar baribir yo'qolib turaverdi: skrollda bir necha
+ * soniyadan keyin g'oyib bo'lib, keyin qaytardi. Sabab mask emas,
+ * animatsiyaning o'zi — 3494px enli, uzluksiz `transform` bilan siljiyotgan
+ * qatlamni mobil brauzer skroll paytida xotiradan tashlab yuboradi va
+ * qaytadan rasterlaguncha o'sha joy bo'sh turadi.
+ *
+ * Kompozitsiya ishoralari bilan sozlash o'rniga mexanizmning o'zi olib
+ * tashlandi: telefonda bu oddiy `overflow-x-auto` qator (markup'da), ya'ni
+ * animatsiyalanadigan qatlam umuman yo'q va yo'qoladigan narsa ham yo'q.
+ * Otzivlar qatori telefonda ayni shu sababdan marquee emas.
  */
 @media (min-width: 768px) {
+  .sado-marquee {
+    animation: sado-marquee 28s linear infinite;
+  }
   .sado-marquee-mask {
     -webkit-mask-image: linear-gradient(
       90deg,

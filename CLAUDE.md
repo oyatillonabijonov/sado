@@ -20,7 +20,15 @@ bunx payload generate:types   # payload-types.ts ni yangilash (kolleksiya o'zgar
 bun scripts/seed.ts     # bo'sh bazani boshlang'ich kontent bilan to'ldirish
 ```
 
-Verifikatsiya = `bunx tsc --noEmit` + `bun test` + brauzerda ko'zdan kechirish. Seed va dev
+To'rtta test fayli bor: `panel/lexical.test.ts` (matn ⇄ Lexical o'girmasi),
+`panel/rows.test.ts` (forma qatorlari va qator id'lari), `scripts/db-ensure.test.ts`
+(sxema migratsiyasi), `scripts/migrate-locales.test.ts` (lokalizatsiya migratsiyasi).
+Uchalasi ham **jimgina ma'lumot yo'qotadigan** joylarni qo'riqlaydi — o'chirmang.
+
+Verifikatsiya = `bunx tsc --noEmit` + `bun test` + brauzerda ko'zdan kechirish.
+**Brauzerda haqiqatan bosib ko'ring**, HTML'ni grep qilish yetarli emas: til
+tanlagichning eng katta xatosi (manzil muzlab qolishi) faqat sahifadan sahifaga
+o'tib bosgandagina ko'rinardi, `tsc` ham, testlar ham, HTML tekshiruvi ham jim edi. Seed va dev
 server bir vaqtda ishlamaydi — ikkalasi ham SQLite sxemasini push qiladi va bir-birini kutib qoladi.
 
 **Hydration bilan bog'liq narsani dev'da tekshirmang.** `.claude/launch.json` da
@@ -49,13 +57,18 @@ Bu funksiyalar Payload hujjatlarini `data/projects.ts` / `data/services.ts` dagi
 o'giradi, shuning uchun komponentlar o'zgarmadi. O'sha fayllardagi massivlar va
 `content/blog/*.mdx` endi faqat `scripts/seed.ts` uchun — ularni tahrirlash saytni o'zgartirmaydi.
 
-Istisno — **`getTestimonials` da zaxira bor**: jadval bo'sh bo'lsa
-`data/testimonials.ts` dagi otzivlar chiqadi. Sabab `db-ensure`: u yangi
-jadvalni bo'sh yaratadi, ya'ni bu kolleksiya qo'shilgan deploy'dan keyin prod
-bazasida bitta ham otziv bo'lmasdi va ishonch bandi mijozning haqiqiy
-otzivlarisiz chiqardi. Yon ta'siri: oxirgi otzivni o'chirish kodagilarni
-qaytaradi. Jamoa va qadriyatlar endi `about` globalida (`data/team.ts` zaxira bo'lib
-qoladi); mijoz logolari (`clients`) hali ham faqat kodda.
+**Kontent zaxirasi yo'q — to'ldirilmagan joy KO'RINMAYDI.** Otzivlar
+(`getTestimonials`), «Biz haqimizda» matni, qadriyatlar va jamoa (`lib/about.ts`)
+bo'sh bo'lsa bo'sh qaytadi, sahifa esa o'sha blokni butunlay yashiradi.
+
+Ilgari ular `data/*.ts` dan zaxira olardi va mijoz haq edi: o'ylab topilgan
+odam ("Aziz Rahimov, kreativ direktor") va uning maqtovi saytda haqiqiy
+ma'lumot bo'lib turardi, va uni o'chirishning yo'li yo'q edi — paneldan
+bo'shatsang kodagilar qaytib kelardi. **Yangi kolleksiyaga zaxira qo'shmang**;
+o'rniga sahifada bo'sh holatni yashiring.
+
+`data/team.ts`, `data/testimonials.ts` va `data/about.ts` o'chirilmadi —
+ular `scripts/seed.ts` uchun. Mijoz logolari (`clients`) hali ham faqat kodda.
 
 **Sayt so'rov paytida render qilinadi — `app/(site)/layout.tsx` dagi
 `export const dynamic = "force-dynamic"` ni olib tashlamang.** Dockerfile build
@@ -132,9 +145,19 @@ yaratib ketardi, shuning uchun birinchi "Saqlash" dan keyin yoqiladi.
 sahifaning birinchi ekrani (matn + `heroImages`), xizmatlar sahifasining muqovasi
 (`servicesCover`), aloqa ma'lumotlari, ishonch bandidagi
 `stats` raqamlari, ijtimoiy tarmoqlar, meta tavsif. Sayt uni `lib/getSettings()` orqali
-o'qiydi va har bir maydon uchun zaxira bor — `data/site.ts`, raqamlar uchun `data/team.ts`
-dagi `stats`, hero rasmlari uchun `public/sd1–sd5`, xizmatlar muqovasi uchun
-`public/sd2.webp`. Sayt nomi, manzili
+o'qiydi. Hero matni, meta tavsif va standart rasmlar uchun zaxira bor
+(`lib/i18n.ts` dagi `hero.*` kalitlari — ular ham tarjima qilinadi; hero
+rasmlari `public/sd1–sd5`, xizmatlar muqovasi `public/sd2.webp`). Bu
+zaxiralar qoladi: bo'sh hero saytni buzardi, bo'sh jamoa esa yo'q.
+
+**`servicesCover` Sozlamalar EKRANIDA emas.** U texnik jihatdan shu globalning
+maydoni, lekin panelda `/panel/xizmatlar` da chiziladi
+(`panel/ServicesCoverForm.tsx`, `saveServicesCover`) — mijoz muqovani
+almashtirish uchun tabiiy ravishda «Xizmatlar» bo'limiga kiradi va uni
+Sozlamalardan topmaydi. Alohida action, chunki `saveSettings` butun globalni
+yozadi va u yerdan chaqirilsa formada yo'q maydonlarni bo'shatib yuborardi.
+
+Sayt nomi, manzili
 va navigatsiya tuzilishi kodda qoladi — ular kontent emas. Hero'ni `HeroSlideshow` (client,
 JS crossfade) render qiladi — rasm soni paneldan kelgani uchun har qanday songa moslashadi.
 
@@ -172,7 +195,12 @@ dan **qiymat** import qilib bo'lmaydi (u Payload'ni tortadi va build yiqiladi) �
 sahifa server tomonda o'qiydi, komponentga tayyor massiv keladi.
 
 **Rasm = LCP. Ikki qoida buzilmasin.** Sayt rasmlari `next/image` orqali ketadi (istisno:
-mijoz logolari — o'nlab turli nisbatda, ular tayyor 224px WebP va `loading="lazy"`).
+mijoz logolari — o'nlab turli nisbatda, ular tayyor 224px WebP va `fetchPriority="low"`).
+**Logolarga `loading="lazy"` qo'ymang.** Ularda width/height yo'q (`w-auto`), ya'ni
+yuklanmagunicha quti 0×40px bo'ladi va nol maydonli element hech qachon viewportga
+"kirmaydi" — lazy yuklash ishga tushmaydi, rasm kelmaydi, quti 0 bo'lib qolaveradi.
+Prodda o'lchandi: 20 tadan 0 tasi yuklangan, lenta 912px sof `gap` bo'lib turgan.
+Xuddi shu tuzoq width'siz har qanday `<img>` ga tegishli.
 Hero'da esa faqat **birinchi kadr** darrov yuklanadi, qolganlari o'sha kadr chizilgach
 mount bo'ladi: beshtasi barobar yuklanganda LCP rasm bandwidth talashib qolardi. Bu
 o'lchangan regressiya — hero 6.8 MB PNG'da, `<img>` bilan turganda mobil LCP 42 s edi.
@@ -293,6 +321,21 @@ blok jimgina o'zbekcha bo'lib qolardi.
 `/ru/portfolio` sahifasida prefiksni yo'qotib odamni o'zbekchaga qaytarardi.
 Til context'dan keladi (`LocaleProvider`, sayt layout'ida). Istisno — til
 tanlagichning o'zi: u prefiksni ataylab o'zi belgilaydi.
+
+**Til tanlagich manzilni `usePathname()` bilan CLIENT tomonda oladi va
+`<a>` bilan TO'LIQ YUKLASH qiladi.** Ikkalasi ham majburiy va ikkalasi ham
+o'lchangan xatodan keyin:
+
+* manzil server layout'idan prop bo'lib kelganda **muzlab qolardi** — Next
+  client navigatsiyada umumiy layout'ni qayta render qilmaydi, ya'ni birinchi
+  ochilgan sahifaning manzili oxirigacha saqlanardi va tugma odamni har safar
+  o'sha sahifaga qaytarardi;
+* `next/link` bilan almashtirilganda o'sha sababdan navigatsiya yorliqlari,
+  futer va til context'i eski tilda qolardi — sahifa yarim tarjima bo'lib
+  ko'rinardi.
+
+`stripLocale(usePathname())` ikkala holatga chidaydi: rewrite ostida
+`usePathname` `/blog` ham, `/ru/blog` ham qaytarishi mumkin.
 
 **Interfeys matnlari `lib/i18n.ts` da** (~70 kalit), kontent esa Payload'da.
 Yetishmagan ruscha kalit o'zbekchasiga qaytadi, ya'ni tarjima unutilgan joy

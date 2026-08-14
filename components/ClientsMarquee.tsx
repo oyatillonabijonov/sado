@@ -19,15 +19,22 @@ export default function ClientsMarquee({ m }: { m: Messages }) {
           {row.map((c, i) => (
             /* ponytail: `next/image` emas — logolar o'ndan ortiq turli
                nisbatda va u har biriga width/height talab qiladi. Manba
-               fayllarning o'zi 224px WebP (jami 160 KB, ilgari 376 KB PNG),
-               `lazy` esa ular hero yuklab bo'lgunicha kutishini ta'minlaydi. */
+               fayllarning o'zi 224px WebP (jami 160 KB, ilgari 376 KB PNG).
+
+               `loading="lazy"` YO'Q va bu ataylab. Bu rasmlarda width/height
+               yo'q (`w-auto`), ya'ni yuklanmagunicha qutisi 0×40px bo'ladi —
+               nol maydonli element esa hech qachon "viewportga kirdi" deb
+               hisoblanmaydi, ya'ni lazy yuklash ishga tushmaydi va rasm
+               kelmaydi. Tugallangan halqa: prodda 20 tadan 0 tasi yuklangan,
+               lenta esa 912px sof bo'shliq bo'lib turgan. Hero bilan
+               bandwidth talashmasligi uchun `fetchPriority="low"` yetarli. */
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={i}
               aria-hidden={i >= clients.length}
               src={c.logo}
               alt={c.name}
-              loading="lazy"
+              fetchPriority="low"
               decoding="async"
               className="block h-[40px] w-auto shrink-0 opacity-90 transition-opacity hover:opacity-100 md:h-[56px]"
             />

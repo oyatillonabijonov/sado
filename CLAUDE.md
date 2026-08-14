@@ -412,25 +412,26 @@ suzib ketayotgan otzivni to'xtatib o'qib bo'lmasdi; u yerda `overflow-x-auto sna
 qoladi, karta `w-[85vw]` (keyingisining cheti ko'rinib turadi — surish ishorasi), va
 takror `<li>` lar `max-md:hidden` — aks holda swipe uzunligi ikki baravar bo'lardi.
 
-**Logotiplar qatori mobilda umuman marquee emas.** Animatsiya ham, mask ham
-`@media (min-width: 768px)` ichida; telefonda bu `overflow-x-auto` bilan qo'lda
-suriladigan qator va takror logolar `max-md:hidden`.
-
-Bu ikki bosqichda tushunilgan. Avval mask ayblangan va faqat u desktopga
-chegaralangan edi — `mask-image` cheksiz `transform` ustiga qo'yilganda mobil
-brauzer lentani har kadrda dasturiy rasterlaydi. Lekin logotiplar baribir
-yo'qolib turaverdi: mijoz telefonida skrollda bir necha soniyadan keyin g'oyib
-bo'lib, keyin qaytardi. Sabab maskda emas, **animatsiyaning o'zida** edi —
-3494px enli, uzluksiz siljiyotgan qatlamni brauzer skroll paytida xotiradan
-tashlaydi va qaytadan rasterlaguncha o'sha joy bo'sh turadi.
-Kompozitsiya ishoralari (`will-change`, `translateZ(0)`) bilan sozlash o'rniga
-mexanizm olib tashlandi: animatsiyalanadigan qatlam yo'q = yo'qoladigan narsa yo'q.
+**Logotiplar qatorining maskasi ham mobilda o'chirilgan** — boshqa sababdan.
+`mask-image` cheksiz `transform` animatsiyasi ustiga qo'yilganda mobil brauzer lentani
+har kadrda dasturiy rasterlaydi va skroll paytida qatlamni tashlab yuboradi: logotiplar
+sahifa surilganda yo'qolib qolardi.
 
 **Lenta oralig'i konteynerdagi `gap` emas, har logodagi `mr`.** `gap` bilan
 lentaning eni `2×logolar + 19×oraliq` bo'ladi, ya'ni `translateX(-50%)` yarim
 oraliqqa (24px) kam siljiydi va halqa har aylanishda ko'zga tashlanadigan
 sakrash bilan yopiladi. `mr` bilan eni `2×logolar + 20×oraliq` — `-50%` aniq
 mos tushadi (o'lchandi: chok xatosi 24px → 0).
+
+**Animatsiyani mobilda o'chirmang** — bir marta o'chirilgan va mijoz darrov
+"logolar qotib qoldi" dedi. Telefonda logolar yo'qolib turgani uchun animatsiya
+ayblangan edi, lekin haqiqiy sabab yuklanmagan rasmlar bo'lib chiqdi (yuqoridagi
+`loading="lazy"` tuzog'i): tasodifan yuklangan bir-ikkitasi aylanib o'tar, lenta
+qolgan vaqt bo'sh turardi — bu "bir necha soniya bor, bir necha soniya yo'q"
+bo'lib ko'rinadi va kompozitsiya muammosiga juda o'xshaydi. Logo lentasidagi
+har qanday "yo'qolish" shikoyatida **avval rasmlar yuklanganini tekshiring**
+(`[...document.querySelectorAll('.sado-marquee img')].filter(i=>i.naturalWidth>0).length`),
+keyingina qatlamlarga o'ting.
 
 Shu bilan birga `--logo-filter` ning sukut qiymati
 `invert(0)` emas, **`none`** — `invert(0)` piksellarni o'zgartirmasa ham har bir logoga

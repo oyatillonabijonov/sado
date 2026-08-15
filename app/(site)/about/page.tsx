@@ -23,6 +23,7 @@ export default async function AboutPage() {
   return (
     <div className="shell pt-[48px]">
       <SectionHeading
+        as="h1"
         kicker={m["about.kicker"]}
         lead={about.lead}
       >

@@ -23,6 +23,7 @@ export default async function ServicesPage() {
   return (
     <div className="shell pt-[48px]">
       <SectionHeading
+        as="h1"
         kicker={m["services.kicker"]}
         lead={m["services.lead"]}
       >

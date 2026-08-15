@@ -58,11 +58,27 @@ export async function generateMetadata(): Promise<Metadata> {
         ru: localePath("ru", bare),
       },
     },
+    /**
+     * OG rasmi PNG, SVG emas — va bu qattiq talab. Facebook, Instagram,
+     * LinkedIn, Telegram va X ning hech biri `image/svg+xml` ni oldindan
+     * ko'rish rasmi sifatida chizmaydi: ilgari bu yerda `og.svg` turgan va
+     * sayt havolasi qayerda ulashilsa ham rasmsiz chiqardi.
+     *
+     * `width`/`height` ham shart: usiz skraper rasmni yuklab o'lchaguncha
+     * oyna bo'sh turadi va birinchi ulashishda ko'pincha rasmsiz ketadi.
+     */
     openGraph: {
       siteName: site.name,
       type: "website",
       locale: locale === "ru" ? "ru_RU" : "uz_UZ",
-      images: ["/images/og.svg"],
+      images: [
+        {
+          url: locale === "ru" ? "/images/og-ru.png" : "/images/og-uz.png",
+          width: 1200,
+          height: 630,
+          alt: `${site.name} — ${t(locale, "site.tagline")}`,
+        },
+      ],
     },
   };
 }

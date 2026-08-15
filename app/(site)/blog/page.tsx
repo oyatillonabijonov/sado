@@ -18,7 +18,9 @@ export default async function BlogPage() {
   const [posts, categories] = await Promise.all([getAllPosts(), getBlogCategories()]);
   return (
     <div className="shell pt-[48px]">
-      <SectionHeading kicker={m["blog.kicker"]}>{m["blog.title"]}</SectionHeading>
+      <SectionHeading as="h1" kicker={m["blog.kicker"]}>
+        {m["blog.title"]}
+      </SectionHeading>
       {posts.length === 0 ? (
         <EmptyState
           title={m["blog.empty"]}

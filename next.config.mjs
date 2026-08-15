@@ -9,6 +9,32 @@ const nextConfig = {
   serverExternalPackages: ["nodemailer"],
 
   /**
+   * `/_next/image` keshi. Next'ning zavod qiymati 4 soat; kontent kam
+   * o'zgargani uchun bir hafta serverdagi qayta optimizatsiyani sezilarli
+   * kamaytiradi. Rasm almashsa URL'dagi `url=` ham o'zgaradi, ya'ni eski
+   * kesh yozuvi ishlatilmaydi.
+   */
+  images: { minimumCacheTTL: 604800 },
+
+  /**
+   * `www` → apex, 301 bilan.
+   *
+   * Ilgari redirect umuman yo'q edi va `www.sado.agency` to'liq saytni 200
+   * bilan qaytarardi: bitta sayt ikkita manzilda yashab, havola og'irligi
+   * ikkiga bo'linardi. `canonical` buni yumshatgan, lekin almashtirmaydi.
+   */
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.sado.agency" }],
+        destination: "https://sado.agency/:path*",
+        permanent: true,
+      },
+    ];
+  },
+
+  /**
    * Xavfsizlik sarlavhalari — hammasi bir joyda, Traefik'da emas: proxy
    * o'zgarsa ham sayt o'zi bilan olib yuradi.
    *
@@ -32,6 +58,23 @@ const nextConfig = {
           { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
           { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
         ],
+      },
+      /**
+       * `public/` dagi rasmlar keshi.
+       *
+       * Next bu fayllarga zavod bo'yicha `public, max-age=0` beradi — nomlari
+       * hashlanmagani uchun. Natijada mijoz logolari, OG rasmi va favicon har
+       * tashrifda qaytadan yuklanardi.
+       *
+       * Bir hafta, `immutable` EMAS: fayl nomi o'zgarmasdan mazmuni
+       * almashishi mumkin (logo yangilandi, OG qayta chizildi) va `immutable`
+       * da brauzer muddat tugagunicha qayta so'ramaydi ham. Bir hafta —
+       * takroriy tashrifda foyda beradigan, lekin almashtirishni haddan
+       * tashqari uzoq kutdirmaydigan oraliq.
+       */
+      {
+        source: "/images/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=604800" }],
       },
     ];
   },

@@ -16,10 +16,15 @@ import { telHref } from "@/lib/site-format";
 import { getAllPosts } from "@/lib/blog";
 
 /* Tavsif ham paneldan: `export const metadata` qat'iy qiymat bo'lardi va
-   sozlamalardagi matnni bosib ketardi. */
+   sozlamalardagi matnni bosib ketardi.
+
+   Sarlavha ataylab BERILMAYDI — layout'dagi `title.default` o'zi to'g'ri
+   qiymatni beradi va u tilga qarab o'zgaradi. Bu yerda u qattiq yozilgan
+   edi ("SADO — Dizayn agentligi") va ruscha bosh sahifa o'zbekcha sarlavha
+   bilan chiqardi, ustiga ikkala til bitta sarlavhani baham ko'rardi. */
 export async function generateMetadata(): Promise<Metadata> {
   const { description } = await getSettings();
-  return { title: "SADO — Dizayn agentligi", description };
+  return { description };
 }
 
 export default async function HomePage() {

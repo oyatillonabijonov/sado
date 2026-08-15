@@ -20,6 +20,7 @@ export default async function PortfolioPage() {
   return (
     <div className="shell pt-[48px]">
       <SectionHeading
+        as="h1"
         kicker={m["portfolio.kicker"]}
         lead={m["portfolio.lead"]}
       >

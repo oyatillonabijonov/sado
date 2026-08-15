@@ -4,17 +4,26 @@
  * `action` seksiyaga tegishli havolani sarlavha qatoriga olib chiqadi:
  * ilgari ular gridning ostida qolib, qaysi seksiyaga tegishli ekani
  * ko'rinmasdi.
+ *
+ * `as` — sarlavha darajasi. Sukut bo'yicha `h2`, chunki komponent asosan
+ * seksiya boshi sifatida ishlatiladi. Sahifaning O'Z sarlavhasi bo'lganda
+ * `as="h1"` berish SHART: `/portfolio`, `/services`, `/about` va `/blog`
+ * uzoq vaqt `h1` siz turgan — SEO auditda topilgan, sahifaning mavzusini
+ * bildiruvchi eng kuchli signal yo'q edi. Vizual jihatdan farq yo'q,
+ * ikkalasi ham `.heading` klassini oladi.
  */
 export default function SectionHeading({
   children,
   kicker,
   action,
   lead,
+  as: Heading = "h2",
 }: {
   children: React.ReactNode;
   kicker?: string;
   action?: React.ReactNode;
   lead?: string;
+  as?: "h1" | "h2";
 }) {
   return (
     <div className="mb-stack border-t border-graphite pt-[20px]">
@@ -27,7 +36,7 @@ export default function SectionHeading({
       {/* 40px sarlavhagacha 1440px kanvasda o'lchangan. 375px da kicker,
           sarlavha va lead uchgalasi ekranning yarmini bo'sh joyga berardi. */}
       <div className="mt-[24px] grid gap-[16px] md:mt-[40px] md:gap-[24px] lg:grid-cols-[minmax(0,1fr)_minmax(0,420px)] lg:items-end">
-        <h2 className="heading">{children}</h2>
+        <Heading className="heading">{children}</Heading>
         {/* Seksiya nima uchun borligini bir jumlada aytadi — sarlavhaning
             o'zi buni ayta olmaydi va o'quvchi taxmin qilishga majbur bo'ladi. */}
         {lead && <p className="max-w-[52ch] text-fog-gray lg:pb-[6px]">{lead}</p>}

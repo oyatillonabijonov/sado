@@ -6,19 +6,29 @@ import Link from "@/components/LocaleLink";
 import { notFound } from "next/navigation";
 import { adjacentProjects, getProject, getProjects } from "@/lib/content";
 import { isVideo } from "@/lib/site-format";
+import { site } from "@/data/site";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbLd } from "@/lib/jsonld";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const [{ slug }, locale] = await Promise.all([params, currentLocale()]);
   const project = await getProject(slug);
   if (!project) return {};
   return {
     title: project.title,
     description: project.brief,
-    openGraph: { images: [project.cover] },
+    /* `siteName` va `locale` takrorlanadi — Next sahifadagi `openGraph` ni
+       layout'dagisi bilan qo'shmaydi, butunlay almashtiradi. Ularsiz
+       ulashilgan kartada "SADO" yorlig'i chiqmasdi. */
+    openGraph: {
+      siteName: site.name,
+      locale: locale === "ru" ? "ru_RU" : "uz_UZ",
+      images: [project.cover],
+    },
   };
 }
 
@@ -27,7 +37,8 @@ export default async function ProjectPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const m = messages(await currentLocale());
+  const locale = await currentLocale();
+  const m = messages(locale);
   const { slug } = await params;
   const project = await getProject(slug);
   if (!project) notFound();
@@ -35,6 +46,15 @@ export default async function ProjectPage({
 
   return (
     <article className="shell pt-[48px]">
+      <JsonLd
+        data={breadcrumbLd(
+          [
+            { name: m["portfolio.title"], path: "/portfolio" },
+            { name: project.title, path: `/portfolio/${project.slug}` },
+          ],
+          locale,
+        )}
+      />
       <h1 className="display max-w-[900px]">{project.title}</h1>
 
       {/* Meta row */}

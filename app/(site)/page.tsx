@@ -14,6 +14,8 @@ import { getProjects, getTestimonials } from "@/lib/content";
 import { getSettings } from "@/lib/settings";
 import { telHref } from "@/lib/site-format";
 import { getAllPosts } from "@/lib/blog";
+import JsonLd from "@/components/JsonLd";
+import { organizationLd } from "@/lib/jsonld";
 
 /* Tavsif ham paneldan: `export const metadata` qat'iy qiymat bo'lardi va
    sozlamalardagi matnni bosib ketardi.
@@ -28,7 +30,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const m = messages(await currentLocale());
+  const locale = await currentLocale();
+  const m = messages(locale);
   const [allProjects, allPosts, settings, testimonials] = await Promise.all([
     getProjects(),
     getAllPosts(),
@@ -40,6 +43,10 @@ export default async function HomePage() {
 
   return (
     <div>
+      {/* Agentlikning o'zi — nom, logo, aloqa, ijtimoiy tarmoqlar. Faqat
+          bosh sahifada: Organization butun sayt uchun bir marta beriladi. */}
+      <JsonLd data={organizationLd(settings, locale)} />
+
       {/* Hero */}
       <section className="relative flex min-h-[calc(100svh-72px)] flex-col justify-end overflow-hidden pb-[48px]">
         <div aria-hidden className="pointer-events-none absolute inset-0">

@@ -244,6 +244,61 @@ shu bitta direktiva bilan cheklangan — to'liq XSS siyosati har so'rovga nonce 
 (`layout.tsx` dagi FOUC skripti va Next'ning bootstrap'i inline), ya'ni middleware; hozircha
 u yozilmagan. HSTS'da `preload` yo'q: u ro'yxatga tushgach qaytarib bo'lmaydi.
 
+## SEO
+
+2026-08-15 dagi audit natijalari. Har biri jonli saytda o'lchangan xatodan
+keyin — o'zgartirishdan oldin sababini o'qing.
+
+**Sahifa sarlavhasi `<h1>` bo'lishi shart.** `SectionHeading` sukut bo'yicha
+`<h2>` chizadi (u seksiya boshi), sahifaning O'Z sarlavhasi esa `as="h1"`
+oladi. `/portfolio`, `/services`, `/about` va `/blog` uzoq vaqt `h1` siz
+turgan: to'rtala landing sahifa mavzusini bildiruvchi eng kuchli signalsiz edi.
+
+**OG rasmi PNG, hech qachon SVG.** Facebook, Instagram, LinkedIn, Telegram va
+X ning hech biri `image/svg+xml` ni oldindan ko'rish rasmi sifatida chizmaydi
+— bu yerda `og.svg` turgan va sayt havolasi qayerda ulashilsa rasmsiz
+chiqardi. `public/images/og-uz.png` va `og-ru.png` (1200×630),
+`width`/`height`/`alt` bilan. Ular Chrome headless orqali chizilgan; sharp
+bilan qayta chizmang — uning SVG renderida shrift yo'q va **matn jimgina
+tushib qoladi** (tekshirilgan: faqat fon va qizil nuqta chiqdi).
+
+**Detal sahifada `openGraph` ni ALMASHTIRADI, qo'shmaydi.** Next sahifadagi
+`openGraph` obyektini layout'dagisi bilan birlashtirmaydi, shuning uchun
+`siteName` va `locale` blog va loyiha sahifalarida qo'lda takrorlanadi.
+Ularsiz ulashilgan kartada "SADO" yorlig'i chiqmasdi.
+
+**Media route'da `HEAD` bor va u `GET` metodi bilan qayta so'raydi.**
+Ijtimoiy tarmoq skraperlari rasmni yuklashdan oldin `HEAD` yuboradi;
+Payload'ning ichki routeri `HEAD` uchun yo'l topmay 404 qaytaradi, shuning
+uchun `app/(payload)/api/[...slug]/route.ts` da so'rov `GET` bo'lib qayta
+quriladi. Handler'ni "soddalashtirib" so'rovni to'g'ridan-to'g'ri uzatsangiz
+404 qaytadi.
+
+**JSON-LD `components/JsonLd.tsx` orqali** — `<` belgisi `<` ga
+almashtiriladi va bu xavfsizlik uchun: sxemaga kiradigan matn paneldan keladi
+va ichida `</script>` bo'lgan sarlavha skript blokini erta yopardi. Sxemalar
+`lib/jsonld.ts` da, Payload'ga tegmaydi (ma'lumot argument bilan keladi).
+Organization — faqat bosh sahifada, Article — blog maqolasida, BreadcrumbList
+— maqola va loyihada. `Organization.logo` maxsus kvadrat PNG
+(`public/images/logo.png`), `icon.svg` emas.
+
+**Sitemapda har sahifa IKKI yozuv** — o'zbekchasi va ruschasi, ikkalasida ham
+to'liq `alternates` (`uz`, `ru`, `x-default`). Ilgari `<loc>` faqat o'zbekcha
+edi. **`lastModified` ni bilmasangiz bermang:** u yerda `new Date()` turgan va
+sitemap har so'rovda "hamma sahifa hozirgina o'zgardi" derdi — Google bunday
+`lastmod` ga ishonishni to'xtatadi.
+
+**`robots.ts` da `/api/` yopiq, lekin `/api/media/file/` OCHIQ.** Butun
+`/api` ni yopish Google Images'dan portfolioni olib tashlardi va ijtimoiy
+tarmoqlardagi oldindan ko'rish rasmlarini sindirardi — yuklangan hamma narsa
+shu yo'ldan uzatiladi.
+
+**Favicon `app/icon.svg`** (Next fayl konvensiyasi), `public/` da emas — u
+yerda turganda hech qayerdan ulanmay, sayt umuman faviconsiz qolgan edi.
+
+Hali qilinmagani: `http://` → `https://` ko'chirishi Traefik'da va 302
+(301 bo'lishi kerak) — u kodda emas, Coolify domen sozlamasida.
+
 **Deploy (Coolify, Docker).** `Dockerfile` — bun install → `next build` (SSG sxemani
 o'qish uchun `cp schema.sqlite db.sqlite`; SIGTRAP-on-exit `.next/BUILD_ID` bilan ajratiladi)
 → `docker-entrypoint.sh`. Prodda Payload sxema push qilmaydi va uni konteynerda Next'dan

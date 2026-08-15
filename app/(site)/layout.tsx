@@ -56,6 +56,9 @@ export async function generateMetadata(): Promise<Metadata> {
       languages: {
         uz: bare,
         ru: localePath("ru", bare),
+        // Ikkala tilga ham tegishli bo'lmagan foydalanuvchi uchun. Usiz
+        // Google qaysi versiyaga yuborishni o'zi taxmin qilardi.
+        "x-default": bare,
       },
     },
     /**

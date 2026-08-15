@@ -7,19 +7,38 @@ import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import BlogCard from "@/components/BlogCard";
 import { getAllPosts, getPost, getRelatedPosts } from "@/lib/blog";
+import { site } from "@/data/site";
+import JsonLd from "@/components/JsonLd";
+import { articleLd, breadcrumbLd } from "@/lib/jsonld";
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const [{ slug }, locale] = await Promise.all([params, currentLocale()]);
   const post = await getPost(slug);
   if (!post) return {};
   return {
     title: post.meta.title,
     description: post.meta.description,
-    openGraph: { images: [post.meta.cover] },
+    /**
+     * `type: "article"` — layout'dagi `website` ni bosib o'tadi. Maqola
+     * ijtimoiy tarmoqlarda oddiy sahifa sifatida ko'rinardi, nashr sanasi
+     * va muallif esa umuman uzatilmasdi.
+     *
+     * `siteName` va `locale` shu yerda TAKRORLANADI: Next sahifadagi
+     * `openGraph` ni layout'dagisi bilan qo'shmaydi, butunlay almashtiradi.
+     * Ularsiz ulashilgan kartada "SADO" yorlig'i chiqmasdi.
+     */
+    openGraph: {
+      type: "article",
+      siteName: site.name,
+      locale: locale === "ru" ? "ru_RU" : "uz_UZ",
+      publishedTime: post.meta.date,
+      authors: [post.meta.author],
+      images: [post.meta.cover],
+    },
   };
 }
 
@@ -28,7 +47,8 @@ export default async function BlogPostPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const m = messages(await currentLocale());
+  const locale = await currentLocale();
+  const m = messages(locale);
   const { slug } = await params;
   const post = await getPost(slug);
   if (!post) notFound();
@@ -36,6 +56,16 @@ export default async function BlogPostPage({
 
   return (
     <article className="shell pt-[48px]">
+      <JsonLd data={articleLd(post.meta, locale)} />
+      <JsonLd
+        data={breadcrumbLd(
+          [
+            { name: m["blog.title"], path: "/blog" },
+            { name: post.meta.title, path: `/blog/${post.meta.slug}` },
+          ],
+          locale,
+        )}
+      />
       {/* Sarlavha — saytning chapga tekislangan tizimida */}
       <header className="border-t border-graphite pt-[20px]">
         {/* `w-max`: `tap` padding'i bilan inline-block shrink-to-fit kengligi

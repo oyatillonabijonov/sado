@@ -2,6 +2,7 @@
 
 import { useCallback, useRef, useState } from 'react';
 import { isVideo } from '@/lib/site-format';
+import { IMAGE_TYPES, VIDEO_TYPES, isAllowedType, isImageType, rejectMessage } from '@/panel/upload-limits';
 import type { MediaOption } from '@/panel/media';
 
 /**
@@ -34,13 +35,19 @@ export async function uploadImage(file: File): Promise<Uploaded> {
  * Nima qabul qilinadi. Galereya videoni ham oladi (sayt uni gif kabi,
  * boshqaruvsiz va aylanma qilib chizadi), muqova va portret esa faqat rasm:
  * ular `next/image` orqali ketadi va OG rasmi bo'lib ham ishlatiladi.
+ *
+ * Ro'yxat `panel/upload-limits.ts` dan — server bilan AYNAN bir xil bo'lishi
+ * shart. Ilgari bu yerda `image/*` turgan va server atigi beshta turni
+ * bilardi: mos kelmagan fayl client tekshiruvidan o'tib, serverda
+ * "qabul qilinmaydi" bo'lib qaytardi va sabab ko'rinmasdi.
  */
+/* `accept` da MIME ham, kengaytma ham: ba'zi tizimlarda fayl tanlagich
+   `.MOV` ni MIME bo'yicha tanimay, ro'yxatda ko'rsatmasdi. */
+const EXT = '.jpg,.jpeg,.png,.webp,.avif,.gif,.svg';
+const VIDEO_EXT = '.mp4,.webm,.mov';
 const ACCEPT = {
-  image: { attr: 'image/*', ok: (t: string) => t.startsWith('image/') },
-  media: {
-    attr: 'image/*,video/mp4,video/webm',
-    ok: (t: string) => t.startsWith('image/') || t === 'video/mp4' || t === 'video/webm',
-  },
+  image: { attr: `${IMAGE_TYPES.join(',')},${EXT}`, ok: isImageType },
+  media: { attr: `${[...IMAGE_TYPES, ...VIDEO_TYPES].join(',')},${EXT},${VIDEO_EXT}`, ok: isAllowedType },
 } as const;
 
 type AcceptKind = keyof typeof ACCEPT;
@@ -56,11 +63,13 @@ function useUploader(kind: AcceptKind) {
       // Sudrab tashlangan fayl mos kelmasa jim qolmaslik kerak — ilgari
       // hech narsa bo'lmagandek ko'rinardi.
       if (!taken.length) {
+        // Xabar qabul qilinmagan faylni NOMLAYDI. Ilgari u umumiy ro'yxatni
+        // takrorlardi va mijoz "men mp4 tashladim-ku" deb qolardi.
         if (files.length) {
           setError(
-            kind === 'image'
-              ? 'Bu maydonga faqat rasm qo‘yiladi.'
-              : 'Rasm (JPG, PNG, WebP) yoki video (MP4, WebM) qo‘ying.',
+            kind === 'image' && files.some((f) => !isImageType(f.type))
+              ? `${files[0].name} — bu maydonga faqat rasm qo‘yiladi (${files[0].type || 'turi aniqlanmagan'}).`
+              : rejectMessage(files[0]),
           );
         }
         return [];

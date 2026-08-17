@@ -125,6 +125,32 @@ bo'lib qoladi: MIME'ni olib yurish uchun uni obyektlar massiviga aylantirish
 vaqtda o'zgartirish degani bo'lardi. Payload media URL'i har doim asl fayl nomi bilan
 tugaydi, ya'ni kengaytma bor.
 
+**Serverda `file.type` ga ISHONMANG — Bun uni fayl nomidan qayta hisoblaydi.**
+`request.formData()` client yuborgan MIME turini tashlab yuboradi va uni
+kengaytmadan tiklaydi, ustiga katta-kichik harfni farqlab (o'lchangan,
+bun 1.3.10):
+
+```
+kadr.mp4  → "video/mp4"      IMG_4821.MOV → ""
+kadr.MP4  → ""               kadr         → ""
+```
+
+iPhone va kameralar videoni aynan `IMG_1234.MOV` deb saqlaydi, ya'ni mijoz
+videosini yuklay olmagani shundan edi: client tekshiruvidan o'tardi (brauzer
+to'g'ri MIME beradi), serverda esa bo'sh tur ko'rinardi va fayl rad etilardi.
+Yechim — `panel/upload-limits.ts` dagi `resolveUploadType()`: tur tanilsa
+o'shani oladi, aks holda kengaytmadan tiklaydi. **Payload'ga ham o'sha
+tiklangan tur uzatiladi**, aks holda media bo'sh `mimeType` bilan yozilardi.
+
+Ruxsat etilgan turlar, chegaralar va rad etish xabari — hammasi
+`panel/upload-limits.ts` da, **yagona manba**. Client (`ImageDrop`), route
+(`app/api/panel/upload`) va server action (`panel/media-actions.ts`) uchalasi
+shundan o'qiydi. Ilgari client `image/*` ni o'tkazardi, server esa beshta
+turni bilardi — mos kelmagan fayl client tekshiruvidan o'tib serverda
+yiqilardi. **Rad etish xabari qabul qilingan turni AYTISHI shart**; usiz
+sabab na mijozga, na bizga ko'rinmaydi. `panel/upload-limits.test.ts` shu
+xatti-harakatlarni qo'riqlaydi.
+
 Saytda video gif kabi chiqadi: `muted loop autoPlay playsInline`, boshqaruvsiz.
 `muted` shart — usiz mobil brauzerlar avtoijroni butunlay bloklaydi.
 

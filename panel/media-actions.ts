@@ -3,14 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { payloadClient, requireUser } from '@/panel/auth';
 import type { FormState } from '@/panel/form-state';
-
-/** 8 MB. Above this a photograph belongs in an image editor first, not here. */
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
-const IMAGE = ['image/jpeg', 'image/png', 'image/webp', 'image/avif', 'image/svg+xml'];
-
-/** Video — loyiha galereyasi uchun. `app/api/panel/upload` bilan bir xil chegara. */
-const MAX_VIDEO_BYTES = 20 * 1024 * 1024;
-const VIDEO = ['video/mp4', 'video/webm'];
+import { isAllowedType, limitFor, rejectMessage, resolveUploadType } from '@/panel/upload-limits';
 
 export async function uploadMedia(_prev: FormState, fd: FormData): Promise<FormState> {
   await requireUser();
@@ -20,10 +13,10 @@ export async function uploadMedia(_prev: FormState, fd: FormData): Promise<FormS
 
   if (!(file instanceof File) || file.size === 0) return { error: 'Fayl tanlanmadi.' };
   if (!alt) return { error: 'Rasm nimani ko‘rsatishini yozing — ko‘rmaydigan odamlar uchun kerak.' };
-  if (!IMAGE.includes(file.type) && !VIDEO.includes(file.type)) {
-    return { error: 'Rasm (JPG, PNG, WebP, AVIF, SVG) yoki video (MP4, WebM) yuklang.' };
-  }
-  const limit = VIDEO.includes(file.type) ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+  // `file.type` ga ishonmaymiz — sababi `panel/upload-limits.ts` da.
+  const type = resolveUploadType(file);
+  if (!isAllowedType(type)) return { error: rejectMessage({ name: file.name, type }) };
+  const limit = limitFor(type);
   if (file.size > limit) {
     return {
       error:
@@ -41,7 +34,7 @@ export async function uploadMedia(_prev: FormState, fd: FormData): Promise<FormS
       // goes in untouched and every derived size follows from the collection.
       file: {
         data: Buffer.from(await file.arrayBuffer()),
-        mimetype: file.type,
+        mimetype: type,
         name: file.name,
         size: file.size,
       },

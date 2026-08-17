@@ -74,7 +74,7 @@ export function ProjectForm({
       <Card title="Rasm va video">
         <ImageStack
           label="Loyiha galereyasi"
-          hint="Rasm ham, video ham (MP4 yoki WebM, 20 MB gacha). Video saytda gif kabi chiqadi — ovozsiz, boshqaruvsiz va o'zi aylanadi, shuning uchun qisqa kadr qo'ying. Bir nechta faylni birdan tashlashingiz mumkin; tartibni strelkalar bilan o'zgartiring."
+          hint="Rasm ham, video ham (MP4, WebM yoki MOV — 20 MB gacha). Video saytda gif kabi chiqadi — ovozsiz, boshqaruvsiz va o'zi aylanadi, shuning uchun qisqa kadr qo'ying. Bir nechta faylni birdan tashlashingiz mumkin; tartibni strelkalar bilan o'zgartiring."
           name="gallery"
           options={media}
           defaultValue={data.gallery}

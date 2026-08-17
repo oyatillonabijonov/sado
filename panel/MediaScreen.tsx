@@ -21,7 +21,7 @@ export function MediaScreen({ rows }: { rows: MediaRow[] }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <Card title="Yangi fayl" hint="Rasm: JPG, PNG, WebP, AVIF, SVG — 8 MB gacha. Video: MP4, WebM — 20 MB gacha.">
+      <Card title="Yangi fayl" hint="Rasm: JPG, PNG, WebP, AVIF, GIF, SVG — 8 MB gacha. Video: MP4, WebM, MOV — 20 MB gacha.">
         {/* `key` on the form: React keeps the file input's value across a
             successful submit otherwise, so the same picture uploads twice on a
             second click. Remounting clears it. */}

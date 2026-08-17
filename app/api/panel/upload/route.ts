@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { currentUser, payloadClient } from "@/panel/auth";
+import { isAllowedType, limitFor, rejectMessage, resolveUploadType } from "@/panel/upload-limits";
 
 /**
  * Panel uchun rasm yuklash — forma yubormasdan.
@@ -15,29 +16,6 @@ import { currentUser, payloadClient } from "@/panel/auth";
  * React formasiga bog'langan, `fetch` esa mustaqil.
  */
 
-/** 8 MB. Bundan kattasi avval rasm tahrirlagichga tushishi kerak. */
-const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
-const IMAGE = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"];
-
-/**
- * Video — loyiha galereyasi uchun, gif o'rnida: sayt uni boshqaruvsiz,
- * ovozsiz va aylanma qilib chizadi.
- *
- * Payload sharp'ni faqat rasm MIME'lariga qo'llaydi, ya'ni `imageSizes` va
- * `resizeOptions` videoga tegmaydi — sxemaga ham, `Media` konfiguratsiyasiga
- * ham o'zgarish kerak emas (sinab ko'rilgan: mp4 to'g'ri saqlanadi, `sizes`
- * bo'sh qoladi).
- *
- * 20 MB — avtoijro etiladigan kadr uchun allaqachon katta. Chegara bor,
- * chunki fayl `/app/media` volume'ida yotadi va har bir tashrifchiga to'liq
- * uzatiladi: 100 MB'lik tanitim roligi mobil trafikni yeb qo'yardi.
- */
-const MAX_VIDEO_BYTES = 20 * 1024 * 1024;
-const VIDEO = ["video/mp4", "video/webm"];
-
-const limitFor = (type: string) =>
-  VIDEO.includes(type) ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
-
 const bad = (error: string, status = 400) => NextResponse.json({ error }, { status });
 
 export async function POST(request: Request) {
@@ -48,10 +26,14 @@ export async function POST(request: Request) {
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File) || file.size === 0) return bad("Fayl kelmadi.");
-  if (!IMAGE.includes(file.type) && !VIDEO.includes(file.type)) {
-    return bad("Rasm (JPG, PNG, WebP, AVIF, SVG) yoki video (MP4, WebM) yuklang.");
-  }
-  const limit = limitFor(file.type);
+  // Ro'yxat `panel/upload-limits.ts` da — client tekshiruvi ham shundan
+  // o'qiydi, ya'ni ikkalasi bir-biriga zid kela olmaydi. Xabar qabul
+  // qilingan turni aytadi: usiz sabab na mijozga, na bizga ko'rinardi.
+  // `file.type` ga ishonmaymiz — Bun uni fayl nomidan qayta hisoblaydi va
+  // `.MOV`/`.MP4` (katta harf) da bo'sh qoldiradi. Sababi upload-limits.ts da.
+  const type = resolveUploadType(file);
+  if (!isAllowedType(type)) return bad(rejectMessage({ name: file.name, type }));
+  const limit = limitFor(type);
   if (file.size > limit) {
     return bad(
       `Fayl juda katta (${Math.round(file.size / 1024 / 1024)} MB). ` +
@@ -71,7 +53,7 @@ export async function POST(request: Request) {
       data: { alt },
       file: {
         data: Buffer.from(await file.arrayBuffer()),
-        mimetype: file.type,
+        mimetype: type,
         name: file.name,
         size: file.size,
       },

@@ -10,8 +10,11 @@ import { autosaveLabel, useAutosave } from "@/panel/useAutosave";
 import { SLOTS } from "@/panel/slots";
 import type { PanelLocale } from "@/panel/locale";
 import { Area, Card, Choice, Collapse, Field, Grid, LangSwitch, SaveBar, Toggle } from "@/panel/ui";
+import { projectCategories } from "@/data/projects";
 
-const CATEGORIES = ["Branding", "Web", "UI/UX", "Print"].map((c) => ({ value: c, label: c }));
+/* Ro'yxat `data/projects.ts` da — Payload maydoni va saytdagi filtr ham
+   shundan o'qiydi. Bu yerda faqat `Choice` kutgan shaklga o'giriladi. */
+const CATEGORIES = projectCategories.map((c) => ({ value: c, label: c }));
 
 export function ProjectForm({
   data,

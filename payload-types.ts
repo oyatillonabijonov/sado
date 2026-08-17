@@ -225,7 +225,7 @@ export interface Project {
   slug: string;
   client?: string | null;
   year: string;
-  category: 'Branding' | 'Web' | 'UI/UX' | 'Print';
+  category: 'Branding' | 'Rebranding' | 'Naming' | 'Web' | 'UI/UX' | 'Packaging' | 'Print';
   services?: string[] | null;
   cover: number | Media;
   featured?: boolean | null;

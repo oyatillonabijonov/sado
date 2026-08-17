@@ -10,7 +10,9 @@ export default function PortfolioGrid({
   categories,
 }: {
   projects: Project[];
-  categories: ProjectCategory[];
+  /* `readonly`: ro'yxat `data/projects.ts` da `as const` bilan e'lon qilingan
+     — yagona manba bo'lgani uchun uni o'zgartirib bo'lmasligi to'g'ri. */
+  categories: readonly ProjectCategory[];
 }) {
   const [active, setActive] = useState<ProjectCategory | "Barchasi">("Barchasi");
   const shown =

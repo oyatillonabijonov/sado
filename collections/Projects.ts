@@ -1,4 +1,5 @@
 import type { CollectionConfig } from "payload";
+import { projectCategories } from "@/data/projects";
 
 /* ponytail: maydonlar `localized: true` emas — saytda hozircha bitta til
  * chiqadi (components/Header.tsx dagi tanlagich faqat <html lang> ni almashtiradi).
@@ -24,7 +25,9 @@ export const Projects: CollectionConfig = {
       type: "select",
       required: true,
       defaultValue: "Branding",
-      options: ["Branding", "Web", "UI/UX", "Print"],
+      // Ro'yxat `data/projects.ts` da — panel va saytdagi filtr ham shundan
+      // o'qiydi, ya'ni yangi tur bitta joyda qo'shiladi.
+      options: [...projectCategories],
     },
     { name: "services", type: "text", hasMany: true, localized: true },
     { name: "cover", type: "upload", relationTo: "media", required: true },

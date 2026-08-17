@@ -3,7 +3,28 @@
  * kontent Payload'da (`collections/Projects.ts`), sayt uni `lib/content.ts` orqali o'qiydi.
  * Bu yerni tahrirlash saytni o'zgartirmaydi; /panel/loyihalar dan foydalaning.
  */
-export type ProjectCategory = "Branding" | "Web" | "UI/UX" | "Print";
+/**
+ * Loyiha turlari — YAGONA manba.
+ *
+ * `collections/Projects.ts` (Payload maydoni), `panel/ProjectForm.tsx`
+ * (paneldagi tanlagich) va `/portfolio` dagi filtr — uchalasi ham shundan
+ * o'qiydi. Ilgari ro'yxat uch joyda qo'lda takrorlangan edi va yangi tur
+ * qo'shilganda biri unutilishi hech gap emasdi.
+ *
+ * Yangi tur qo'shish: shu massivga bitta qator. Baza migratsiyasi KERAK EMAS —
+ * `category` ustuni oddiy `text`, cheklovsiz (tekshirilgan: `schema.sqlite`).
+ */
+export const projectCategories = [
+  "Branding",
+  "Rebranding",
+  "Naming",
+  "Web",
+  "UI/UX",
+  "Packaging",
+  "Print",
+] as const;
+
+export type ProjectCategory = (typeof projectCategories)[number];
 
 export interface Project {
   slug: string;
@@ -171,13 +192,6 @@ export const projects: Project[] = [
       "Placeholder matn: ma'lumotlarga asoslangan, sokin va aniq raqamli tajriba yaratdik.",
     gallery: ["/images/projects/quyosh-1.svg"],
   },
-];
-
-export const projectCategories: ProjectCategory[] = [
-  "Branding",
-  "Web",
-  "UI/UX",
-  "Print",
 ];
 
 

@@ -355,6 +355,19 @@ alohida tekshiradi va mijoz ruschani kiritmaguncha o'zbekchani ham saqlab bo'lma
 Formadagi HTML `required` o'z o'rnida qoladi. Hamon aniqlanmaydigani — ustun **o'chirilishi** va **nom o'zgarishi**; ataylab,
 chunki ikkalasi ham ma'lumot yo'qotadi. Skript hech qachon `DROP` bajarmaydi.
 
+**Loyiha turlari — `data/projects.ts` dagi `projectCategories`, yagona manba.**
+Payload maydoni (`collections/Projects.ts`), paneldagi tanlagich
+(`panel/ProjectForm.tsx`) va `/portfolio` dagi filtr uchalasi shundan o'qiydi.
+Ilgari ro'yxat uch joyda qo'lda takrorlangan edi. Yangi tur qo'shish =
+massivga bitta qator + `bunx payload generate:types`.
+
+**Select maydoniga variant qo'shish baza migratsiyasini TALAB QILMAYDI.**
+Payload SQLite'da `select` ni oddiy `text` qilib chiqaradi, `CHECK` yoki enum
+yo'q (tekshirilgan: `category` → `text DEFAULT 'Branding'`). Ya'ni
+`schema.sqlite` DDL'i o'zgarmaydi va `db-ensure` ga ish tushmaydi — mavjud
+yozuvlar tegilmaydi. Sxemani qayta yaratsangiz DDL'ni solishtiring: bir xil
+bo'lsa faylni commit qilmang, u faqat binar churn bo'ladi.
+
 **Ikki til: UZ (asosiy) va RU.** `payload.config.ts` da `localization`,
 `fallback: true` — tarjimasi bo'sh maydon o'zbekchasini ko'rsatadi, ya'ni yarim
 tarjima ham xavfsiz.

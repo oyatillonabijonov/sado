@@ -10,7 +10,7 @@ import BlogCard from "@/components/BlogCard";
 import RedDotLink from "@/components/RedDotLink";
 import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
-import { getLatestFeaturedProjects, getTestimonials } from "@/lib/content";
+import { getFeaturedProjects, getTestimonials } from "@/lib/content";
 import { getSettings } from "@/lib/settings";
 import { telHref } from "@/lib/site-format";
 import { getAllPosts } from "@/lib/blog";
@@ -33,7 +33,7 @@ export default async function HomePage() {
   const locale = await currentLocale();
   const m = messages(locale);
   const [featured, allPosts, settings, testimonials] = await Promise.all([
-    getLatestFeaturedProjects(4),
+    getFeaturedProjects(8),
     getAllPosts(),
     getSettings(),
     getTestimonials(),

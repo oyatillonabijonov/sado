@@ -78,10 +78,18 @@ export async function findRaw(collection: CollectionSlug, id: number, locale: Pa
 }
 
 /** Next free position, so a newly created row lands at the end of its list. */
+/**
+ * Yangi yozuvning `order` i — eng kattasidan bitta ko'p.
+ *
+ * Ilgari yozuvlar SONI edi: biror yozuv o'chirilgach yangisi mavjud raqamni
+ * takrorlardi. Loyihalar kamayish tartibida ko'rsatilgani uchun (yangisi
+ * tepada) takror yangi loyihani birinchi o'rindan tushirib yuborardi.
+ */
 export async function nextOrder(collection: CollectionSlug) {
   const payload = await payloadClient();
-  const { totalDocs } = await payload.count({ collection });
-  return totalDocs;
+  const { docs } = await payload.find({ collection, sort: '-order', limit: 1, depth: 0 });
+  const top = docs[0] as { order?: unknown } | undefined;
+  return top ? Number(top.order ?? 0) + 1 : 0;
 }
 
 /** Every uploaded picture, newest first — what the pickers choose from. */

@@ -26,6 +26,20 @@ export const projectCategories = [
 
 export type ProjectCategory = (typeof projectCategories)[number];
 
+/**
+ * Loyihalar tartibi — kattaroq `order` tepada, ya'ni YANGI loyiha birinchi.
+ *
+ * Mijoz talabi (2026-09-19): «Admin paneldan yangi loyiha qo'shsa u saytda
+ * birinchi ko'rinsin». Yangi loyiha `max(order) + 1` oladi (`panel/doc.ts`).
+ * Mavjud qiymatlar qo'shilish tartibida edi (0…6), shuning uchun yo'nalishni
+ * almashtirishning o'zi ularni eng yangisidan boshlab ko'rsatdi — prod
+ * bazasiga tegish shart bo'lmadi.
+ *
+ * Sayt (`lib/content.ts`), panel ro'yxati va strelkalar (`moveItem`) uchalasi
+ * shundan o'qiydi: bittasi farq qilsa "yuqoriga" tugmasi saytda pastga surardi.
+ */
+export const PROJECT_SORT = "-order";
+
 export interface Project {
   slug: string;
   title: string;

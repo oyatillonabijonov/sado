@@ -1,6 +1,7 @@
 import { payloadClient } from "@/panel/auth";
 import { ItemList } from "@/panel/ItemList";
 import { ActionButton, Empty, PageHeader } from "@/panel/ui";
+import { PROJECT_SORT } from "@/data/projects";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function ProjectsListPage() {
     draft: true,
     depth: 1,
     limit: 100,
-    sort: "order",
+    sort: PROJECT_SORT,
   });
 
   const items = docs.map((doc) => {
@@ -33,7 +34,7 @@ export default async function ProjectsListPage() {
     <div className="flex flex-col gap-8">
       <PageHeader
         title="Loyihalar"
-        lead="Portfolio sahifasidagi ishlar. Tartibni strelkalar bilan o'zgartiring."
+        lead="Portfolio sahifasidagi ishlar. Yangi loyiha ro'yxat tepasiga tushadi — saytda ham birinchi chiqadi. Tartibni strelkalar bilan o'zgartiring."
         action={<ActionButton href="/panel/loyihalar/yangi">Yangi loyiha</ActionButton>}
       />
 

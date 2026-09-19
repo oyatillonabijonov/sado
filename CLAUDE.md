@@ -20,10 +20,12 @@ bunx payload generate:types   # payload-types.ts ni yangilash (kolleksiya o'zgar
 bun scripts/seed.ts     # bo'sh bazani boshlang'ich kontent bilan to'ldirish
 ```
 
-To'rtta test fayli bor: `panel/lexical.test.ts` (matn ⇄ Lexical o'girmasi),
+Oltita test fayli bor: `panel/lexical.test.ts` (matn ⇄ Lexical o'girmasi),
 `panel/rows.test.ts` (forma qatorlari va qator id'lari), `scripts/db-ensure.test.ts`
-(sxema migratsiyasi), `scripts/migrate-locales.test.ts` (lokalizatsiya migratsiyasi).
-Uchalasi ham **jimgina ma'lumot yo'qotadigan** joylarni qo'riqlaydi — o'chirmang.
+(sxema migratsiyasi), `scripts/migrate-locales.test.ts` (lokalizatsiya migratsiyasi),
+`panel/upload-limits.test.ts` (yuklashda fayl turi), `panel/reorder.test.ts`
+(loyihalar tartibi va strelkalar yo'nalishi). Birinchi to'rttasi **jimgina ma'lumot
+yo'qotadigan** joylarni qo'riqlaydi — o'chirmang.
 
 Verifikatsiya = `bunx tsc --noEmit` + `bun test` + brauzerda ko'zdan kechirish.
 **Brauzerda haqiqatan bosib ko'ring**, HTML'ni grep qilish yetarli emas: til
@@ -381,13 +383,18 @@ alohida tekshiradi va mijoz ruschani kiritmaguncha o'zbekchani ham saqlab bo'lma
 Formadagi HTML `required` o'z o'rnida qoladi. Hamon aniqlanmaydigani — ustun **o'chirilishi** va **nom o'zgarishi**; ataylab,
 chunki ikkalasi ham ma'lumot yo'qotadi. Skript hech qachon `DROP` bajarmaydi.
 
-**Bosh sahifadagi «So'nggi loyihalar» — belgilanganlarning ENG YANGI 4 tasi**
-(`getLatestFeaturedProjects`, `createdAt` bo'yicha). Ilgari `getProjects()` `order`
-bo'yicha olinib birinchi 4 belgilangani kesilardi: yangi loyiha ro'yxat oxiriga
-tushgani uchun hech qachon chiqmasdi va mijoz «yuklangan loyihalar ko'rinmayapti»
-dedi. `order` panel strelkalari bilan o'zgaradi — u yangilikni bildirmaydi.
-Yangi loyihada «Bosh sahifada ko'rsatilsin» sukut bo'yicha yoqiq
-(`panel/projects-data.ts`).
+**Loyihalar tartibi — yangisi tepada, hamma joyda bitta: `PROJECT_SORT = "-order"`**
+(`data/projects.ts`). Sayt (`/portfolio`, bosh sahifa), panel ro'yxati va strelkalar
+(`moveItem`) uchalasi shundan o'qiydi — bittasi farq qilsa "yuqoriga" tugmasi saytda
+pastga surardi. Yangi loyiha `max(order) + 1` oladi (`nextOrder`, ilgari yozuvlar
+SONI edi va o'chirishdan keyin takrorlanardi). Strelka ro'yxatni qayta raqamlaydi
+(`panel/reorder.ts`, testi bor). Mijoz talabi (2026-09-19): «Admin paneldan yangi
+loyiha qo'shsa u saytda birinchi ko'rinsin». Mavjud qiymatlar qo'shilish tartibida
+edi, shuning uchun yo'nalishni almashtirish prod bazasiga tegmasdan ishladi.
+
+Bosh sahifada belgilanganlarning birinchi **8** tasi (`getFeaturedProjects(8)`).
+Ilgari `order` o'sish tartibida birinchi 4 tasi kesilardi va yangi loyiha hech
+qachon chiqmasdi. Yangi loyihada «Bosh sahifada ko'rsatilsin» sukut bo'yicha yoqiq.
 
 **Loyiha turlari — `data/projects.ts` dagi `projectCategories`, yagona manba.**
 Payload maydoni (`collections/Projects.ts`), paneldagi tanlagich

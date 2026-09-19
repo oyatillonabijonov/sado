@@ -4,6 +4,8 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import type { CollectionSlug } from 'payload';
 import { payloadClient, requireUser } from '@/panel/auth';
+import { reorder } from '@/panel/reorder';
+import { PROJECT_SORT } from '@/data/projects';
 
 /**
  * Move and delete, shared by every list in the panel.
@@ -18,17 +20,20 @@ import { payloadClient, requireUser } from '@/panel/auth';
 export async function moveItem(collection: CollectionSlug, id: number, direction: 'up' | 'down') {
   await requireUser();
   const payload = await payloadClient();
-  const { docs } = await payload.find({ collection, limit: 200, sort: 'order', depth: 0 });
+  // Panel ro'yxati bilan AYNAN bir xil tartib — aks holda "yuqoriga" boshqa
+  // qo'shni bilan almashardi. Loyihalar kamayish tartibida (yangisi tepada).
+  const sort = collection === 'projects' ? PROJECT_SORT : 'order';
+  const { docs } = await payload.find({ collection, limit: 200, sort, depth: 0 });
 
-  const index = docs.findIndex((d) => d.id === id);
-  const swapWith = direction === 'up' ? index - 1 : index + 1;
-  if (index === -1 || swapWith < 0 || swapWith >= docs.length) return;
-
-  // Written from the array position rather than by swapping the two stored
-  // values: seeded rows carry hand-set numbers and two of them can legitimately
-  // be equal, in which case swapping the values moves nothing.
-  await payload.update({ collection, id: docs[swapWith].id, data: { order: index } as never });
-  await payload.update({ collection, id, data: { order: swapWith } as never });
+  const updates = reorder(
+    docs.map((d) => ({ id: d.id as number, order: Number((d as { order?: unknown }).order ?? 0) })),
+    id,
+    direction,
+    sort.startsWith('-'),
+  );
+  for (const u of updates) {
+    await payload.update({ collection, id: u.id, data: { order: u.order } as never });
+  }
 
   revalidatePath('/panel', 'layout');
   revalidatePath('/', 'layout');

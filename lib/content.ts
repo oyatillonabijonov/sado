@@ -1,6 +1,6 @@
 import { getPayload } from "payload";
 import config from "@payload-config";
-import type { Project, ProjectCategory } from "@/data/projects";
+import { PROJECT_SORT, type Project, type ProjectCategory } from "@/data/projects";
 import type { Service } from "@/data/services";
 import type { Testimonial } from "@/data/testimonials";
 import { currentLocale } from "@/lib/locale";
@@ -48,30 +48,31 @@ export async function getProjects(): Promise<Project[]> {
     collection: "projects",
     depth: 1,
     limit: 200,
-    sort: "order",
+    // Yangisi tepada — sababi `data/projects.ts` dagi PROJECT_SORT da.
+    sort: PROJECT_SORT,
     locale: await currentLocale(),
   });
   return docs.map((d) => toProject(d as unknown as Record<string, unknown>));
 }
 
 /**
- * Bosh sahifadagi «So'nggi loyihalar» — belgilanganlardan ENG YANGI yuklangan
- * `limit` tasi.
+ * Bosh sahifadagi «So'nggi loyihalar» — belgilanganlarning birinchi `limit`
+ * tasi, sayt tartibida (yangisi tepada, `PROJECT_SORT`).
  *
- * Ilgari bosh sahifa `getProjects()` ni `order` bo'yicha olib, birinchi 4
- * belgilanganini kesardi. Yangi loyiha ro'yxat oxiriga tushgani uchun u hech
- * qachon chiqmasdi: mijoz 6 ta loyihani belgilagan, «Arbol» esa 6-bo'lib
- * qolib ketgan edi (2026-09-19). Tartib `createdAt` bo'yicha — `order` panel
- * strelkalari bilan o'zgaradi va yangilikni bildirmaydi.
+ * Ilgari `order` O'SISH tartibida olinib birinchi 4 tasi kesilardi: yangi
+ * loyiha ro'yxat oxiriga tushgani uchun bosh sahifaga hech qachon chiqmasdi
+ * (mijoz 6 tasini belgilagan, «Arbol» 6-bo'lib qolgan edi). Mijoz talabi:
+ * 8 ta, yangisi birinchi (2026-09-19). `/portfolio` bilan bitta tartib —
+ * panel strelkalari bilan qo'yilgani bosh sahifada ham saqlanadi.
  */
-export async function getLatestFeaturedProjects(limit: number): Promise<Project[]> {
+export async function getFeaturedProjects(limit: number): Promise<Project[]> {
   const payload = await client();
   const { docs } = await payload.find({
     collection: "projects",
     depth: 1,
     limit,
     where: { featured: { equals: true } },
-    sort: "-createdAt",
+    sort: PROJECT_SORT,
     locale: await currentLocale(),
   });
   return docs.map((d) => toProject(d as unknown as Record<string, unknown>));

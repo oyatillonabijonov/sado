@@ -47,7 +47,7 @@ export default function Select({
         aria-expanded={open}
         aria-invalid={invalid}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full cursor-pointer items-center justify-between rounded-[10px] bg-pure-black px-[16px] py-[16px] text-left outline-none ring-1 ring-transparent transition-shadow focus:ring-bone-white"
+        className="flex w-full cursor-pointer items-center justify-between rounded-base bg-pure-black px-[16px] py-[16px] text-left outline-none ring-1 ring-transparent transition-shadow focus:ring-bone-white"
       >
         <span className={value ? "text-bone-white" : "text-fog-gray"}>
           {value ? labelOf(value) : placeholder}
@@ -62,7 +62,7 @@ export default function Select({
       {open && (
         <ul
           role="listbox"
-          className="absolute inset-x-0 top-full z-20 max-h-[320px] overflow-y-auto rounded-[10px] border border-graphite bg-pure-black"
+          className="absolute inset-x-0 top-full z-20 max-h-[320px] overflow-y-auto rounded-base border border-graphite bg-pure-black"
         >
           {options.map((o) => (
             <li key={o}>

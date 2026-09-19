@@ -97,7 +97,7 @@ export default async function BlogPostPage({
           maqolada ham aynan o'sha kadr bo'ladi. Ilgari bu yerda mobilda 4:3,
           desktopda 21:9 turardi va bitta muqova uch xil qirqilardi (21:9
           telefonda 375×160 tasmaga aylanib, rasmdan hech narsa o'qilmasdi). */}
-      <div className="relative mt-[40px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black md:mt-[64px]">
+      <div className="relative mt-[40px] aspect-[16/9] w-full overflow-hidden rounded-base bg-soft-black md:mt-[64px]">
         <Image
           src={post.meta.cover}
           alt={post.meta.title}

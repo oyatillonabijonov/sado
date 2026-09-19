@@ -48,7 +48,7 @@ export default async function AboutPage() {
 
       {/* Raqamlar endi o'zi karta — panelning 32/48px paddingi ustiga qo'shilib
           ikki qavat ramka berardi. Panel yupqa zamin bo'lib qoladi. */}
-      <Reveal className="mt-[40px] rounded-[10px] bg-soft-black p-[16px] md:mt-[80px] md:p-[24px]">
+      <Reveal className="mt-[40px] rounded-base bg-soft-black p-[16px] md:mt-[80px] md:p-[24px]">
         <Stats stats={settings.stats} />
       </Reveal>
 
@@ -64,7 +64,7 @@ export default async function AboutPage() {
         <Stagger className="grid gap-[16px] md:grid-cols-2 xl:grid-cols-4">
           {about.values.map((v) => (
             <StaggerItem key={v.title} className="h-full">
-              <div className="flex h-full flex-col gap-[16px] rounded-[10px] bg-soft-black p-card">
+              <div className="flex h-full flex-col gap-[16px] rounded-base bg-soft-black p-card">
                 <p className="text-subheading text-bone-white">{v.title}</p>
                 <p className="whitespace-pre-line text-fog-gray">{v.text}</p>
               </div>
@@ -83,7 +83,7 @@ export default async function AboutPage() {
         <Stagger className="grid grid-cols-2 gap-[16px] lg:grid-cols-3">
           {about.team.map((m) => (
             <StaggerItem key={m.name}>
-              <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-[10px] bg-soft-black">
+              <div className="relative flex aspect-[3/4] w-full items-center justify-center overflow-hidden rounded-base bg-soft-black">
                 {m.photo ? (
                   <Image
                     src={m.photo}

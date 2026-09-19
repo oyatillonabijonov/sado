@@ -491,6 +491,8 @@ birinchi saqlashdan keyin.
 - Token nomlari tarixiy (dark-first) lekin qiymatlari **semantik** — light modeda `bone-white` qora bo'ladi. Yangi komponentda hardcoded hex yoki `bg-white`/`text-black` ishlatmang, aks holda light mode buziladi.
 - **Light/dark mode:** header'dagi toggle `<html data-theme>` ni o'zgartiradi va `localStorage.theme` ga saqlaydi; `app/(site)/layout.tsx` inline skripti FOUC oldini olish uchun birinchi bo'yashdan oldin qo'llaydi. `data-theme` tizim sozlamasidan (`prefers-color-scheme`) ustun turadi.
 
+**Burchak — `rounded-base` (10px, `--radius-base`).** Kartalar, rasmlar, maydonlar va dropdown shundan oladi; `rounded-[10px]` deb yozmang. Panelning `--radius-card` (20px) i `panel.css` da, saytga tegishli emas. `.btn-fill` o'zining `999px` pill burchagini qatlamsiz CSS'da majburlaydi — undagi `rounded-*` klassi ishlamaydi.
+
 **Tipografika.** `Inter Tight` (`next/font`, `--font-sans` o'zgaruvchisi orqali `app/(site)/layout.tsx` da). Sarlavha darajalari `.display` (hero/CTA) va `.heading` (seksiyalar) — `globals.css` da `clamp()` bilan. Seksiya oʻlchamlari `text-subheading`/`text-heading-sm` tokenlarda.
 
 **Seksiya naqshi.** Bosh sahifa seksiyalari izchil ritmda, hairline `border-t border-graphite` + kulrang kicker (`SectionHeading` komponenti buni inkassa qiladi).

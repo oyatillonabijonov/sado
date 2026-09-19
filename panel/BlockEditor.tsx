@@ -162,14 +162,23 @@ const BLOCK_MARK = /^(#{2,3}\s+|>\s+|-\s+|\d+\.\s+)/;
 type Tool =
   | { label: string; title: string; kind: 'wrap'; mark: string; bold?: boolean; italic?: boolean }
   | { label: string; title: string; kind: 'prefix'; mark: string }
-  | { label: string; title: string; kind: 'link' };
+  | { label: React.ReactNode; title: string; kind: 'link' };
 
 const TOOLS: Tool[] = [
   { label: 'H2', title: 'Sarlavha', kind: 'prefix', mark: '## ' },
   { label: 'H3', title: 'Kichik sarlavha', kind: 'prefix', mark: '### ' },
   { label: 'B', title: 'Qalin', kind: 'wrap', mark: '**', bold: true },
   { label: 'I', title: 'Kursiv', kind: 'wrap', mark: '*', italic: true },
-  { label: '🔗', title: 'Havola', kind: 'link' },
+  {
+    label: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className="size-4" aria-hidden>
+        <path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1" />
+        <path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" />
+      </svg>
+    ),
+    title: 'Havola',
+    kind: 'link',
+  },
   { label: '❝', title: 'Iqtibos', kind: 'prefix', mark: '> ' },
   { label: '•', title: "Ro'yxat", kind: 'prefix', mark: '- ' },
   { label: '1.', title: "Raqamli ro'yxat", kind: 'prefix', mark: '1. ' },
@@ -234,7 +243,7 @@ function Toolbar({ target }: { target: React.RefObject<HTMLTextAreaElement | nul
     <div className="flex flex-wrap items-center gap-1 px-2 pb-1">
       {TOOLS.map((tool) => (
         <button
-          key={tool.label}
+          key={tool.title}
           type="button"
           title={tool.title}
           aria-label={tool.title}

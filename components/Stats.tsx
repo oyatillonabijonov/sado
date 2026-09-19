@@ -73,7 +73,7 @@ export default function Stats({ stats }: { stats: SiteSettings["stats"] }) {
           // kartaning tagiga tushib, raqam bilan orasida bo'sh joy qolardi.
           <div
             key={s.label}
-            className="flex flex-col gap-[8px] rounded-[10px] bg-pure-black p-card"
+            className="flex flex-col gap-[8px] rounded-base bg-pure-black p-card"
           >
             <p
               className="display tabular-nums"

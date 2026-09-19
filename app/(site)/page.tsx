@@ -158,7 +158,7 @@ export default async function HomePage() {
                     aria-hidden={isDuplicate}
                     className={`snap-start ${isDuplicate ? "max-md:hidden" : ""}`}
                   >
-                    <figure className="flex h-full w-[85vw] flex-col justify-between gap-[24px] rounded-[10px] bg-pure-black p-card sm:w-[480px] md:gap-[48px]">
+                    <figure className="flex h-full w-[85vw] flex-col justify-between gap-[24px] rounded-base bg-pure-black p-card sm:w-[480px] md:gap-[48px]">
                       <blockquote className="text-[19px] text-bone-white md:text-subheading">
                         {t.quote}
                       </blockquote>

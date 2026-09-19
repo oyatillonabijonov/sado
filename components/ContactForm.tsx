@@ -11,11 +11,11 @@ type Errors = Partial<Record<string, string>>;
 /* Har bir maydon o'z ramkasiga olindi: pastki chiziqli variant kulrang kartada
    yo'qolib ketardi va forma "tekis" ko'rinardi. */
 const field =
-  "w-full rounded-[10px] bg-pure-black px-[16px] py-[16px] text-bone-white outline-none ring-1 ring-transparent transition-shadow placeholder:text-fog-gray focus:ring-bone-white";
+  "w-full rounded-base bg-pure-black px-[16px] py-[16px] text-bone-white outline-none ring-1 ring-transparent transition-shadow placeholder:text-fog-gray focus:ring-bone-white";
 
 /* Formani sahifadan ajratib turadigan to'rtburchak. Ikkala joyda ham (bosh sahifa
    CTA va /contact) bir xil bo'lishi uchun sahifada emas, shu yerda. */
-const card = "rounded-[10px] bg-soft-black p-[24px] sm:p-[40px]";
+const card = "rounded-base bg-soft-black p-[24px] sm:p-[40px]";
 
 export default function ContactForm({ m }: { m: Messages }) {
   const [status, setStatus] = useState<Status>("idle");
@@ -120,7 +120,7 @@ export default function ContactForm({ m }: { m: Messages }) {
         <button
           type="submit"
           disabled={status === "sending"}
-          className="btn-fill inline-flex w-full cursor-pointer items-center justify-center gap-[8px] rounded-[10px] border border-graphite px-[16px] py-[16px] text-subheading disabled:opacity-50 sm:w-auto sm:px-[32px]"
+          className="btn-fill inline-flex w-full cursor-pointer items-center justify-center gap-[8px] rounded-base border border-graphite px-[16px] py-[16px] text-subheading disabled:opacity-50 sm:w-auto sm:px-[32px]"
         >
           <span className="block size-[6px] shrink-0 rounded-full bg-scarlet-signal" />
           <span>{status === "sending" ? m["contact.sending"] : m["contact.submit"]}</span>

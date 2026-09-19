@@ -76,7 +76,7 @@ export default async function ProjectPage({
       </div>
 
       {/* Cover */}
-      <div className="relative mt-section-sm aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black">
+      <div className="relative mt-section-sm aspect-[16/9] w-full overflow-hidden rounded-base bg-soft-black">
         <Image
           src={project.cover}
           alt={project.title}
@@ -122,7 +122,7 @@ export default async function ProjectPage({
         {project.gallery.map((src, i) => (
           <div
             key={src}
-            className={`relative aspect-[4/3] w-full overflow-hidden rounded-[10px] bg-soft-black ${
+            className={`relative aspect-[4/3] w-full overflow-hidden rounded-base bg-soft-black ${
               i === 0 ? "md:col-span-2 md:aspect-[16/9]" : ""
             }`}
           >
@@ -156,7 +156,7 @@ export default async function ProjectPage({
       {/* Keyingi loyiha — to'liq cover, hover'da nom chiqadi */}
       <Link
         href={`/portfolio/${next.slug}`}
-        className="group relative mt-section-sm block aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black"
+        className="group relative mt-section-sm block aspect-[16/9] w-full overflow-hidden rounded-base bg-soft-black"
       >
         <Image
           src={next.cover}
@@ -167,7 +167,7 @@ export default async function ProjectPage({
         />
         {/* ponytail: media overlay — rasm ustida har doim qorayadi, temadan mustaqil */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-[12px] bg-black/0 transition-colors duration-300 group-hover:bg-black/55">
-          <p className="uppercase tracking-wide text-white/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <p className="text-white/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
             {m["project.next"]}
           </p>
           <p className="display text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">

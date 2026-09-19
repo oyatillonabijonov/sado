@@ -48,6 +48,9 @@
   --spacing-section-sm: 120px;
   --spacing-stack: 64px;
   --spacing-card: 32px;
+
+  /* Saytdagi yagona burchak: kartalar, rasmlar, maydonlar, dropdown. */
+  --radius-base: 10px;
 }
 
 /* Mobil ritm. `@theme` dagi qiymatlar bugungi desktopdan bir piksel ham
@@ -329,7 +332,7 @@ body {
   background: var(--color-bone-white);
   transform: scaleX(0);
   transform-origin: left center;
-  transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
 }
 .btn-fill > * {
   position: relative;

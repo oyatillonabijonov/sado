@@ -46,7 +46,7 @@ function ThemeToggle({ label }: { label: string }) {
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`absolute inset-0 size-full transition-all duration-300 ease-out motion-reduce:transition-none ${
+          className={`absolute inset-0 size-full transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
             showMoon ? "scale-50 rotate-90 opacity-0" : "scale-100 rotate-0 opacity-100"
           }`}
         >
@@ -60,7 +60,7 @@ function ThemeToggle({ label }: { label: string }) {
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className={`absolute inset-0 size-full transition-all duration-300 ease-out motion-reduce:transition-none ${
+          className={`absolute inset-0 size-full transition-[transform,opacity] duration-300 ease-out motion-reduce:transition-none ${
             showMoon ? "scale-100 rotate-0 opacity-100" : "scale-50 -rotate-90 opacity-0"
           }`}
         >
@@ -155,7 +155,7 @@ function LanguageSwitcher({
           /* Pastga ochiladi. Telefonda tugma ekranning o'ng chetida turadi —
              chapga tekislangan ro'yxat oynadan chiqib ketardi, shuning uchun
              u yerda o'ng chetga tekislanadi. */
-          className="absolute right-0 top-full z-20 mt-[8px] min-w-[132px] overflow-hidden rounded-[10px] bg-soft-black py-[4px] md:left-0 md:right-auto"
+          className="absolute right-0 top-full z-20 mt-[8px] min-w-[132px] overflow-hidden rounded-base bg-soft-black py-[4px] md:left-0 md:right-auto"
         >
           {SITE_LOCALES.map((l) => (
             <li key={l.code}>

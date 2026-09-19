@@ -39,7 +39,7 @@ export default async function ServicesPage() {
           yonidagi standart kadr chiqadi. */}
       {/* Mobilda 16:5 atigi 105px baland chiziqqa aylanadi va rasmdan hech
           narsa o'qilmaydi — tor ekranda balandroq nisbat. */}
-      <Reveal className="relative mb-[48px] aspect-[16/9] w-full overflow-hidden rounded-[10px] bg-soft-black sm:aspect-[16/5]">
+      <Reveal className="relative mb-[48px] aspect-[16/9] w-full overflow-hidden rounded-base bg-soft-black sm:aspect-[16/5]">
         <Image
           src={settings.servicesCover}
           alt=""
@@ -66,7 +66,7 @@ export default async function ServicesPage() {
             <StaggerItem key={s.slug}>
             <section
               id={s.slug}
-              className="flex h-full scroll-mt-[88px] flex-col gap-[24px] rounded-[10px] bg-soft-black p-card"
+              className="flex h-full scroll-mt-[88px] flex-col gap-[24px] rounded-base bg-soft-black p-card"
             >
               <div>
                 <h2 className="text-heading-sm font-medium text-bone-white">

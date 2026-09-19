@@ -167,6 +167,28 @@ const uz = {
   "site.tagline": "Dizayn agentligi",
   "common.contact": "Bog'lanish",
   "common.readMore": "Batafsil",
+  // Formadagi byudjet — ixtiyoriy, erkin matn (mijoz qarori, 2026-09-19).
+  "contact.budget": "Mo'ljallangan byudjet (ixtiyoriy)",
+  "contact.budget.placeholder": "Masalan: $2 000 yoki 25 mln so'm",
+  // Xato matnlari: zod sxemasidagi xabarlar o'zbekcha va server bilan
+  // umumiy, shuning uchun forma ularni shu kalitlar bilan almashtiradi —
+  // aks holda ruscha sahifada xato o'zbekcha chiqardi.
+  "contact.err.name": "Ismingizni kiriting",
+  "contact.err.phone": "Telefon raqamini kiriting",
+  "contact.err.service": "Xizmat turini tanlang",
+  "contact.err.budget": "Byudjetni qisqaroq yozing",
+  // Xizmat variantlari. Kalit — `lib/contact.ts` dagi qiymatning o'zi:
+  // bazaga doim o'zbekcha qiymat yoziladi, ko'rinadigani esa tarjima.
+  "svc:Brend strategiyasi": "Brend strategiyasi",
+  "svc:Brend dizayn": "Brend dizayn",
+  "svc:Veb-dizayn": "Veb-dizayn",
+  "svc:UI/UX dizayn": "UI/UX dizayn",
+  "svc:Motion dizayn": "Motion dizayn",
+  "svc:Print va editorial": "Print va editorial",
+  "svc:Boshqa": "Boshqa",
+  "footer.cookies": "Cookie siyosati",
+  "footer.privacy": "Maxfiylik siyosati",
+  "footer.city": "Toshkent",
 } as const;
 
 export type MessageKey = keyof typeof uz;
@@ -292,6 +314,22 @@ const ru: Partial<Record<MessageKey, string>> = {
   "site.tagline": "Дизайн-агентство",
   "common.contact": "Связаться",
   "common.readMore": "Подробнее",
+  "contact.budget": "Планируемый бюджет (необязательно)",
+  "contact.budget.placeholder": "Например: $2 000 или 25 млн сумов",
+  "contact.err.name": "Введите ваше имя",
+  "contact.err.phone": "Введите номер телефона",
+  "contact.err.service": "Выберите тип услуги",
+  "contact.err.budget": "Напишите бюджет короче",
+  "svc:Brend strategiyasi": "Стратегия бренда",
+  "svc:Brend dizayn": "Бренд-дизайн",
+  "svc:Veb-dizayn": "Веб-дизайн",
+  "svc:UI/UX dizayn": "UI/UX-дизайн",
+  "svc:Motion dizayn": "Моушн-дизайн",
+  "svc:Print va editorial": "Печатный дизайн и editorial",
+  "svc:Boshqa": "Другое",
+  "footer.cookies": "Политика cookie",
+  "footer.privacy": "Политика конфиденциальности",
+  "footer.city": "Ташкент",
 };
 
 const TABLE: Record<SiteLocale, Partial<Record<MessageKey, string>>> = { uz, ru };

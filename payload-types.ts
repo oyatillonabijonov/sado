@@ -323,6 +323,7 @@ export interface Submission {
     | 'Motion dizayn'
     | 'Print va editorial'
     | 'Boshqa';
+  budget?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -587,6 +588,7 @@ export interface SubmissionsSelect<T extends boolean = true> {
   phone?: T;
   company?: T;
   service?: T;
+  budget?: T;
   updatedAt?: T;
   createdAt?: T;
 }

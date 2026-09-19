@@ -8,7 +8,7 @@ import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
 import { getAbout } from "@/lib/about";
 import { getSettings } from "@/lib/settings";
-import { telHref } from "@/lib/site-format";
+import { mapHref, telHref } from "@/lib/site-format";
 
 export async function generateMetadata(): Promise<Metadata> {
   // Statik `metadata` bir tilda qotib qolardi — ruscha sahifada ham
@@ -150,7 +150,16 @@ export default async function AboutPage() {
               >
                 {settings.phone}
               </a>
-              <p className="mt-[8px] text-fog-gray md:mt-0">{settings.address}</p>
+              {settings.address && (
+                <a
+                  href={mapHref(settings.address)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="tap mt-[8px] self-start text-fog-gray transition-colors hover:text-bone-white md:mt-0"
+                >
+                  {settings.address}
+                </a>
+              )}
             </div>
             <div className="mt-[16px] flex flex-wrap gap-x-[24px] md:mt-[32px] md:gap-y-[8px]">
               {settings.socials.map((s) => (

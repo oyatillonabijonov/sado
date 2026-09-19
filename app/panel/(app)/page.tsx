@@ -43,6 +43,7 @@ export default async function DashboardPage() {
             const name = String(doc.name ?? '');
             const phone = String(doc.phone ?? '');
             const company = String(doc.company ?? '');
+            const budget = String(doc.budget ?? '');
             return (
               <li
                 key={doc.id}
@@ -53,6 +54,7 @@ export default async function DashboardPage() {
                   <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-body-sm text-driftwood">
                     <span>{String(doc.service ?? '')}</span>
                     {company && <span className="truncate">{company}</span>}
+                    {budget && <span className="truncate">Byudjet: {budget}</span>}
                     <span>{formatDate(doc.createdAt as string)}</span>
                   </span>
                 </div>

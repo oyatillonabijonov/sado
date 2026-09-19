@@ -5,7 +5,7 @@ import Link from "@/components/LocaleLink";
 import { useEffect, useState } from "react";
 import { site } from "@/data/site";
 import type { Messages } from "@/lib/i18n";
-import { telHref, type SiteSettings } from "@/lib/site-format";
+import { mapHref, telHref, type SiteSettings } from "@/lib/site-format";
 
 function Newsletter({ m }: { m: Messages }) {
   const [status, setStatus] = useState<"idle" | "done">("idle");
@@ -41,7 +41,7 @@ function Newsletter({ m }: { m: Messages }) {
 }
 
 /** Toshkent vaqti — meta qatordagi mayda agentlik detali. */
-function LocalTime() {
+function LocalTime({ city }: { city: string }) {
   const [time, setTime] = useState("");
   useEffect(() => {
     const fmt = () =>
@@ -56,7 +56,7 @@ function LocalTime() {
     const t = setInterval(fmt, 30_000);
     return () => clearInterval(t);
   }, []);
-  return <span suppressHydrationWarning>Toshkent {time}</span>;
+  return <span suppressHydrationWarning>{city} {time}</span>;
 }
 
 /* Aloqa ma'lumotlari va ijtimoiy tarmoqlar paneldan keladi; menyu va sayt
@@ -125,7 +125,16 @@ export default function Footer({ settings, m }: { settings: SiteSettings; m: Mes
           >
             {settings.phone}
           </a>
-          <p className="mt-[8px] text-fog-gray md:mt-0">{settings.address}</p>
+          {settings.address && (
+            <a
+              href={mapHref(settings.address)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="tap mt-[8px] self-start text-fog-gray transition-colors hover:text-bone-white md:mt-0"
+            >
+              {settings.address}
+            </a>
+          )}
         </div>
         <div className="col-span-2 md:col-span-1">
           <p className="mb-[12px] text-fog-gray md:mb-[24px]">{m["footer.newsletter"]}</p>
@@ -140,13 +149,13 @@ export default function Footer({ settings, m }: { settings: SiteSettings; m: Mes
         <p>
           © {new Date().getFullYear()} {site.name}. {m["footer.rights"]}.
         </p>
-        <LocalTime />
+        <LocalTime city={m["footer.city"]} />
         <div className="flex gap-[24px] md:gap-[16px]">
           <a href="#" className="tap transition-colors hover:text-bone-white">
-            Cookie siyosati
+            {m["footer.cookies"]}
           </a>
           <a href="#" className="tap transition-colors hover:text-bone-white">
-            Maxfiylik siyosati
+            {m["footer.privacy"]}
           </a>
         </div>
       </div>

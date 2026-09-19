@@ -30,6 +30,15 @@ export const telHref = (phone: string) =>
   `tel:${phone.replace(/[^\d+]/g, "").replace(/^(?!\+)/, "+")}`;
 
 /**
+ * Manzil → Yandex Maps qidiruvi. Yandex — mijoz tanlovi (2026-09-19):
+ * O'zbekistonda eng ko'p ishlatiladigan xarita. Qidiruv manzil MATNI
+ * bo'yicha, ya'ni paneldagi manzil xaritada topiladigan ko'rinishda
+ * yozilishi kerak — pin noto'g'ri chiqsa, matnni tuzatish kifoya.
+ */
+export const mapHref = (address: string) =>
+  `https://yandex.uz/maps/?text=${encodeURIComponent(address)}`;
+
+/**
  * Galereya elementi video-mi?
  *
  * MIME turi emas, kengaytma bo'yicha — ataylab. Payload media URL'i har doim

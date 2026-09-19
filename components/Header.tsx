@@ -131,7 +131,7 @@ function LanguageSwitcher({
         aria-expanded={open}
         aria-label={`${label}: ${current.label}`}
         onClick={() => setOpen((v) => !v)}
-        className={`flex cursor-pointer items-center gap-[6px] px-[8px] py-[6px] text-[15px] tracking-[0.04em] transition-colors hover:text-bone-white ${
+        className={`flex min-h-[44px] cursor-pointer items-center gap-[6px] px-[8px] py-[6px] text-[15px] tracking-[0.04em] transition-colors hover:text-bone-white md:min-h-0 ${
           open ? "text-bone-white" : "text-fog-gray"
         }`}
       >
@@ -152,10 +152,10 @@ function LanguageSwitcher({
       {open && (
         <ul
           role="listbox"
-          /* Mobil menyuda tanlagich ekranning pastida turadi — pastga
-             ochilgan ro'yxat oynadan chiqib ketardi, shuning uchun u yerda
-             tepaga ochiladi. */
-          className="absolute left-0 bottom-full z-20 mb-[8px] min-w-[132px] overflow-hidden rounded-[10px] bg-soft-black py-[4px] md:bottom-auto md:top-full md:mb-0 md:mt-[8px]"
+          /* Pastga ochiladi. Telefonda tugma ekranning o'ng chetida turadi —
+             chapga tekislangan ro'yxat oynadan chiqib ketardi, shuning uchun
+             u yerda o'ng chetga tekislanadi. */
+          className="absolute right-0 top-full z-20 mt-[8px] min-w-[132px] overflow-hidden rounded-[10px] bg-soft-black py-[4px] md:left-0 md:right-auto"
         >
           {SITE_LOCALES.map((l) => (
             <li key={l.code}>
@@ -250,6 +250,14 @@ export default function Header({
         {/* -mr: 44px maydon logotip qatorini o'ngga surib yubormasin — glif
             o'z joyida qoladi, bosish maydoni esa chetga chiqadi. */}
         <div className="-mr-[10px] flex items-center md:hidden">
+          {/* Til tanlagich menyuning ICHIDA edi va mijoz uni topa olmadi:
+              «Til tanlash imkoniyatini menu oldiga olib chiqish kerak ichida
+              qolib ketibdi». Endi header qatorida, menyu ochilmasdan. */}
+          <LanguageSwitcher
+            locale={locale}
+            label={m["nav.language"]}
+            onNavigate={() => setOpen(false)}
+          />
           <ThemeToggle label={m["nav.theme"]} />
           <button
             aria-label={open ? m["nav.close"] : m["nav.menu"]}
@@ -304,17 +312,6 @@ export default function Header({
 
           {/* Aloqa pastda: menyu ochgan odamning ikkinchi niyati — yozish. */}
           <div className="shell mt-auto flex flex-col gap-[16px] border-t border-graphite py-[24px]">
-            <div className="-ml-[8px]">
-              {/* ponytail: desktopdagisidan alohida nusxa. Ikkalasi ham
-                  localStorage'dan o'qiydi, lekin bir vaqtda faqat bittasi
-                  ko'rinadi — holatni bo'lishish uchun context qo'shish shu
-                  bitta ko'rinmas qirra uchun ortiqcha. */}
-              <LanguageSwitcher
-                locale={locale}
-                label={m["nav.language"]}
-                onNavigate={() => setOpen(false)}
-              />
-            </div>
             <div className="flex flex-col">
               <a
                 href={`mailto:${settings.email}`}

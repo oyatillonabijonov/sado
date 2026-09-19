@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import type { Messages } from "@/lib/i18n";
 import Select from "@/components/Select";
-import { contactSchema, serviceOptions } from "@/lib/contact";
+import { contactSchema, serviceOptions, type ServiceOption } from "@/lib/contact";
 
 type Status = "idle" | "sending" | "success" | "error";
 type Errors = Partial<Record<string, string>>;
@@ -36,7 +36,9 @@ export default function ContactForm({ m }: { m: Messages }) {
     if (!parsed.success) {
       const fieldErrors: Errors = {};
       for (const [k, v] of Object.entries(parsed.error.flatten().fieldErrors)) {
-        if (v?.[0]) fieldErrors[k] = v[0];
+        // Sxemadagi xabar o'zbekcha (server bilan umumiy) — sahifa tilida
+        // ko'rsatish uchun lug'atdan olinadi.
+        if (v?.[0]) fieldErrors[k] = m[`contact.err.${k}` as keyof Messages] ?? v[0];
       }
       setErrors(fieldErrors);
       return;
@@ -71,6 +73,27 @@ export default function ContactForm({ m }: { m: Messages }) {
     );
   }
 
+  function textField(name: string, label: string, type: string, placeholder?: string) {
+    return (
+      <div key={name} className="flex flex-col gap-[8px]">
+        {/* Ko'rinadigan yorliq: placeholder yozuv kirgach yo'qoladi va maydon
+            nima uchun ekani bilinmay qoladi. */}
+        <label htmlFor={`contact-${name}`} className="text-fog-gray">
+          {label}
+        </label>
+        <input
+          id={`contact-${name}`}
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          className={field}
+          aria-invalid={!!errors[name]}
+        />
+        {errors[name] && <p className="text-scarlet-signal">{errors[name]}</p>}
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={onSubmit} noValidate className={`${card} flex flex-col gap-[16px]`}>
       {(
@@ -79,33 +102,20 @@ export default function ContactForm({ m }: { m: Messages }) {
           ["phone", m["contact.phone"], "tel"],
           ["company", m["contact.company"], "text"],
         ] as const
-      ).map(([name, label, type]) => (
-        <div key={name} className="flex flex-col gap-[8px]">
-          {/* Ko'rinadigan yorliq: placeholder yozuv kirgach yo'qoladi va maydon
-              nima uchun ekani bilinmay qoladi. */}
-          <label htmlFor={`contact-${name}`} className="text-fog-gray">
-            {label}
-          </label>
-          <input
-            id={`contact-${name}`}
-            name={name}
-            type={type}
-            className={field}
-            aria-invalid={!!errors[name]}
-          />
-          {errors[name] && <p className="text-scarlet-signal">{errors[name]}</p>}
-        </div>
-      ))}
+      ).map(([name, label, type]) => textField(name, label, type))}
       <div className="flex flex-col gap-[8px]">
         <span className="text-fog-gray">{m["contact.service"]}</span>
         <Select
           name="service"
           placeholder={m["contact.select"]}
           options={serviceOptions}
+          labelOf={(v) => m[`svc:${v as ServiceOption}`]}
           invalid={!!errors.service}
         />
         {errors.service && <p className="text-scarlet-signal">{errors.service}</p>}
       </div>
+      {/* Xizmatdan keyin: "nima kerak" → "qancha mo'ljallangan". */}
+      {textField("budget", m["contact.budget"], "text", m["contact.budget.placeholder"])}
       <div className="pt-[16px]">
         <button
           type="submit"

@@ -35,7 +35,10 @@ export async function emptyProject(): Promise<ProjectFormData> {
     category: "Branding",
     services: "",
     cover: null,
-    featured: false,
+    // Yangi loyiha sukut bo'yicha bosh sahifaga tushadi: mijoz loyiha yuklab,
+    // belgini bosishni unutib, «yuklangan loyihalar ko'rinmayapti» dedi
+    // (2026-09-19). Chiqmasin desa — belgini olib tashlaydi.
+    featured: true,
     brief: "",
     solution: "",
     results: padResults([]),

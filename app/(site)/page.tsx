@@ -10,7 +10,7 @@ import BlogCard from "@/components/BlogCard";
 import RedDotLink from "@/components/RedDotLink";
 import SectionHeading from "@/components/SectionHeading";
 import Stats from "@/components/Stats";
-import { getProjects, getTestimonials } from "@/lib/content";
+import { getLatestFeaturedProjects, getTestimonials } from "@/lib/content";
 import { getSettings } from "@/lib/settings";
 import { telHref } from "@/lib/site-format";
 import { getAllPosts } from "@/lib/blog";
@@ -32,13 +32,12 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function HomePage() {
   const locale = await currentLocale();
   const m = messages(locale);
-  const [allProjects, allPosts, settings, testimonials] = await Promise.all([
-    getProjects(),
+  const [featured, allPosts, settings, testimonials] = await Promise.all([
+    getLatestFeaturedProjects(4),
     getAllPosts(),
     getSettings(),
     getTestimonials(),
   ]);
-  const featured = allProjects.filter((p) => p.featured).slice(0, 4);
   const posts = allPosts.slice(0, 3);
 
   return (

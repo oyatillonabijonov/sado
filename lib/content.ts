@@ -54,6 +54,29 @@ export async function getProjects(): Promise<Project[]> {
   return docs.map((d) => toProject(d as unknown as Record<string, unknown>));
 }
 
+/**
+ * Bosh sahifadagi «So'nggi loyihalar» — belgilanganlardan ENG YANGI yuklangan
+ * `limit` tasi.
+ *
+ * Ilgari bosh sahifa `getProjects()` ni `order` bo'yicha olib, birinchi 4
+ * belgilanganini kesardi. Yangi loyiha ro'yxat oxiriga tushgani uchun u hech
+ * qachon chiqmasdi: mijoz 6 ta loyihani belgilagan, «Arbol» esa 6-bo'lib
+ * qolib ketgan edi (2026-09-19). Tartib `createdAt` bo'yicha — `order` panel
+ * strelkalari bilan o'zgaradi va yangilikni bildirmaydi.
+ */
+export async function getLatestFeaturedProjects(limit: number): Promise<Project[]> {
+  const payload = await client();
+  const { docs } = await payload.find({
+    collection: "projects",
+    depth: 1,
+    limit,
+    where: { featured: { equals: true } },
+    sort: "-createdAt",
+    locale: await currentLocale(),
+  });
+  return docs.map((d) => toProject(d as unknown as Record<string, unknown>));
+}
+
 export async function getProject(slug: string): Promise<Project | undefined> {
   const payload = await client();
   const { docs } = await payload.find({

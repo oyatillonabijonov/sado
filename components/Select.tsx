@@ -7,11 +7,15 @@ export default function Select({
   name,
   placeholder,
   options,
+  labelOf = (v) => v,
   invalid,
 }: {
   name: string;
   placeholder: string;
   options: readonly string[];
+  /* Ko'rinadigan nom. Formaga doim `options` dagi qiymat tushadi —
+     ruscha sahifada ham bazaga bir xil qiymat yozilsin. */
+  labelOf?: (value: string) => string;
   invalid?: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -46,7 +50,7 @@ export default function Select({
         className="flex w-full cursor-pointer items-center justify-between rounded-[10px] bg-pure-black px-[16px] py-[16px] text-left outline-none ring-1 ring-transparent transition-shadow focus:ring-bone-white"
       >
         <span className={value ? "text-bone-white" : "text-fog-gray"}>
-          {value || placeholder}
+          {value ? labelOf(value) : placeholder}
         </span>
         <span
           aria-hidden
@@ -74,7 +78,7 @@ export default function Select({
                   o === value ? "text-bone-white" : "text-fog-gray"
                 } hover:text-bone-white`}
               >
-                {o}
+                {labelOf(o)}
               </button>
             </li>
           ))}

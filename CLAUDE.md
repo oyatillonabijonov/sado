@@ -381,6 +381,14 @@ alohida tekshiradi va mijoz ruschani kiritmaguncha o'zbekchani ham saqlab bo'lma
 Formadagi HTML `required` o'z o'rnida qoladi. Hamon aniqlanmaydigani — ustun **o'chirilishi** va **nom o'zgarishi**; ataylab,
 chunki ikkalasi ham ma'lumot yo'qotadi. Skript hech qachon `DROP` bajarmaydi.
 
+**Bosh sahifadagi «So'nggi loyihalar» — belgilanganlarning ENG YANGI 4 tasi**
+(`getLatestFeaturedProjects`, `createdAt` bo'yicha). Ilgari `getProjects()` `order`
+bo'yicha olinib birinchi 4 belgilangani kesilardi: yangi loyiha ro'yxat oxiriga
+tushgani uchun hech qachon chiqmasdi va mijoz «yuklangan loyihalar ko'rinmayapti»
+dedi. `order` panel strelkalari bilan o'zgaradi — u yangilikni bildirmaydi.
+Yangi loyihada «Bosh sahifada ko'rsatilsin» sukut bo'yicha yoqiq
+(`panel/projects-data.ts`).
+
 **Loyiha turlari — `data/projects.ts` dagi `projectCategories`, yagona manba.**
 Payload maydoni (`collections/Projects.ts`), paneldagi tanlagich
 (`panel/ProjectForm.tsx`) va `/portfolio` dagi filtr uchalasi shundan o'qiydi.
